@@ -1,0 +1,9 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - section: API
+        contents:
+          - 01_readers.ipynb
+
+
