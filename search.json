@@ -1,0 +1,135 @@
+[
+  {
+    "objectID": "readers.html",
+    "href": "readers.html",
+    "title": "Readers",
+    "section": "",
+    "text": "The EvalReader interface defines a common contract that all evaluation repository readers (e.g. IOM, UNHCR) must implement:\nsource",
+    "crumbs": [
+      "API",
+      "Readers"
+    ]
+  },
+  {
+    "objectID": "readers.html#iom-reader",
+    "href": "readers.html#iom-reader",
+    "title": "Readers",
+    "section": "IOM Reader",
+    "text": "IOM Reader\n\nsource\n\niom_input_cfg\n\n iom_input_cfg ()\n\n\n\nExported source\ndef iom_input_cfg():\n    return {\n        'sheet_name': 'extract from 2005 to Aug 2024',\n        'date_cols': ['Date of Publication', 'Evaluation Period From Date', 'Evaluation Period To Date'],\n        'string_cols': ['Year'],\n        'list_fields': {\n            'Countries Covered': {'separator': ',', 'clean': True}\n        },\n        'document_fields': ['Document Subtype', 'File URL', 'File description'],\n        'id_gen': {\n            'method': 'md5',\n            'fields': ['Title', 'Year', 'Project Code']  # fields to hash\n        },\n        'field_mappings': {\n            'Title': 'title',\n            'Year': 'year',\n            # other mappings\n        }\n    }\n\n\n\ncfg = iom_input_cfg()\nfname = Path('files/test/eval_repo_iom.xlsx')\ndf = pd.read_excel(fname, sheet_name=cfg['sheet_name'])\ndf.head(2)\n\n\n\n\n\n\n\n\nTitle\nYear\nAuthor\nBest Practicesor Lessons Learnt\nDate of Publication\nDonor\nEvaluation Brief\nEvaluation Commissioner\nEvaluation Coverage\nEvaluation Period From Date\n...\nType of Evaluator\nLevel of Evaluation\nDocument Subtype\nFile URL\nFile description\nManagement response\nDate added\nMetaevaluation\nexclude\nreason\n\n\n\n\n0\nEX-POST EVALUATION OF THE PROJECT: NIGERIA: S...\n2023\nAbderrahim El Moulat\nYes\n2023-05-10\nGovernment of Germany\nYes\nDonor, IOM\nCountry\nNaT\n...\nInternal\nDecentralized\nEvaluation report, Evaluation brief\nhttps://evaluation.iom.int/sites/g/files/tmzbd...\nEvaluation Report , Evaluation Brief\nNo\nFri, 07/07/2023 - 15:35\n2020-24\nNaN\nNaN\n\n\n1\nFINAL EVALUATION OF THE PROJECT: STRENGTHEN BO...\n2023\nAbderrahim El Moulat\nYes\n2023-02-14\nGovernment of Canada\nYes\nDonor, IOM\nMulti-country\nNaT\n...\nInternal\nDecentralized\nEvaluation report, Evaluation brief\nhttps://evaluation.iom.int/sites/g/files/tmzbd...\nEvaluation Report , Evaluation Brief\nNo\nFri, 05/19/2023 - 16:49\n2020-24\nNaN\nNaN\n\n\n\n\n2 rows × 36 columns\n\n\n\n\nsource\n\n\nIOMRepoReader\n\n IOMRepoReader (fname, max_n=None)\n\nHelper class that provides a standard way to create an ABC using inheritance.\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\nfname\n\n\npath to the excel file\n\n\nmax_n\nNoneType\nNone\nmax number of rows to read\n\n\n\n\n\nExported source\nclass IOMRepoReader(EvalReader):\n    def __init__(self, \n                 fname, # path to the excel file\n                 max_n=None): # max number of rows to read\n        cfg = iom_input_cfg()  \n        super().__init__(cfg)\n        self.fname = fname\n        self.max_n = max_n\n    \n    def read(self): \n        \"\"\"Read the excel file and return a dataframe\"\"\"\n        df = pd.read_excel(self.fname, sheet_name=self.cfg['sheet_name'])\n        if self.max_n:\n            df = df.head(self.max_n)\n        return df\n    \n    def tfm(self, df):\n        \"\"\"Transform the dataframe into a list of evaluations\"\"\"\n        df_proc = df.copy()\n\n        # Process dates\n        date_cols = self.cfg['date_cols']\n        df_proc[date_cols] = df_proc[date_cols].astype(str)\n        \n        # Process list fields\n        for fname, fcfg in self.cfg['list_fields'].items():\n            df_proc[fname] = (\n                df_proc[fname]\n                .astype(str)\n                .str.split(fcfg['separator'])\n                .apply(lambda x: [item.strip() for item in x if item.strip()])\n            )\n        \n        # Generate IDs\n        df_proc['id'] = df_proc.apply(self._mk_id, axis=1)\n        \n        # Process documents\n        df_proc['docs'] = df_proc.apply(self._mk_docs, axis=1)\n        \n        # Collect metadata\n        meta_cols = [col for col in df_proc.columns if col not in ['id', 'docs']]\n        \n        # Create final structure\n        res = []\n        for _, row in df_proc.iterrows():\n            res.append({\n                'id': row['id'],\n                'docs': row['docs'],\n                'meta': {field: row[field] for field in meta_cols}\n            })\n        \n        return res\n    \n    def to_json(self, out_path):  \n        evals = self()\n        with open(out_path, 'w', encoding='utf-8') as f:\n            json.dump(evals, f, indent=4, ensure_ascii=False)\n    \n    def _mk_docs(self, row):\n        try:\n            stypes = [s.strip() for s in str(row['Document Subtype']).split(', ')]\n            urls = [u.strip() for u in str(row['File URL']).split(', ')]\n            descs = [d.strip() for d in str(row['File description']).split(', ')]\n            \n            docs = []\n            for stype, url, desc in zip(stypes, urls, descs):\n                if url.strip():\n                    docs.append({\n                        'Document Subtype': stype,\n                        'File URL': url,\n                        'File description': desc\n                    })\n            return docs\n        except Exception as e:\n            print(f\"Error processing documents for row: {e}\")\n            return []\n    \n    def _mk_id(self, row):\n        \"\"\"Generate MD5 hash from specified fields\"\"\"\n        id_cfg = self.cfg['id_gen']\n        fields = id_cfg['fields']\n        \n        # Concatenate the specified fields\n        id_str = ''.join(str(row[field]) for field in fields)\n        \n        # Generate MD5 hash\n        return hashlib.md5(id_str.encode('utf-8')).hexdigest()\n\n\nTo use the reader:\n\nfname = '../_data/input/Evaluation repository extract 22 Oct 2024.xlsx'\nreader = IOMRepoReader(fname)\nevaluations = reader()\n\nThe reader produces a list of JSON objects, where each object represents an evaluation with:\n\nid: A unique MD5 hash identifier generated from specified fields\ndocs: A list of associated documents, each containing:\n\nDocument Subtype: Type of evaluation document (e.g. report, brief)\nFile URL: Direct link to download the document\nFile description: Brief description of the document contents\n\nmeta: Additional metadata about the evaluation\n\nThen serialize as json for further use:\n\nreader.to_json('../_data/output/evaluations.json')",
+    "crumbs": [
+      "API",
+      "Readers"
+    ]
+  },
+  {
+    "objectID": "downloaders.html",
+    "href": "downloaders.html",
+    "title": "Downloaders",
+    "section": "",
+    "text": "source\n\nload_evals\n\n load_evals (json_file:str, config:dict={'id_field': 'id', 'docs_field':\n             'docs', 'url_field': 'File URL'})\n\nLoad evaluations from JSON file and return flattened list of (eval_id, url) tuples\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\njson_file\nstr\n\npath to the JSON file\n\n\nconfig\ndict\n{‘id_field’: ‘id’, ‘docs_field’: ‘docs’, ‘url_field’: ‘File URL’}\nconfig for the JSON file\n\n\nReturns\nL\n\n\n\n\n\n\n\nExported source\ndefault_config = {\n    'id_field': 'id',\n    'docs_field': 'docs', \n    'url_field': 'File URL'\n}\n\n\n\n\nExported source\ndef load_evals(\n    json_file: str, # path to the JSON file\n    config: dict = default_config # config for the JSON file\n    ) -&gt; L:\n    \"Load evaluations from JSON file and return flattened list of (eval_id, url) tuples\"\n    \n    with open(json_file) as f:\n        evals = json.load(f)\n    \n    return L((eval_data[config['id_field']], doc[config['url_field']]) \n             for eval_data in evals \n             for doc in eval_data[config['docs_field']])\n\n\n\nfname = 'files/test/evaluations.json'\ndocs_to_download = load_evals(fname)\nprint(docs_to_download[:2])\n\n[('1a57974ab89d7280988aa6b706147ce1', \n'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Internal%20Evaluation_NG20P0516_MAY_2023_F\nINAL_Abderrahim%20EL%20MOULAT.pdf'), ('1a57974ab89d7280988aa6b706147ce1', \n'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/RR0163_Evaluation%20Brief_MAY_%202023_Abde\nrrahim%20EL%20MOULAT.pdf')]\n\n\n\n\nsource\n\n\nmk_dirs\n\n mk_dirs (docs_to_download:fastcore.foundation.L, base_dir:pathlib.Path)\n\nCreate directories for each unique evaluation ID\n\n\n\n\nType\nDetails\n\n\n\n\ndocs_to_download\nL\nlist of (eval_id, url) tuples\n\n\nbase_dir\nPath\npath to the base directory\n\n\nReturns\nNone\n\n\n\n\n\n\nExported source\ndef mk_dirs(\n    docs_to_download: L, # list of (eval_id, url) tuples\n    base_dir: Path # path to the base directory\n    ) -&gt; None:\n    \"Create directories for each unique evaluation ID\"\n    unique_eval_ids = set(eval_id for eval_id, url in docs_to_download)\n    for eval_id in unique_eval_ids:\n        (base_dir / eval_id).mkdir(parents=True, exist_ok=True)\n\n\n\nbase_dir = Path(\"files/test/pdf_library\")\nmk_dirs(docs_to_download[:2], base_dir)\n\n\nsource\n\n\nextract_fname\n\n extract_fname (url:str)\n\n\n\nExported source\ndef extract_fname(url: str) -&gt; str: \n    parsed_url = urlparse(url)\n    fname = Path(parsed_url.path).name\n    return fname\n\n\n\nsource\n\n\ndownload_doc\n\n download_doc (doc_info:tuple[str,str], base_dir:pathlib.Path,\n               overwrite:bool=True)\n\nDownload a document from a given URL and save it to a specified directory.\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\ndoc_info\ntuple\n\n(eval_id, url) for the document to download\n\n\nbase_dir\nPath\n\nBase directory to save files to\n\n\noverwrite\nbool\nTrue\nIf True, overwrite existing file\n\n\nReturns\nstr\n\n\n\n\n\n\n\nExported source\ndef download_doc(\n    doc_info: tuple[str, str],  # (eval_id, url) for the document to download\n    base_dir: Path, # Base directory to save files to\n    overwrite: bool = True # If True, overwrite existing file\n) -&gt; str:\n    \"Download a document from a given URL and save it to a specified directory.\"\n    eval_id, url = doc_info    \n    \n    fname = extract_fname(url)\n    path = base_dir / eval_id / fname\n    \n    if path.exists() and not overwrite: \n        return f\"Skipped {fname} (already exists)\"\n    \n    try:\n        r = requests.get(url, timeout=15)\n        r.raise_for_status()\n        \n        with open(path, 'wb') as f:\n            f.write(r.content)\n            \n        return f\"Downloaded {fname}\"\n    except Exception as e:\n        return f\"Failed to download {fname}: {e}\"\n\n\n\ndocs_to_download = load_evals(fname)\nprint(docs_to_download[:2])\n\n[('1a57974ab89d7280988aa6b706147ce1', \n'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Internal%20Evaluation_NG20P0516_MAY_2023_F\nINAL_Abderrahim%20EL%20MOULAT.pdf'), ('1a57974ab89d7280988aa6b706147ce1', \n'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/RR0163_Evaluation%20Brief_MAY_%202023_Abde\nrrahim%20EL%20MOULAT.pdf')]\n\n\n\n\neval_id, url = docs_to_download[0]\ndownload_doc((eval_id, url), base_dir=base_dir, overwrite=False)\n\n'Downloaded Internal%20Evaluation_NG20P0516_MAY_2023_FINAL_Abderrahim%20EL%20MOULAT.pdf'\n\n\n\nsource\n\n\ndownload_docs\n\n download_docs (json_file:str, base_dir:pathlib.Path=Path('PDF_Library'),\n                n_workers:int=5, overwrite:bool=False,\n                config:dict={'id_field': 'id', 'docs_field': 'docs',\n                'url_field': 'File URL'})\n\nDownload all evaluation documents from a JSON file in parallel\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\njson_file\nstr\n\npath to the JSON file\n\n\nbase_dir\nPath\nPDF_Library\npath to the base directory\n\n\nn_workers\nint\n5\nnumber of workers\n\n\noverwrite\nbool\nFalse\nif True, overwrite existing files\n\n\nconfig\ndict\n{‘id_field’: ‘id’, ‘docs_field’: ‘docs’, ‘url_field’: ‘File URL’}\nconfig for the JSON file\n\n\nReturns\nlist\n\n\n\n\n\n\n\nExported source\ndef download_docs(\n    json_file: str, # path to the JSON file\n    base_dir: Path = Path(\"./PDF_Library\"), # path to the base directory\n    n_workers: int = 5, # number of workers\n    overwrite: bool = False, # if True, overwrite existing files\n    config: dict = default_config # config for the JSON file\n) -&gt; list:\n    \"Download all evaluation documents from a JSON file in parallel\"\n    docs_to_download = load_evals(json_file, config)\n    mk_dirs(docs_to_download, base_dir)\n    download_func = partial(download_doc, base_dir=base_dir, overwrite=overwrite)\n    results = parallel(download_func, \n                      docs_to_download, \n                      n_workers=n_workers,\n                      total=len(docs_to_download),\n                      progress=True)\n    \n    return results\n\n\n\nfname = 'files/test/evaluations.json'\nbase_dir = Path(\"files/test/pdf_library\")\ndownload_docs(fname, base_dir=base_dir, n_workers=0, overwrite=True)\n\n                                                                       \n\n\n(#24) ['Downloaded Internal%20Evaluation_NG20P0516_MAY_2023_FINAL_Abderrahim%20EL%20MOULAT.pdf','Downloaded RR0163_Evaluation%20Brief_MAY_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0238_Evaluation%20Brief_FEB_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0238__FEB_2023_FINAL%20RE_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0053_Evaluation%20Brief_SEP_%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0053_OCT_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Internal%20Evaluation_NC0030_JUNE_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded NC0030_Evaluation%20Brief_June%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded CD0015_Evaluation%20Brief_May%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Projet%20CD0015_Final%20Evaluation%20Report_May_202_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_Retour%20Vert_JUL_2021_Fina_Abderrahim%20EL%20MOULAT.pdf','Downloaded NC0012_Evaluation%20Brief_JUL%202021_Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Internal%20Evaluation_JANUARY_2021__Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Project_Evaluation%20Brief_JAN%202021_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Evaluation%20Brief_ARCO_Shiraz%20JERBI.pdF','Downloaded Final%20evaluation%20report_ARCO_Shiraz%20JERBI_1.pdf','Downloaded Management%20Response%20Matrix_ARCO_Shiraz%20JERBI.pdf','Downloaded IOM%20MANAGEMENT%20RESPONSE%20MATRIX.pdf','Downloaded IOM%20Niger%20-%20MIRAA%20III%20-%20Final%20Evaluation%20Report%20%28003%29.pdf','Downloaded CE.0369%20-%20IDEE%20-%20ANNEXE%201%20-%20Rapport%20Recherche_Joanie%20DUROCHER_0.pdf'...]",
+    "crumbs": [
+      "API",
+      "Downloaders"
+    ]
+  },
+  {
+    "objectID": "index.html#what-is-evaluatr",
+    "href": "index.html#what-is-evaluatr",
+    "title": "Evaluatr",
+    "section": "What is Evaluatr?",
+    "text": "What is Evaluatr?\nEvaluatr is an AI-powered system that automates the creation of Evidence Maps - structured, visual tools that organize what we know (and don’t know) about programs, policies, and interventions. It transforms hundreds of hours of manual document review into an automated, intelligent process.\n\nThe Challenge We Solve\nTraditional evidence mapping requires hundreds of staff-hours manually reviewing and tagging evaluation documents. Evaluatr automates this process while maintaining accuracy through human-AI collaboration, making evidence mapping accessible and efficient.",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#key-features-wip",
+    "href": "index.html#key-features-wip",
+    "title": "Evaluatr",
+    "section": "Key Features (WIP)",
+    "text": "Key Features (WIP)\n\nDocument Processing\n\nMulti-Format Repository Reading: Seamlessly process evaluation repositories from diverse organizations with standardized outputs\nOCR Processing: Extract text from scanned PDFs and images to ensure no valuable information is missed\nIntelligent Document Chunking: Break down documents into meaningful segments for optimal analysis\n\n\n\nAI-Powered Analysis\n\nAutomated Information Extraction: Extract key program details, context, and findings using advanced AI models\nSmart Document Tagging: AI-assisted categorization and labeling of evaluation reports\nEnhanced RAG Implementation: Enriched chunking strategy for more accurate retrieval and generation\n\n\n\nFlexibility & Openness\n\nFramework Agnostic Design: Compatible with multiple evaluation frameworks including IOM Strategic Results Framework and Global Compact on Migration\nOpen Training Data: Contribute to and benefit from community-curated training datasets",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "Evaluatr",
+    "section": "️ Installation",
+    "text": "️ Installation\n\nFrom PyPI (Recommended)\npip install evaluatr\n\n\nFrom GitHub\npip install git+https://github.com/franckalbinet/evaluatr.git\n\n\nDevelopment Installation\n# Clone the repository\ngit clone https://github.com/franckalbinet/evaluatr.git\ncd evaluatr\n\n# Install in development mode\npip install -e .\n\n# Make changes in nbs/ directory, then compile:\nnbdev_prepare",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#quick-start",
+    "href": "index.html#quick-start",
+    "title": "Evaluatr",
+    "section": "Quick Start",
+    "text": "Quick Start\n\nReading an IOM Evaluation Repository\n\nfrom evaluatr.readers import IOMRepoReader\n\n# Initialize reader with your Excel file\nreader = IOMRepoReader('files/test/eval_repo_iom.xlsx')\n\n# Process the repository\nevaluations = reader()\n\n# Each evaluation is a standardized dictionary\nfor eval in evaluations[:3]:  # Show first 3\n    print(f\"ID: {eval['id']}\")\n    print(f\"Title: {eval['meta']['Title']}\")\n    print(f\"Documents: {len(eval['docs'])}\")\n    print(\"---\")\n\nID: 1a57974ab89d7280988aa6b706147ce1\nTitle: EX-POST EVALUATION OF THE PROJECT:  NIGERIA: STRENGTHENING REINTEGRATION FOR RETURNEES (SRARP)  - PHASE II\nDocuments: 2\n---\nID: c660e774d14854e20dc74457712b50ec\nTitle: FINAL EVALUATION OF THE PROJECT: STRENGTHEN BORDER MANAGEMENT AND SECURITY IN MALI AND NIGER THROUGH CAPACITY BUILDING OF BORDER AUTHORITIES AND ENHANCED DIALOGUE WITH BORDER COMMUNITIES\nDocuments: 2\n---\nID: 2cae361c6779b561af07200e3d4e4051\nTitle: Final Evaluation of the project \"SUPPORTING THE IMPLEMENTATION OF AN E RESIDENCE PLATFORM IN CABO VERDE\"\nDocuments: 2\n---\n\n\nExporting it to JSON:\nreader.to_json('processed_evaluations.json')",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#downloading-evaluation-documents",
+    "href": "index.html#downloading-evaluation-documents",
+    "title": "Evaluatr",
+    "section": "Downloading evaluation documents",
+    "text": "Downloading evaluation documents\n\nfrom evaluatr.downloaders import download_docs\nfrom pathlib import Path\n\nfname = 'files/test/evaluations.json'\nbase_dir = Path(\"files/test/pdf_library\")\ndownload_docs(fname, base_dir=base_dir, n_workers=0, overwrite=True)\n\n(#24) ['Downloaded Internal%20Evaluation_NG20P0516_MAY_2023_FINAL_Abderrahim%20EL%20MOULAT.pdf','Downloaded RR0163_Evaluation%20Brief_MAY_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0238_Evaluation%20Brief_FEB_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0238__FEB_2023_FINAL%20RE_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0053_Evaluation%20Brief_SEP_%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0053_OCT_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Internal%20Evaluation_NC0030_JUNE_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded NC0030_Evaluation%20Brief_June%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded CD0015_Evaluation%20Brief_May%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Projet%20CD0015_Final%20Evaluation%20Report_May_202_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_Retour%20Vert_JUL_2021_Fina_Abderrahim%20EL%20MOULAT.pdf','Downloaded NC0012_Evaluation%20Brief_JUL%202021_Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Internal%20Evaluation_JANUARY_2021__Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Project_Evaluation%20Brief_JAN%202021_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Evaluation%20Brief_ARCO_Shiraz%20JERBI.pdF','Downloaded Final%20evaluation%20report_ARCO_Shiraz%20JERBI_1.pdf','Downloaded Management%20Response%20Matrix_ARCO_Shiraz%20JERBI.pdf','Downloaded IOM%20MANAGEMENT%20RESPONSE%20MATRIX.pdf','Downloaded IOM%20Niger%20-%20MIRAA%20III%20-%20Final%20Evaluation%20Report%20%28003%29.pdf','Downloaded CE.0369%20-%20IDEE%20-%20ANNEXE%201%20-%20Rapport%20Recherche_Joanie%20DUROCHER_0.pdf'...]",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#documentation",
+    "href": "index.html#documentation",
+    "title": "Evaluatr",
+    "section": "Documentation",
+    "text": "Documentation\n\nFull Documentation: GitHub Pages\nAPI Reference: Available in the documentation\nExamples: See the nbs/ directory for Jupyter notebooks",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#contributing",
+    "href": "index.html#contributing",
+    "title": "Evaluatr",
+    "section": "Contributing",
+    "text": "Contributing\nWe welcome contributions! Here’s how you can help:\n\nFork the repository\nCreate a feature branch (git checkout -b feature/amazing-feature)\nMake your changes in the nbs/ directory\nCompile with nbdev_prepare\nCommit your changes (git commit -m 'Add amazing feature')\nPush to the branch (git push origin feature/amazing-feature)\nOpen a Pull Request\n\n\nDevelopment Setup\n# Install development dependencies\npip install -e .\n\n# Make changes in nbs/ directory\n# ...\n\n# Compile changes to evalstack package\nnbdev_prepare",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "Evaluatr",
+    "section": "License",
+    "text": "License\nThis project is licensed under the MIT License - see the LICENSE file for details.",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#acknowledgments",
+    "href": "index.html#acknowledgments",
+    "title": "Evaluatr",
+    "section": "Acknowledgments",
+    "text": "Acknowledgments\n\nBuilt with nbdev for literate programming\nUses pandas for data processing\nPowered by rich for beautiful terminal output",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  },
+  {
+    "objectID": "index.html#support",
+    "href": "index.html#support",
+    "title": "Evaluatr",
+    "section": "Support",
+    "text": "Support\n\nIssues: GitHub Issues\nDiscussions: GitHub Discussions\nEmail: [Your email here]",
+    "crumbs": [
+      "Evaluatr"
+    ]
+  }
+]
