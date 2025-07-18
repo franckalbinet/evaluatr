@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "evaluatr"
+  site-url: "https://franckalbinet.github.io/evaluatr"
+  description: "Streamline policy evaluation workflows with AI-driven analysis and evaluation framework-agnostic processing"
+  repo-branch: main
+  repo-url: "https://github.com/franckalbinet/evaluatr"
