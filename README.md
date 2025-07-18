@@ -18,57 +18,37 @@ automated, intelligent process.
 ### The Challenge We Solve
 
 Traditional evidence mapping requires hundreds of staff-hours manually
-reviewing and tagging evaluation documents. EvalStack automates this
+reviewing and tagging evaluation documents. Evaluatr automates this
 process while maintaining **accuracy** through human-AI collaboration,
 making evidence mapping accessible and efficient.
 
 ## Key Features
 
-- **📚 Multi-Format Repository Reading**: Standardized processing of
-  evaluation repositories from different organizations
-- **🤖 AI-Powered Analysis**: Automated extraction of program details,
-  context, and findings
-- **🗂️ Framework Agnostic**: Works with various evaluation frameworks
-  (IOM Strategic Results Framework, Global Compact on Migration, etc.)
-- **Interactive Visualizations**: Generate bubble maps, heatmaps, and
-  gap analysis
-- **🔍 Hybrid Search**: Vector database storage with semantic and
-  keyword search capabilities
+### Document Processing
 
-## Workflow Overview
+- **Multi-Format Repository Reading**: Seamlessly process evaluation
+  repositories from diverse organizations with standardized outputs
+- **OCR Processing**: Extract text from scanned PDFs and images to
+  ensure no valuable information is missed
+- **Intelligent Document Chunking**: Break down documents into
+  meaningful segments for optimal analysis
 
-``` mermaid
-graph LR
-    A[Evaluation Repositories] --> B[Standardized Reading]
-    B --> C[Document Processing]
-    C --> D[AI Analysis]
-    D --> E[Evidence Mapping]
-    E --> F[Interactive Visualizations]
-```
+### AI-Powered Analysis
 
-### Current Implementation ✅
+- **Automated Information Extraction**: Extract key program details,
+  context, and findings using advanced AI models
+- **Smart Document Tagging**: AI-assisted categorization and labeling of
+  evaluation reports
+- **Enhanced RAG Implementation**: Enriched chunking strategy for more
+  accurate retrieval and generation
 
-**Step 1: Repository Reading** - EvalStack can read and standardize
-evaluation repositories from different organizations:
+### Flexibility & Openness
 
-``` python
-from evaluatr.readers import IOMRepoReader
-
-# Read IOM evaluation repository
-reader = IOMRepoReader('files/test/eval_repo_iom.xlsx')
-evaluations = reader()  # Returns standardized format
-
-# Each evaluation contains:
-# - id: Unique identifier
-# - docs: Associated documents with URLs and descriptions
-# - meta: All metadata in standardized format
-```
-
-### Coming Soon 🚧
-
-- **Step 2**: Document Processing (OCR, chunking, embeddings)
-- **Step 3**: Structured Information Extraction (AI-powered)
-- **Step 4**: Evidence Mapping & Analysis (cross-evaluation patterns)
+- **Framework Agnostic Design**: Compatible with multiple evaluation
+  frameworks including IOM Strategic Results Framework and Global
+  Compact on Migration
+- **Open Training Data**: Contribute to and benefit from
+  community-curated training datasets
 
 ## ️ Installation
 
@@ -132,9 +112,22 @@ for eval in evaluations[:3]:  # Show first 3
     Documents: 2
     ---
 
-### Export to JSON
+Exporting it to JSON:
 
     reader.to_json('processed_evaluations.json')
+
+## Downloading evaluation documents
+
+``` python
+from evaluatr.downloaders import download_docs
+from pathlib import Path
+
+fname = 'files/test/evaluations.json'
+base_dir = Path("files/test/pdf_library")
+download_docs(fname, base_dir=base_dir, n_workers=0, overwrite=True)
+```
+
+    (#24) ['Downloaded Internal%20Evaluation_NG20P0516_MAY_2023_FINAL_Abderrahim%20EL%20MOULAT.pdf','Downloaded RR0163_Evaluation%20Brief_MAY_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0238_Evaluation%20Brief_FEB_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0238__FEB_2023_FINAL%20RE_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0053_Evaluation%20Brief_SEP_%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0053_OCT_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Internal%20Evaluation_NC0030_JUNE_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded NC0030_Evaluation%20Brief_June%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded CD0015_Evaluation%20Brief_May%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Projet%20CD0015_Final%20Evaluation%20Report_May_202_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_Retour%20Vert_JUL_2021_Fina_Abderrahim%20EL%20MOULAT.pdf','Downloaded NC0012_Evaluation%20Brief_JUL%202021_Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Internal%20Evaluation_JANUARY_2021__Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Project_Evaluation%20Brief_JAN%202021_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Evaluation%20Brief_ARCO_Shiraz%20JERBI.pdF','Downloaded Final%20evaluation%20report_ARCO_Shiraz%20JERBI_1.pdf','Downloaded Management%20Response%20Matrix_ARCO_Shiraz%20JERBI.pdf','Downloaded IOM%20MANAGEMENT%20RESPONSE%20MATRIX.pdf','Downloaded IOM%20Niger%20-%20MIRAA%20III%20-%20Final%20Evaluation%20Report%20%28003%29.pdf','Downloaded CE.0369%20-%20IDEE%20-%20ANNEXE%201%20-%20Rapport%20Recherche_Joanie%20DUROCHER_0.pdf'...]
 
 ## Documentation
 
