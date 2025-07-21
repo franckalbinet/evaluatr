@@ -2,6 +2,9 @@ website:
   sidebar:
     contents:
       - index.ipynb
+      - section: Tutorials
+        contents:
+          - tutorials/01_eval_reports_eda.ipynb
       - section: API
         contents:
           - 01_readers.ipynb
