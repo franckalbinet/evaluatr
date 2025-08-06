@@ -9,5 +9,6 @@ website:
         contents:
           - 01_readers.ipynb
           - 02_downloaders.ipynb
+          - 03_ocr.ipynb
 
 
