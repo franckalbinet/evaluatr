@@ -4,7 +4,7 @@
 
 # %% auto 0
 __all__ = ['mistral_api_key', 'src_dir', 'get_doc_subtype', 'clean_pdf_name', 'setup_output_dirs', 'get_pdfs_and_dir',
-           'save_page_images', 'create_batch_ocr_job', 'process_batch_results', 'submit_and_monitor_batch_job',
+           'save_page_images', 'process_batch_results', 'create_batch_ocr_job', 'submit_and_monitor_batch_job',
            'download_and_parse_results', 'process_single_evaluation_batch', 'process_all_reports_batch']
 
 # %% ../nbs/03_ocr.ipynb 2
@@ -113,45 +113,6 @@ def save_page_images(page, dest_folder: Path):
             output_path = dest_folder / img_id
             pil_img.save(output_path)
 
-# %% ../nbs/03_ocr.ipynb 23
-def create_batch_ocr_job(
-    pdf_paths: List[Path],
-    model: str = "mistral-ocr-latest",
-    include_images: bool = True,
-    api_key: str = mistral_api_key
-):
-    "Create a batch job for multiple PDFs"
-    cli = Mistral(api_key=api_key)
-    
-    # Upload all PDFs and create batch entries
-    batch_entries = []
-    for i, pdf_path in enumerate(pdf_paths):
-        # Upload PDF
-        uploaded_pdf = cli.files.upload(
-            file={
-                "file_name": pdf_path.stem,
-                "content": pdf_path.read_bytes(),
-            },
-            purpose="ocr"
-        )
-        
-        signed_url = cli.files.get_signed_url(file_id=uploaded_pdf.id)
-        
-        # Create batch entry with custom_id to track which PDF this is
-        entry = {
-            "custom_id": f"{pdf_path.parent.name}_{pdf_path.stem}",  # eval_id_pdfname
-            "body": {
-                "document": {
-                    "type": "document_url",
-                    "document_url": signed_url.url,
-                },
-                "include_image_base64": include_images
-            }
-        }
-        batch_entries.append(entry)
-    
-    return batch_entries, cli
-
 # %% ../nbs/03_ocr.ipynb 24
 def process_batch_results(results, md_output_dir):
     "Process batch OCR results and save to appropriate folders"
@@ -222,6 +183,7 @@ def create_batch_ocr_job(
         logging.info(f"Added {pdf_path.name} to batch for {eval_report_path}")
         
     return batch_entries, cli
+
 
 # %% ../nbs/03_ocr.ipynb 26
 def submit_and_monitor_batch_job(batch_entries, eval_report_path, cli):
