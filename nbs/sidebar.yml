@@ -10,5 +10,6 @@ website:
           - 01_readers.ipynb
           - 02_downloaders.ipynb
           - 03_ocr.ipynb
+          - 04_enrichr.ipynb
 
 
