@@ -167,7 +167,7 @@ Exporting it to JSON:
 
     reader.to_json('processed_evaluations.json')
 
-## Downloading evaluation documents
+### Downloading evaluation documents
 
 ``` python
 from evaluatr.downloaders import download_docs
@@ -180,7 +180,7 @@ download_docs(fname, base_dir=base_dir, n_workers=0, overwrite=True)
 
     (#24) ['Downloaded Internal%20Evaluation_NG20P0516_MAY_2023_FINAL_Abderrahim%20EL%20MOULAT.pdf','Downloaded RR0163_Evaluation%20Brief_MAY_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0238_Evaluation%20Brief_FEB_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0238__FEB_2023_FINAL%20RE_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0053_Evaluation%20Brief_SEP_%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0053_OCT_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Internal%20Evaluation_NC0030_JUNE_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded NC0030_Evaluation%20Brief_June%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded CD0015_Evaluation%20Brief_May%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Projet%20CD0015_Final%20Evaluation%20Report_May_202_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_Retour%20Vert_JUL_2021_Fina_Abderrahim%20EL%20MOULAT.pdf','Downloaded NC0012_Evaluation%20Brief_JUL%202021_Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Internal%20Evaluation_JANUARY_2021__Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Project_Evaluation%20Brief_JAN%202021_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Evaluation%20Brief_ARCO_Shiraz%20JERBI.pdF','Downloaded Final%20evaluation%20report_ARCO_Shiraz%20JERBI_1.pdf','Downloaded Management%20Response%20Matrix_ARCO_Shiraz%20JERBI.pdf','Downloaded IOM%20MANAGEMENT%20RESPONSE%20MATRIX.pdf','Downloaded IOM%20Niger%20-%20MIRAA%20III%20-%20Final%20Evaluation%20Report%20%28003%29.pdf','Downloaded CE.0369%20-%20IDEE%20-%20ANNEXE%201%20-%20Rapport%20Recherche_Joanie%20DUROCHER_0.pdf'...]
 
-## OCR Processing
+### OCR Processing
 
 Convert PDF evaluation reports into structured markdown files with
 extracted images:
@@ -218,7 +218,7 @@ FIGURE 2. OECD/DAC CRITERIA FOR EVALUATIONS
 Each evaluation question includes the main data collection ...
 ```
 
-### Batch OCR Processing
+#### Batch OCR Processing
 
 Process multiple evaluation reports efficiently using Mistral’s batch
 OCR API:
@@ -240,7 +240,7 @@ PDFs individually - Cost-effective through Mistral’s batch API pricing
 (expect \$0.5 per 1,000 pages) - Automatic job monitoring and result
 retrieval
 
-## Document Enrichment
+### Document Enrichment
 
 While Mistral OCR excels at text extraction, it often struggles with
 heading hierarchy detection, producing inconsistent markdown levels that
