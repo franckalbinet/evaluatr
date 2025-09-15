@@ -40,14 +40,16 @@ significant operational challenges when processing reports that often
 exceed 150 pages of diverse content across multiple projects and
 contexts.
 
-The core challenges are: - **Time-intensive process**: Hundreds of
-staff-hours required per comprehensive mapping exercise - **Individual
-consistency**: Even expert evaluators may categorize the same content
-differently across sessions - **Cross-evaluator consistency**: Different
-evaluators may interpret and map identical content to different
-framework outputs - **Scale vs. thoroughness**: Growing volume of
-evaluation reports creates pressure to choose between speed and
-comprehensive analysis
+The core challenges are:
+
+- **Time-intensive process**: Hundreds of staff-hours required per
+  comprehensive mapping exercise
+- **Individual consistency**: Even expert evaluators may categorize the
+  same content differently across sessions
+- **Cross-evaluator consistency**: Different evaluators may interpret
+  and map identical content to different framework outputs
+- **Scale vs. thoroughness**: Growing volume of evaluation reports
+  creates pressure to choose between speed and comprehensive analysis
 
 IOM needs a solution that leverages evaluators’ expertise while
 addressing these operational bottlenecks—accelerating the mapping
@@ -328,10 +330,13 @@ This project is licensed under the MIT License - see the
 
 ## Dependencies
 
-`Evaluatr` is built on these key Python packages: - **fastcore** &
-**pandas** - Core data processing and utilities - **mistralai** &
-**litellm** - AI/LLM integration for OCR and enrichment - **dspy** &
-**toolslm** - Structured AI programming and tool integration
+`Evaluatr` is built on these key Python packages:
+
+- **fastcore** & **pandas** - Core data processing and utilities
+- **mistralai** & **litellm** - AI/LLM integration for OCR and
+  enrichment
+- **dspy** & **toolslm** - Structured AI programming and tool
+  integration
 
 ## Support
 
