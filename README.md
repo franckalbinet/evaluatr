@@ -9,48 +9,79 @@
 
 ## What is Evaluatr?
 
-`Evaluatr` is an AI-powered system that automates the creation of
-**Evidence Maps** - structured, visual tools that organize what we know
-(and don’t know) about programs, policies, and interventions. It
-transforms hundreds of hours of manual document review into an
-automated, intelligent process.
+`Evaluatr` is an AI-powered system designed to automate the complex task
+of mapping evaluation reports against structured frameworks. Initially
+developed for [IOM (International Organization for
+Migration)](https://www.iom.int) evaluation reports and the [Strategic
+Results Framework (SRF)](https://srf.iom.int), it transforms a
+traditionally manual, time-intensive process into an intelligent,
+interpretable workflow.
 
-### The Challenge We Solve
+The system maps evaluation reports—often 150+ pages of heterogeneous
+content—against hierarchical frameworks like the SRF, which contains
+objectives, enablers, and cross-cutting priorities, each with specific
+outcomes, outputs, and indicators. Evaluatr targets the output level for
+optimal granularity and connects to broader frameworks like the
+[Sustainable Development Goals (SDGs)](https://sdgs.un.org) for
+interoperability.
 
-Traditional evidence mapping requires hundreds of staff-hours manually
-reviewing and tagging evaluation documents. Evaluatr automates this
-process while maintaining **accuracy** through human-AI collaboration,
-making evidence mapping accessible and efficient.
+Beyond automation, Evaluatr prioritizes **interpretability and human-AI
+collaboration**. IOM evaluators can understand the mapping process,
+audit AI decisions, perform error analysis, build training datasets over
+time, and create robust evaluation pipelines—ensuring the AI system
+aligns with business needs through actionable, transparent, auditable
+methodology.
 
-## Key Features (WIP)
+## The Challenge We Solve
 
-### Document Processing
+IOM evaluators possess deep expertise in mapping evaluation reports
+against frameworks like the Strategic Results Framework (SRF), but face
+significant operational challenges when processing reports that often
+exceed 150 pages of diverse content across multiple projects and
+contexts.
 
-- **Multi-Format Repository Reading**: Seamlessly process evaluation
-  repositories from diverse organizations with standardized outputs
-- **OCR Processing**: Extract text from scanned PDFs and images to
-  ensure no valuable information is missed
-- **Intelligent Document Chunking**: Break down documents into
-  meaningful segments for optimal analysis
+The core challenges are: - **Time-intensive process**: Hundreds of
+staff-hours required per comprehensive mapping exercise - **Individual
+consistency**: Even expert evaluators may categorize the same content
+differently across sessions - **Cross-evaluator consistency**: Different
+evaluators may interpret and map identical content to different
+framework outputs - **Scale vs. thoroughness**: Growing volume of
+evaluation reports creates pressure to choose between speed and
+comprehensive analysis
 
-### AI-Powered Analysis
+IOM needs a solution that leverages evaluators’ expertise while
+addressing these operational bottlenecks—accelerating the mapping
+process while maintaining the consistency and thoroughness that manual
+review currently struggles to achieve at scale.
 
-- **Automated Information Extraction**: Extract key program details,
-  context, and findings using advanced AI models
-- **Smart Document Tagging**: AI-assisted categorization and labeling of
-  evaluation reports
-- **Enhanced RAG Implementation**: Enriched chunking strategy for more
-  accurate retrieval and generation
+## Key Features
 
-### Flexibility & Openness
+### 1. Document Preparation Pipeline ✅ **Available**
 
-- **Framework Agnostic Design**: Compatible with multiple evaluation
-  frameworks including IOM Strategic Results Framework and Global
-  Compact on Migration
-- **Open Training Data**: Contribute to and benefit from
-  community-curated training datasets
+- **Repository Processing**: Read and preprocess IOM evaluation report
+  repositories with standardized outputs
+- **Automated Downloads**: Batch download of evaluation documents from
+  diverse sources
+- **OCR Processing**: Convert scanned PDFs to searchable text using
+  Optical Character Recognition (OCR) technology
+- **Content Enrichment**: Fix OCR-corrupted headings and enrich
+  documents with AI-generated image descriptions for high-quality input
+  data
 
-## ️ Installation
+### 2. Intelligent Mapping 🚧 **In Development**
+
+- **Agentic Framework Mapping**: Use DSPy-powered agents for traceable,
+  interpretable mapping of reports against evaluation frameworks like
+  the IOM Strategic Results Framework (SRF)
+- **Command-line Interface**: Streamlined pipeline execution through
+  easy-to-use CLI tools
+
+### 3. Knowledge Synthesis 📋 **Planned**
+
+- **Knowledge Cards**: Generate structured summaries for downstream AI
+  tasks like proposal writing and synthesis
+
+## ️ Installation & Setup
 
 ### From PyPI (Recommended)
 
@@ -77,6 +108,24 @@ pip install -e .
 # Make changes in nbs/ directory, then compile:
 nbdev_prepare
 ```
+
+> [!NOTE]
+>
+> This project uses [nbdev](https://nbdev.fast.ai) for literate
+> programming - see the Development section for more details.
+
+### Environment Configuration
+
+Create a `.env` file in your project root with your API keys:
+
+``` bash
+MISTRAL_API_KEY="your_mistral_api_key"
+GEMINI_API_KEY="your_gemini_api_key"
+```
+
+**Note**: Evaluatr uses `llmlite` and `dspy` for LLM interactions,
+giving you flexibility to use any compatible language model provider
+beyond the examples above.
 
 ## Quick Start
 
@@ -129,6 +178,94 @@ download_docs(fname, base_dir=base_dir, n_workers=0, overwrite=True)
 
     (#24) ['Downloaded Internal%20Evaluation_NG20P0516_MAY_2023_FINAL_Abderrahim%20EL%20MOULAT.pdf','Downloaded RR0163_Evaluation%20Brief_MAY_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0238_Evaluation%20Brief_FEB_%202023_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0238__FEB_2023_FINAL%20RE_Abderrahim%20EL%20MOULAT.pdf','Downloaded IB0053_Evaluation%20Brief_SEP_%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_IB0053_OCT_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Internal%20Evaluation_NC0030_JUNE_2022_FINAL_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded NC0030_Evaluation%20Brief_June%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded CD0015_Evaluation%20Brief_May%202022_Abderrahim%20EL%20MOULAT.pdf','Downloaded Projet%20CD0015_Final%20Evaluation%20Report_May_202_Abderrahim%20EL%20MOULAT.pdf','Downloaded Internal%20Evaluation_Retour%20Vert_JUL_2021_Fina_Abderrahim%20EL%20MOULAT.pdf','Downloaded NC0012_Evaluation%20Brief_JUL%202021_Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Internal%20Evaluation_JANUARY_2021__Abderrahim%20EL%20MOULAT.pdf','Downloaded Nigeria%20GIZ%20Project_Evaluation%20Brief_JAN%202021_Abderrahim%20EL%20MOULAT_0.pdf','Downloaded Evaluation%20Brief_ARCO_Shiraz%20JERBI.pdF','Downloaded Final%20evaluation%20report_ARCO_Shiraz%20JERBI_1.pdf','Downloaded Management%20Response%20Matrix_ARCO_Shiraz%20JERBI.pdf','Downloaded IOM%20MANAGEMENT%20RESPONSE%20MATRIX.pdf','Downloaded IOM%20Niger%20-%20MIRAA%20III%20-%20Final%20Evaluation%20Report%20%28003%29.pdf','Downloaded CE.0369%20-%20IDEE%20-%20ANNEXE%201%20-%20Rapport%20Recherche_Joanie%20DUROCHER_0.pdf'...]
 
+## OCR Processing
+
+Convert PDF evaluation reports into structured markdown files with
+extracted images:
+
+``` python
+from evaluatr.ocr import process_single_evaluation_batch
+from pathlib import Path
+
+# Process a single evaluation report
+report_path = Path("path/to/your/evaluation_report_folder")
+output_dir = Path("md_library")
+
+process_single_evaluation_batch(report_path, output_dir)
+```
+
+**Output Structure:**
+
+    md_library/
+    ├── evaluation_id/
+    │   ├── page_1.md
+    │   ├── page_2.md
+    │   └── img/
+    │       ├── img-0.jpeg
+    │       └── img-1.jpeg
+
+**Example markdown page with image reference as generated by Mistral
+OCR:**
+
+``` markdown
+The evaluation followed the Organisation of Economic Cooperation and Development/Development Assistance Committee (OECD/DAC) evaluation criteria and quality standards. The evaluation ...
+
+FIGURE 2. OECD/DAC CRITERIA FOR EVALUATIONS
+![img-2.jpeg](img-2.jpeg)
+
+Each evaluation question includes the main data collection ...
+```
+
+### Batch OCR Processing
+
+Process multiple evaluation reports efficiently using Mistral’s batch
+OCR API:
+
+``` python
+from evaluatr.ocr import process_all_reports_batch
+from pathlib import Path
+
+# Get all evaluation report directories
+reports_dir = Path("path/to/all/evaluation_reports")
+report_folders = [d for d in reports_dir.iterdir() if d.is_dir()]
+
+# Process all reports using batch OCR for efficiency
+process_all_reports_batch(report_folders, md_library_path="md_library")
+```
+
+**Benefits of batch processing:** - Significantly faster than processing
+PDFs individually - Cost-effective through Mistral’s batch API pricing
+(expect \$0.5 per 1,000 pages) - Automatic job monitoring and result
+retrieval
+
+## Document Enrichment
+
+While Mistral OCR excels at text extraction, it often struggles with
+heading hierarchy detection, producing inconsistent markdown levels that
+break document structure. Clean, properly nested headings are crucial
+for agentic AI systems to retrieve content hierarchically—mimicking how
+experienced evaluation analysts navigate reports by section and
+subsection (as you’ll see in the upcoming `mappr` module). Additionally,
+evaluation reports contain rich visual evidence through charts, graphs,
+and diagrams that standard OCR simply references as image links. The
+enrichr module addresses these “garbage in, garbage out” challenges by
+fixing structural issues and converting visual content into searchable,
+AI-readable descriptions.
+
+``` python
+from evaluatr.enrichr import fix_doc_hdgs, enrich_images
+from pathlib import Path
+
+# Fix heading hierarchy in OCR'd document
+doc_path = Path("md_library/evaluation_id")
+fix_doc_hdgs(doc_path)
+
+# Enrich images with descriptive text
+pages_dir = doc_path / "enhanced"
+img_dir = doc_path / "img"
+enrich_images(pages_dir, img_dir)
+```
+
 ## Documentation
 
 - **Full Documentation**: [GitHub
@@ -137,6 +274,28 @@ download_docs(fname, base_dir=base_dir, n_workers=0, overwrite=True)
 - **Examples**: See the `nbs/` directory for Jupyter notebooks
 
 ## Contributing
+
+### Development Philosophy
+
+Evaluatr is built using [**nbdev**](https://nbdev.fast.ai), a literate
+programming framework that allows us to develop code, documentation, and
+tests together in Jupyter notebooks. This approach offers several
+advantages:
+
+- **Documentation-driven development**: Code and explanations live
+  side-by-side, ensuring documentation stays current
+- **Reproducible research**: Each module’s development process is fully
+  transparent and reproducible
+- **Collaborative friendly**: Notebooks make it easier for domain
+  experts to understand and contribute to the codebase
+
+**fastcore** provides the foundational utilities that power this
+approach, offering enhanced Python functionality and seamless
+integration between notebooks and production code.
+
+### Development Setup
+
+We welcome contributions! Here’s how you can help:
 
 We welcome contributions! Here’s how you can help:
 
@@ -167,12 +326,12 @@ nbdev_prepare
 This project is licensed under the MIT License - see the
 [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## Dependencies
 
-- Built with [nbdev](https://nbdev.fast.ai/) for literate programming
-- Uses [pandas](https://pandas.pydata.org/) for data processing
-- Powered by [rich](https://rich.readthedocs.io/) for beautiful terminal
-  output
+`Evaluatr` is built on these key Python packages: - **fastcore** &
+**pandas** - Core data processing and utilities - **mistralai** &
+**litellm** - AI/LLM integration for OCR and enrichment - **dspy** &
+**toolslm** - Structured AI programming and tool integration
 
 ## Support
 
@@ -180,4 +339,3 @@ This project is licensed under the MIT License - see the
   Issues](https://github.com/franckalbinet/evalstack/issues)
 - **Discussions**: [GitHub
   Discussions](https://github.com/franckalbinet/evalstack/discussions)
-- **Email**: \[Your email here\]
