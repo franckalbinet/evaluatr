@@ -11,5 +11,6 @@ website:
           - 02_downloaders.ipynb
           - 03_ocr.ipynb
           - 04_enrichr.ipynb
+          - 05_mappr.ipynb
 
 
