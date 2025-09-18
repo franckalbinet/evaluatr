@@ -6,7 +6,7 @@
 __all__ = ['GEMINI_API_KEY', 'cfg', 'lm', 'find_section_path', 'get_content_tool', 'format_enabler_theme', 'format_evidence',
            'Overview', 'Exploration', 'Assessment', 'Synthesis', 'ThemeAnalyzer']
 
-# %% ../nbs/06_mappr.ipynb 8
+# %% ../nbs/06_mappr.ipynb 6
 from pathlib import Path
 from functools import reduce
 from toolslm.md_hier import *
@@ -19,14 +19,14 @@ import dspy
 
 from .frameworks import IOMEvalData
 
-# %% ../nbs/06_mappr.ipynb 9
+# %% ../nbs/06_mappr.ipynb 7
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
-# %% ../nbs/06_mappr.ipynb 10
+# %% ../nbs/06_mappr.ipynb 8
 cfg = AttrDict({
     'lm': 'gemini/gemini-2.0-flash-exp',
     'api_key': GEMINI_API_KEY,
@@ -34,11 +34,11 @@ cfg = AttrDict({
     'track_usage': False,
 })
 
-# %% ../nbs/06_mappr.ipynb 11
+# %% ../nbs/06_mappr.ipynb 9
 lm = dspy.LM(cfg.lm, api_key=cfg.api_key)
 dspy.configure(lm=lm)
 
-# %% ../nbs/06_mappr.ipynb 17
+# %% ../nbs/06_mappr.ipynb 15
 def find_section_path(
     hdgs: dict, # The nested dictionary structure
     target_section: str # The section name to find
@@ -57,12 +57,12 @@ def find_section_path(
     
     return search_recursive(hdgs)
 
-# %% ../nbs/06_mappr.ipynb 21
+# %% ../nbs/06_mappr.ipynb 19
 def get_content_tool(hdgs, keys_list):
     "Navigate through nested levels using the exact key strings"
     return reduce(lambda current, key: current[key], keys_list, hdgs).text
 
-# %% ../nbs/06_mappr.ipynb 27
+# %% ../nbs/06_mappr.ipynb 25
 def format_enabler_theme(theme):
     parts = [
         f'## Enabler {theme.id}: {theme.title}',
@@ -71,7 +71,7 @@ def format_enabler_theme(theme):
     ]
     return '\n'.join(parts)
 
-# %% ../nbs/06_mappr.ipynb 30
+# %% ../nbs/06_mappr.ipynb 28
 def format_evidence(theme):
     parts = [
         f'## Enabler {theme.id}: {theme.title}',
@@ -80,7 +80,7 @@ def format_evidence(theme):
     ]
     return '\n'.join(parts)
 
-# %% ../nbs/06_mappr.ipynb 33
+# %% ../nbs/06_mappr.ipynb 31
 class Overview(dspy.Signature):
     """Identify sections relevant to enabler/cross-cutting category"""
     theme: str = dspy.InputField(desc="Theme being analyzed")
@@ -89,7 +89,7 @@ class Overview(dspy.Signature):
     strategy: str = dspy.OutputField(desc="Reasoning for this exploration strategy")
 
 
-# %% ../nbs/06_mappr.ipynb 36
+# %% ../nbs/06_mappr.ipynb 34
 class Exploration(dspy.Signature):
     """Decide next exploration step for enabler/cross-cutting analysis"""
     theme: str = dspy.InputField(desc="Theme being analyzed")
@@ -98,7 +98,7 @@ class Exploration(dspy.Signature):
     next_section: str = dspy.OutputField(desc="Next section key to explore, or 'DONE' if sufficient")
     reasoning: str = dspy.OutputField(desc="Why this section or why stopping")
 
-# %% ../nbs/06_mappr.ipynb 38
+# %% ../nbs/06_mappr.ipynb 36
 class Assessment(dspy.Signature):
     """Assess if current evidence is sufficient for enabler analysis"""
     theme: str = dspy.InputField(desc="Theme being analyzed")
@@ -108,7 +108,7 @@ class Assessment(dspy.Signature):
     confidence_score: float = dspy.OutputField(desc="Confidence in current findings (0-1)")
     next_priority: str = dspy.OutputField(desc="If continuing, what type of section to prioritize")
 
-# %% ../nbs/06_mappr.ipynb 39
+# %% ../nbs/06_mappr.ipynb 37
 class Synthesis(dspy.Signature):
     """Provide detailed rationale and synthesis of enabler analysis"""
     theme: str = dspy.InputField(desc="Theme being analyzed")
@@ -119,7 +119,7 @@ class Synthesis(dspy.Signature):
     evidence_summary: str = dspy.OutputField(desc="Key evidence supporting the conclusion")
     gaps_identified: str = dspy.OutputField(desc="Any gaps or missing aspects")
 
-# %% ../nbs/06_mappr.ipynb 41
+# %% ../nbs/06_mappr.ipynb 39
 class ThemeAnalyzer(dspy.Module):
     "Full pipeline for theme analysis"
     def __init__(self, overview_sig, exploration_sig, assessment_sig, synthesis_sig, max_iter=10):
@@ -129,14 +129,14 @@ class ThemeAnalyzer(dspy.Module):
         self.synthesize = dspy.ChainOfThought(synthesis_sig)
         self.max_iter = max_iter
 
-# %% ../nbs/06_mappr.ipynb 42
+# %% ../nbs/06_mappr.ipynb 40
 @patch
 def forward(self:ThemeAnalyzer, theme, headings, get_content_fn=get_content_tool):
     priority_sections = self.get_overview(theme, headings)
     evidence = self.explore_iteratively(theme, priority_sections, headings, get_content_fn)
     return self.synthesize_findings(theme, evidence)
 
-# %% ../nbs/06_mappr.ipynb 43
+# %% ../nbs/06_mappr.ipynb 41
 @patch
 def get_overview(self:ThemeAnalyzer, theme, headings):
     overview = self.overview(theme=theme, all_headings=str(headings))
@@ -145,7 +145,7 @@ def get_overview(self:ThemeAnalyzer, theme, headings):
     return overview.priority_sections
 
 
-# %% ../nbs/06_mappr.ipynb 44
+# %% ../nbs/06_mappr.ipynb 42
 @patch
 def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, headings, get_content_fn):
     evidence_collected = []
@@ -173,7 +173,7 @@ def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, headings, 
     return {"evidence": evidence_collected, "sections": sections_explored}
 
 
-# %% ../nbs/06_mappr.ipynb 45
+# %% ../nbs/06_mappr.ipynb 43
 @patch
 def make_exploration_decision(self:ThemeAnalyzer, theme, evidence_collected, available_sections):
     decision = self.explore(
@@ -186,7 +186,7 @@ def make_exploration_decision(self:ThemeAnalyzer, theme, evidence_collected, ava
     return decision
 
 
-# %% ../nbs/06_mappr.ipynb 46
+# %% ../nbs/06_mappr.ipynb 44
 @patch
 def should_stop_exploring(self:ThemeAnalyzer, theme, evidence_collected, sections_explored):
     if not evidence_collected:
@@ -202,7 +202,7 @@ def should_stop_exploring(self:ThemeAnalyzer, theme, evidence_collected, section
     return assessment.sufficient and assessment.confidence_score > 0.8
 
 
-# %% ../nbs/06_mappr.ipynb 47
+# %% ../nbs/06_mappr.ipynb 45
 @patch
 def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evidence_collected, sections_explored, available_sections):
     path = find_section_path(headings, decision.next_section)
@@ -221,7 +221,7 @@ def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evid
     return evidence_collected, sections_explored
 
 
-# %% ../nbs/06_mappr.ipynb 48
+# %% ../nbs/06_mappr.ipynb 46
 @patch
 def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
     synthesis = self.synthesize(
