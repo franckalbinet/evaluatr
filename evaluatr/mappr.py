@@ -4,7 +4,7 @@
 
 # %% auto 0
 __all__ = ['GEMINI_API_KEY', 'cfg', 'lm', 'find_section_path', 'get_content_tool', 'format_enabler_theme', 'Overview',
-           'Exploration', 'Assessment', 'Synthesis', 'ThemeAnalyzer']
+           'Exploration', 'Assessment', 'Phase', 'TraceContext', 'Synthesis', 'ThemeAnalyzer']
 
 # %% ../nbs/06_mappr.ipynb 5
 from pathlib import Path
@@ -13,11 +13,12 @@ from toolslm.md_hier import *
 from rich import print
 import json
 from fastcore.all import *
+from enum import Enum
 
 from typing import List
 import dspy
 
-from .frameworks import EvalData, IOMEvalData
+from .frameworks import EvalData, IOMEvalData, FrameworkInfo
 
 # %% ../nbs/06_mappr.ipynb 6
 from dotenv import load_dotenv
@@ -104,9 +105,30 @@ class Assessment(dspy.Signature):
     confidence_score: float = dspy.OutputField(desc="Confidence in current findings (0-1)")
     next_priority: str = dspy.OutputField(desc="If continuing, what type of section to prioritize")
 
-# %% ../nbs/06_mappr.ipynb 32
+# %% ../nbs/06_mappr.ipynb 33
+class Phase(Enum):
+    "Pipeline phase number."
+    STAGE1 = 1
+    STAGE2 = 2
+    STAGE3 = 3
+
+# %% ../nbs/06_mappr.ipynb 34
+class TraceContext(AttrDict):
+    "Context for tracing the mapping process"
+    def __init__(self, 
+                 report_id:str,  # Report identifier
+                 phase_nb:Phase,  # Pipeline phase number
+                 framework:FrameworkInfo,  # Framework info (name, category, theme_id)
+                 ): 
+        store_attr()
+    
+    def __repr__(self):
+        return f"TraceContext(report_id={self.report_id}, phase_nb={self.phase_nb}, framework={self.framework})"
+
+# %% ../nbs/06_mappr.ipynb 36
 class Synthesis(dspy.Signature):
     "Provide detailed rationale and synthesis of theme analysis."
+    trace_ctx: str = dspy.InputField(desc="Trace context")
     theme: str = dspy.InputField(desc="Theme being analyzed")
     all_evidence: str = dspy.InputField(desc="All collected evidence")
     sections_explored: str = dspy.InputField(desc="List of sections explored")
@@ -115,33 +137,40 @@ class Synthesis(dspy.Signature):
     evidence_summary: str = dspy.OutputField(desc="Key evidence supporting the conclusion")
     gaps_identified: str = dspy.OutputField(desc="Any gaps or missing aspects")
 
-# %% ../nbs/06_mappr.ipynb 35
+# %% ../nbs/06_mappr.ipynb 39
 class ThemeAnalyzer(dspy.Module):
     """
     Analyzes a theme across a document by iteratively exploring sections, collecting evidence, and synthesizing findings. 
     Uses a structured pipeline of overview -> exploration -> assessment -> synthesis.
     """
-    def __init__(self, overview_sig, exploration_sig, assessment_sig, synthesis_sig, max_iter=10):
+    def __init__(self, 
+                 overview_sig:dspy.Signature, # Overview signature
+                 exploration_sig:dspy.Signature, # Exploration signature
+                 assessment_sig:dspy.Signature, # Assessment signature
+                 synthesis_sig:dspy.Signature, # Synthesis signature
+                 max_iter:int=10 # Maximum number of iterations in the ReAct loop
+                 ):
         self.overview = dspy.ChainOfThought(overview_sig)
         self.explore = dspy.ChainOfThought(exploration_sig)
         self.assess = dspy.ChainOfThought(assessment_sig)
         self.synthesize = dspy.ChainOfThought(synthesis_sig)
         self.max_iter = max_iter
 
-# %% ../nbs/06_mappr.ipynb 36
+# %% ../nbs/06_mappr.ipynb 40
 @patch
 def forward(
     self:ThemeAnalyzer, 
     theme: str, # The formatted theme to analyze
     headings: dict, # The headings TOC of the document
-    get_content_fn=get_content_tool # The function to get the content of a section using `hdgs[keys_list].text` for instance
+    trace_ctx:TraceContext, # Trace report and pipeline context
+    get_content_fn=get_content_tool, # The function to get the content of a section using `hdgs[keys_list].text` for instance
     ) -> Synthesis: # Synthesized analysis results including theme coverage, confidence, evidence and gaps
     "Executes a structured analysis process."
     priority_sections = self.get_overview(theme, headings)
     evidence = self.explore_iteratively(theme, priority_sections, headings, get_content_fn)
-    return self.synthesize_findings(theme, evidence)
+    return self.synthesize_findings(theme, evidence, trace_ctx)
 
-# %% ../nbs/06_mappr.ipynb 37
+# %% ../nbs/06_mappr.ipynb 41
 @patch
 def get_overview(self:ThemeAnalyzer, theme, headings) -> Overview:
     overview = self.overview(theme=theme, all_headings=str(headings))
@@ -150,7 +179,7 @@ def get_overview(self:ThemeAnalyzer, theme, headings) -> Overview:
     return overview.priority_sections
 
 
-# %% ../nbs/06_mappr.ipynb 38
+# %% ../nbs/06_mappr.ipynb 42
 @patch
 def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, headings, get_content_fn):
     evidence_collected = []
@@ -178,7 +207,7 @@ def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, headings, 
     return {"evidence": evidence_collected, "sections": sections_explored}
 
 
-# %% ../nbs/06_mappr.ipynb 39
+# %% ../nbs/06_mappr.ipynb 43
 @patch
 def make_exploration_decision(self:ThemeAnalyzer, theme, evidence_collected, available_sections):
     decision = self.explore(
@@ -191,7 +220,7 @@ def make_exploration_decision(self:ThemeAnalyzer, theme, evidence_collected, ava
     return decision
 
 
-# %% ../nbs/06_mappr.ipynb 40
+# %% ../nbs/06_mappr.ipynb 44
 @patch
 def should_stop_exploring(self:ThemeAnalyzer, theme, evidence_collected, sections_explored):
     if not evidence_collected:
@@ -207,7 +236,7 @@ def should_stop_exploring(self:ThemeAnalyzer, theme, evidence_collected, section
     return assessment.sufficient and assessment.confidence_score > 0.8
 
 
-# %% ../nbs/06_mappr.ipynb 41
+# %% ../nbs/06_mappr.ipynb 45
 @patch
 def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evidence_collected, sections_explored, available_sections):
     path = find_section_path(headings, decision.next_section)
@@ -226,10 +255,11 @@ def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evid
     return evidence_collected, sections_explored
 
 
-# %% ../nbs/06_mappr.ipynb 42
+# %% ../nbs/06_mappr.ipynb 46
 @patch
-def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
+def synthesize_findings(self:ThemeAnalyzer, theme, evidence, trace_ctx):
     synthesis = self.synthesize(
+        trace_ctx=str(trace_ctx),
         theme=theme,
         all_evidence="\n\n".join(evidence["evidence"]),
         sections_explored=str(evidence["sections"])
