@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.24">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Scale up evaluation report mapping against evaluation frameworks using agentic workflows">
+
+<title>Mappr – Evaluatr</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-89c69529a4f2ce877e4270091897ef49.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Mappr – Evaluatr">
+<meta property="og:description" content="Scale up evaluation report mapping against evaluation frameworks using agentic workflows">
+<meta property="og:image" content="https://franckalbinet.github.io/evaluatr/img/three-stage-pipeline-overview.png">
+<meta property="og:site_name" content="Evaluatr">
+<meta property="og:image:height" content="741">
+<meta property="og:image:width" content="871">
+<meta name="twitter:title" content="Mappr – Evaluatr">
+<meta name="twitter:description" content="Scale up evaluation report mapping against evaluation frameworks using agentic workflows">
+<meta name="twitter:image" content="https://franckalbinet.github.io/evaluatr/img/three-stage-pipeline-overview.png">
+<meta name="twitter:image-height" content="741">
+<meta name="twitter:image-width" content="871">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Evaluatr</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/franckalbinet/evaluatr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./readers.html">API</a></li><li class="breadcrumb-item"><a href="./mappr.html">Mappr</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluatr</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/eval_reports_eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation reports EDA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./readers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./downloaders.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Downloaders</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ocr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OCR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./enrichr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Enrichr</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./frameworks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frameworks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mappr.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Mappr</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#hierarchical-report-navigation" id="toc-hierarchical-report-navigation" class="nav-link active" data-scroll-target="#hierarchical-report-navigation">Hierarchical report navigation</a>
+  <ul>
+  <li><a href="#find_section_path" id="toc-find_section_path" class="nav-link" data-scroll-target="#find_section_path">find_section_path</a></li>
+  <li><a href="#get_content_tool" id="toc-get_content_tool" class="nav-link" data-scroll-target="#get_content_tool">get_content_tool</a></li>
+  </ul></li>
+  <li><a href="#formatters" id="toc-formatters" class="nav-link" data-scroll-target="#formatters">Formatters</a>
+  <ul>
+  <li><a href="#format_enabler_theme" id="toc-format_enabler_theme" class="nav-link" data-scroll-target="#format_enabler_theme">format_enabler_theme</a></li>
+  </ul></li>
+  <li><a href="#signatures" id="toc-signatures" class="nav-link" data-scroll-target="#signatures">Signatures</a>
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#exploration" id="toc-exploration" class="nav-link" data-scroll-target="#exploration">Exploration</a></li>
+  <li><a href="#assessment" id="toc-assessment" class="nav-link" data-scroll-target="#assessment">Assessment</a></li>
+  <li><a href="#phase" id="toc-phase" class="nav-link" data-scroll-target="#phase">Phase</a></li>
+  <li><a href="#tracecontext" id="toc-tracecontext" class="nav-link" data-scroll-target="#tracecontext">TraceContext</a></li>
+  <li><a href="#synthesis" id="toc-synthesis" class="nav-link" data-scroll-target="#synthesis">Synthesis</a></li>
+  </ul></li>
+  <li><a href="#reasoning-acting-react" id="toc-reasoning-acting-react" class="nav-link" data-scroll-target="#reasoning-acting-react">Reasoning &amp; Acting (ReAct)</a>
+  <ul>
+  <li><a href="#themeanalyzer" id="toc-themeanalyzer" class="nav-link" data-scroll-target="#themeanalyzer">ThemeAnalyzer</a></li>
+  <li><a href="#themeanalyzer.aforward" id="toc-themeanalyzer.aforward" class="nav-link" data-scroll-target="#themeanalyzer.aforward">ThemeAnalyzer.aforward</a></li>
+  <li><a href="#themeanalyzer.get_overview" id="toc-themeanalyzer.get_overview" class="nav-link" data-scroll-target="#themeanalyzer.get_overview">ThemeAnalyzer.get_overview</a></li>
+  <li><a href="#themeanalyzer.explore_iteratively" id="toc-themeanalyzer.explore_iteratively" class="nav-link" data-scroll-target="#themeanalyzer.explore_iteratively">ThemeAnalyzer.explore_iteratively</a></li>
+  <li><a href="#themeanalyzer.make_exploration_decision" id="toc-themeanalyzer.make_exploration_decision" class="nav-link" data-scroll-target="#themeanalyzer.make_exploration_decision">ThemeAnalyzer.make_exploration_decision</a></li>
+  <li><a href="#themeanalyzer.should_stop_exploring" id="toc-themeanalyzer.should_stop_exploring" class="nav-link" data-scroll-target="#themeanalyzer.should_stop_exploring">ThemeAnalyzer.should_stop_exploring</a></li>
+  <li><a href="#themeanalyzer.process_section" id="toc-themeanalyzer.process_section" class="nav-link" data-scroll-target="#themeanalyzer.process_section">ThemeAnalyzer.process_section</a></li>
+  <li><a href="#themeanalyzer.synthesize_findings" id="toc-themeanalyzer.synthesize_findings" class="nav-link" data-scroll-target="#themeanalyzer.synthesize_findings">ThemeAnalyzer.synthesize_findings</a>
+  <ul>
+  <li><a href="#single-theme" id="toc-single-theme" class="nav-link" data-scroll-target="#single-theme">Single theme</a></li>
+  <li><a href="#multiple-themes-in-parallel" id="toc-multiple-themes-in-parallel" class="nav-link" data-scroll-target="#multiple-themes-in-parallel">Multiple themes in parallel</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#stage-1-srf-enablers-cross-cutting-analysis" id="toc-stage-1-srf-enablers-cross-cutting-analysis" class="nav-link" data-scroll-target="#stage-1-srf-enablers-cross-cutting-analysis">Stage 1: SRF Enablers &amp; Cross-cutting Analysis</a></li>
+  <li><a href="#stage-2-informed-gcm-analysis" id="toc-stage-2-informed-gcm-analysis" class="nav-link" data-scroll-target="#stage-2-informed-gcm-analysis">Stage 2: Informed GCM Analysis</a></li>
+  <li><a href="#stage-3-targeted-srf-analysis" id="toc-stage-3-targeted-srf-analysis" class="nav-link" data-scroll-target="#stage-3-targeted-srf-analysis">Stage 3: Targeted SRF Analysis</a></li>
+  <li><a href="#iom-mapping-pipeline" id="toc-iom-mapping-pipeline" class="nav-link" data-scroll-target="#iom-mapping-pipeline">IOM Mapping Pipeline</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/franckalbinet/evaluatr/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./readers.html">API</a></li><li class="breadcrumb-item"><a href="./mappr.html">Mappr</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Mappr</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+</div>
+
+<div>
+  <div class="description">
+    Scale up evaluation report mapping against evaluation frameworks using agentic workflows
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This notebook is a work in progress.</p>
+</div>
+</div>
+<p>Manually mapping evaluation reports against IOM’s <a href="https://srf.iom.int">Strategic Results Framework (SRF)</a> is time-consuming and resource-intensive with ~150 outputs to analyze. Additionally, the mapping process needs transparent and human-readable traces of LLM decision flows that both reflect natural reasoning patterns and allow human evaluators to audit the mapping logic.</p>
+<p>A three-stage async pipeline leveraging <a href="https://www.iom.int/sites/g/files/tmzbdl2616/files/ny_declaration.pdf">Global Compact for Migration (GCM) UN General Assembly Resolution</a> objectives as SRF Outputs pruning mechanism:</p>
+<p><strong>Stage 1</strong>: SRF Enablers &amp; Cross-cutting Analysis</p>
+<ul>
+<li><strong>Async parallel analysis</strong> of Enablers (7 categories) and Cross-cutting Priorities (4 categories) using shared semaphore for rate limiting</li>
+<li><strong>Purpose</strong>: Identify if report is primarily meta-evaluation/transversal in nature</li>
+<li><strong>Fast processing</strong>: ~11 items total with concurrent execution, provides context for subsequent stages</li>
+</ul>
+<p><strong>Stage 2</strong>: Informed GCM Analysis</p>
+<ul>
+<li><strong>Rate-limited parallel processing</strong> of GCM Objectives (23 items) informed by Stage 1 results</li>
+<li><strong>Condensed representations</strong>: UN General Assembly Resolution formulation simplified for retrieval efficiency</li>
+<li><strong>Concurrent theme analysis</strong> with API quota management</li>
+</ul>
+<p><strong>Stage 3</strong>: Targeted SRF Analysis</p>
+<ul>
+<li><strong>SRF Filtering</strong>: Use GCM results + <code>gcm_srf_lut</code> lookup table to prune ~150 SRF outputs to ~20-50 relevant ones</li>
+<li><strong>Deep parallel analysis</strong>: Full hierarchy context (objective → outcome → output → indicators)</li>
+<li><strong>Async batch processing</strong>: Final targeted analysis of pruned SRF outputs with retry logic and error handling</li>
+</ul>
+<div class="page-columns page-full">
+<div class="quarto-figure quarto-figure-center page-columns page-full">
+<figure class="figure page-columns page-full">
+<p class="page-columns page-full"><img src="img/three-stage-pipeline-overview.png" class="img-fluid figure-img column-body" width="800"></p>
+<figcaption>Three-stage Pipeline Overview</figcaption>
+</figure>
+</div>
+</div>
+<div id="cell-5" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> <span class="bu">reduce</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> toolslm.md_hier <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastcore.<span class="bu">all</span> <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> enum <span class="im">import</span> Enum</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> uuid</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> List</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dspy</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> evaluatr.frameworks <span class="im">import</span> EvalData, IOMEvalData, FrameworkInfo</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-6" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>load_dotenv()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>GEMINI_API_KEY <span class="op">=</span> os.getenv(<span class="st">'GEMINI_API_KEY'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-7" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> AttrDict({</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'lm'</span>: <span class="st">'gemini/gemini-2.0-flash-exp'</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'api_key'</span>: GEMINI_API_KEY,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'max_tokens'</span>: <span class="dv">8192</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'track_usage'</span>: <span class="va">False</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'rpm_limit'</span>: <span class="dv">15</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'call_delay'</span>: <span class="dv">6</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-8" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>lm <span class="op">=</span> dspy.LM(cfg.lm, api_key<span class="op">=</span>cfg.api_key, cache<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>dspy.configure(lm<span class="op">=</span>lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-9" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> Path(<span class="st">"../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/abridged_evaluation_report_final_olta_ndoja_pdf/enriched"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pages <span class="op">=</span> doc.ls(file_exts<span class="op">=</span><span class="st">".md"</span>).<span class="bu">sorted</span>(key<span class="op">=</span><span class="kw">lambda</span> p: <span class="bu">int</span>(p.stem.split(<span class="st">'_'</span>)[<span class="dv">1</span>]))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>report <span class="op">=</span> <span class="st">'</span><span class="ch">\n\n</span><span class="st">---</span><span class="ch">\n\n</span><span class="st">'</span>.join(page.read_text() <span class="cf">for</span> page <span class="kw">in</span> pages)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(report[:<span class="dv">1000</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"># PPMi <span style="color: #808000; text-decoration-color: #808000">...</span>. page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>
+
+**Final Evaluation of the EU-IOM Joint Initiative for migrant protection and reintegration in the horn of Africa**
+
+Final Evaluation Report, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">17</span> March <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2023</span>
+
+!<span style="font-weight: bold">(</span>img-<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.j</span>peg<span style="font-weight: bold">)</span>
+
+**EU-IOM** Joint Initiative for Migrant Protection and Reintegration
+
+Project funded by the European Union
+Project implemented by IOM
+
+---
+
+This Final Evaluation Report was commissioned by IOM and developed by the evaluation team of PPMI Group, including:
+Loes van der Graaf, Rimantas Dumcius, Radvilė Bankauskaitė, Anna Kiss-Pal and Laura Daukšaitė, as well as by 
+external expert Anthony Roger Plant. The evaluation team is grateful to all IOM staff and stakeholders to the 
+JI-HoA for their time taken to participate in interviews. The team is especially grateful to the returnees, 
+migrants, and community members who participated in Focus Group Discussions.
+
+This publication was funded by the European Union. Its contents are the sole responsibility of PPMI Group and do 
+not necessarily reflect
+</pre>
+</div>
+</div>
+<section id="hierarchical-report-navigation" class="level2">
+<h2 class="anchored" data-anchor-id="hierarchical-report-navigation">Hierarchical report navigation</h2>
+<p>Thanks to <code>toolslm.md_hier</code> and a clean markdown structure of a <code>report</code> markdown, we can create a nested dictionary of section, subsection, … as follows:</p>
+<div id="cell-12" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hdgs <span class="op">=</span> create_heading_dict(report)<span class="op">;</span> hdgs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'PPMi .... page 1': {},
+ 'CONTENTS .... page 3': {},
+ '1. Introduction .... page 4': {},
+ '2. Background of the JI-HoA .... page 5': {'2.1. Context and design of the JI-HoA .... page 5': {},
+  '2.2. External factors affecting the implementation of the JI .... page 7': {}},
+ '3. Methodology .... page 8': {},
+ '4. Findings .... page 10': {'4.1. Relevance .... page 10': {'4.1.1. Relevance of programme activities for migrants, returnees, and communities .... page 10': {}},
+  'Overall performance score for relevance: $3.9 / 5$ &lt;br&gt; Robustness score for the evidence: $4.5 / 5$': {'4.1.1.1 Needs of migrants .... page 10': {},
+   '4.1.1.2 Needs of returnees .... page 10': {},
+   '4.1.1.3 Needs of community members .... page 12': {},
+   "4.1.2. Programme's relevance to the needs of stakeholders .... page 12": {'4.1.2.1 Needs of governments .... page 12': {},
+    '4.1.2.2 Needs of other stakeholders .... page 13': {}},
+   '4.2. Coherence .... page 13': {"4.2.1. The JI-HoA's alignment with the objectives and standards of IOM, and objectives of the EU .... page 14": {},
+    '4.2.2. Alignment with other initiatives .... page 14': {}}}},
+ '4.3. Effectiveness .... page 16': {'4.3.1. Specific Objective 1: Partner countries and relevant stakeholders developed or strengthened evidence-based return and reintegration procedures .... page 16': {'4.3.1.1 Achievement of outputs and results .... page 16': {}},
+  'Data availability .... page 16': {'4.3.1.2 Achievement of Specific Objective 1 .... page 17': {'4.3.1.2 Achievement of Specific Objective 1 .... page 17': {}}}},
+ '4.3.2. Specific Objective 2: Safe, humane, dignified voluntary return processes are enhanced along main migration routes .... page 18': {'4.3.2.1 Achievement of outputs and results .... page 19': {},
+  'Outreach and awareness .... page 19': {},
+  'Assistance to stranded migrants .... page 19': {'4.3.2.2 Achievement of the Objective .... page 20': {},
+   '4.3.3. Specific Objective 3: Returnees are sustainably integrated in host communities, and host communities are better able to create living standards that address drivers of migration. .... page 20': {'4.3.3.1 Achievement of outputs and results .... page 20': {}}},
+  'Individual and community-based reintegration .... page 20': {'4.3.3.2 Achievement of Specific Objective 3 .... page 21': {}}},
+ '4.3.3.2 Achievement of Specific Objective 3': {'Overall achievement of reintegration .... page 22': {'4.3.4. Functioning of the Integrated Approach .... page 23': {'4.3.4. Functioning of the Integrated Approach .... page 23': {}}}},
+ '4.4. Efficiency .... page 24': {'4.4.3. Did the programme receive sufficient resources to achieve its objectives? .... page 24': {},
+  '4.4.2. Cost-effectiveness and efficiency of the programme .... page 25': {}},
+ '4.5. Sustainability .... page 26': {'Overall performance score for sustainability: $2.5 / 5$ &lt;br&gt; Robustness score for the evidence: $4 / 5$ .... page 26': {}},
+ '5. Conclusions and Recommendations .... page 27': {'5.1. Conclusions .... page 27': {},
+  '5.2. Recommendations .... page 28': {'5.2.1. Increase attention on building partnerships with service providers who can function without (significant) funding channelled by IOM. .... page 29': {},
+   '5.2.2. Explore opportunities to extend the scope of support provided to returnees, with a focus on longer-term integration. .... page 30': {}}}}</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L49" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="find_section_path" class="level3">
+<h3 class="anchored" data-anchor-id="find_section_path">find_section_path</h3>
+<blockquote class="blockquote">
+<pre><code> find_section_path (hdgs:dict, target_section:str)</code></pre>
+</blockquote>
+<p><em>Find the nested key path for a given section name.</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>hdgs</td>
+<td>dict</td>
+<td>The nested dictionary structure</td>
+</tr>
+<tr class="even">
+<td>target_section</td>
+<td>str</td>
+<td>The section name to find</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>list</strong></td>
+<td><strong>The nested key path for the given section name</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-14" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_section_path(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    hdgs: <span class="bu">dict</span>, <span class="co"># The nested dictionary structure</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    target_section: <span class="bu">str</span> <span class="co"># The section name to find</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>: <span class="co"># The nested key path for the given section name</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Find the nested key path for a given section name."</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> search_recursive(current_dict, path<span class="op">=</span>[]):</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> key, value <span class="kw">in</span> current_dict.items():</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>            current_path <span class="op">=</span> path <span class="op">+</span> [key]</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> key <span class="op">==</span> target_section:</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> current_path</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">isinstance</span>(value, <span class="bu">dict</span>):</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                result <span class="op">=</span> search_recursive(value, current_path)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> result:</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">return</span> result</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> search_recursive(hdgs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Then we can retrieve the subsection path (list of nested headings to reach this specific section) in this nested <code>hdgs</code> dict :</p>
+<div id="cell-16" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> find_section_path(hdgs, <span class="st">"4.1.1.1 Needs of migrants .... page 10"</span>)<span class="op">;</span> path</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>['4. Findings .... page 10',
+ 'Overall performance score for relevance: $3.9 / 5$ &lt;br&gt; Robustness score for the evidence: $4.5 / 5$',
+ '4.1.1.1 Needs of migrants .... page 10']</code></pre>
+</div>
+</div>
+<p>Then retrieve the specific subsection content:</p>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L68" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_content_tool" class="level3">
+<h3 class="anchored" data-anchor-id="get_content_tool">get_content_tool</h3>
+<blockquote class="blockquote">
+<pre><code> get_content_tool (hdgs:dict, keys_list:list)</code></pre>
+</blockquote>
+<p><em>Navigate through nested levels using the exact key strings.</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>hdgs</td>
+<td>dict</td>
+<td>The nested dictionary structure</td>
+</tr>
+<tr class="even">
+<td>keys_list</td>
+<td>list</td>
+<td>The list of keys to navigate through</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>str</strong></td>
+<td><strong>The content of the section</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-19" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_content_tool(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    hdgs: <span class="bu">dict</span>, <span class="co"># The nested dictionary structure</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    keys_list: <span class="bu">list</span>, <span class="co"># The list of keys to navigate through</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="bu">str</span>: <span class="co"># The content of the section</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Navigate through nested levels using the exact key strings."</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">reduce</span>(<span class="kw">lambda</span> current, key: current[key], keys_list, hdgs).text</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-20" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>content <span class="op">=</span> get_content_tool(hdgs, path)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(content[:<span class="dv">500</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">##### <span style="color: #00ff00; text-decoration-color: #00ff00; font-weight: bold">4.1.1.1</span> Needs of migrants <span style="color: #808000; text-decoration-color: #808000">...</span>. page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10</span>
+
+Desk research and interviews confirm that the programme responded to the most pressing needs of migrants. The 
+JI-HoA enabled them to return from dangerous environments, such as detention, where no other support was available.
+Migrants shared that they suffered on their irregular migration journeys, had acutely distressing experiences $<span style="font-weight: bold">{</span> 
+<span style="font-weight: bold">}</span>^<span style="font-weight: bold">{</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">13</span><span style="font-weight: bold">}</span>$, and highlighted that their families and communities could not help them $<span style="font-weight: bold">{</span> <span style="font-weight: bold">}</span>^<span style="font-weight: bold">{</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">14</span><span style="font-weight: bold">}</span>$. Stakeholders supportin
+</pre>
+</div>
+</div>
+</section>
+</section>
+<section id="formatters" class="level2">
+<h2 class="anchored" data-anchor-id="formatters">Formatters</h2>
+<p>We define here a set of function formatting both evaluation frameworks themes to analyze (SRF enablers, objectives, GCM objectives, …) and traces.</p>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L76" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="format_enabler_theme" class="level3">
+<h3 class="anchored" data-anchor-id="format_enabler_theme">format_enabler_theme</h3>
+<blockquote class="blockquote">
+<pre><code> format_enabler_theme (theme:evaluatr.frameworks.EvalData)</code></pre>
+</blockquote>
+<p><em>Format SRF enabler into structured text for LM processing.</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>theme</td>
+<td>EvalData</td>
+<td>The theme object</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>str</strong></td>
+<td><strong>The formatted theme string</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-24" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> format_enabler_theme(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    theme: EvalData <span class="co"># The theme object</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="bu">str</span>: <span class="co"># The formatted theme string</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Format SRF enabler into structured text for LM processing."</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    parts <span class="op">=</span> [</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'## Enabler </span><span class="sc">{</span>theme<span class="sc">.</span><span class="bu">id</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>theme<span class="sc">.</span>title<span class="sc">}</span><span class="ss">'</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">'### Description'</span>, </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        theme.description</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>.join(parts)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For instance:</p>
+<div id="cell-26" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>eval_data <span class="op">=</span> IOMEvalData()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>data_evidence <span class="op">=</span> eval_data.srf_enablers[<span class="dv">3</span>]  <span class="co"># "Data and evidence" is at index 3</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(format_enabler_theme(data_evidence))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">## Enabler <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>: Data and evidence
+### Description
+IOM will be the pre-eminent source of migration and displacement data for action, which help save lives and deliver
+solutions; data for insight, which help facilitate regular migration pathways; and data for foresight, which help 
+drive anticipatory action. IOM will have the systems and data fluency to collect, safely store, analyze, share and 
+apply disaggregated data and evidence across the mobility spectrum. Our extensive data and research repositories 
+will underpin evidence-based policies and practices. Data will be central to the internal decision-making and 
+management of the Organization.
+</pre>
+</div>
+</div>
+</section>
+</section>
+<section id="signatures" class="level2">
+<h2 class="anchored" data-anchor-id="signatures">Signatures</h2>
+<p>A <a href="https://dspy.ai/learn/programming/signatures">DSPy signature</a> is a declarative specification of input/output behavior of a DSPy module. Signatures allow you to tell the LM (Language Model) what it needs to do, rather than specify how we should ask the LM to do it.</p>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L88" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="overview" class="level3">
+<h3 class="anchored" data-anchor-id="overview">Overview</h3>
+<blockquote class="blockquote">
+<pre><code> Overview (theme:str, all_headings:str, priority_sections:List[str],
+           strategy:str)</code></pre>
+</blockquote>
+<p><em>Based on framework theme to map and report’s TOC determine the sections to explore first.</em></p>
+<div id="cell-30" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Overview(dspy.Signature):</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Based on framework theme to map and report's TOC determine the sections to explore first."</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    theme: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Theme being analyzed"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    all_headings: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Complete document structure"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    priority_sections: List[<span class="bu">str</span>] <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Ordered list of section keys to explore first"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    strategy: <span class="bu">str</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Reasoning for this exploration strategy"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For instance on “Data and evidence” SRF Enabler:</p>
+<div id="cell-32" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>overview_analyzer <span class="op">=</span> dspy.ChainOfThought(Overview)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>result_overview <span class="op">=</span> overview_analyzer(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    theme <span class="op">=</span> format_enabler_theme(data_evidence),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    all_headings<span class="op">=</span><span class="bu">str</span>(hdgs),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Priority sections: </span><span class="sc">{</span>result_overview<span class="sc">.</span>priority_sections<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Strategy: </span><span class="sc">{</span>result_overview<span class="sc">.</span>strategy<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Priority sections: <span style="font-weight: bold">[</span><span style="color: #008000; text-decoration-color: #008000">'3. Methodology .... page 8'</span>, <span style="color: #008000; text-decoration-color: #008000">'4. Findings .... page 10'</span>, <span style="color: #008000; text-decoration-color: #008000">'4.1. Relevance .... page 10'</span>, <span style="color: #008000; text-decoration-color: #008000">'4.3. </span>
+<span style="color: #008000; text-decoration-color: #008000">Effectiveness .... page 16'</span>, <span style="color: #008000; text-decoration-color: #008000">'Data availability .... page 16'</span>, <span style="color: #008000; text-decoration-color: #008000">'5. Conclusions and Recommendations .... page 27'</span><span style="font-weight: bold">]</span>
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Strategy: The strategy is to prioritize sections that directly relate to data collection, analysis, and the 
+presentation of findings. This includes sections on methodology, findings, effectiveness <span style="font-weight: bold">(</span>which often relies on 
+data<span style="font-weight: bold">)</span>, and conclusions.
+</pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L96" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="exploration" class="level3">
+<h3 class="anchored" data-anchor-id="exploration">Exploration</h3>
+<blockquote class="blockquote">
+<pre><code> Exploration (theme:str, current_findings:str, available_sections:str,
+              next_section:str, reasoning:str)</code></pre>
+</blockquote>
+<p><em>Decide next exploration step for theme to be mapped based on current findings and available sections.</em></p>
+<div id="cell-34" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Exploration(dspy.Signature):</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Decide next exploration step for theme to be mapped based on current findings and available sections."</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    theme: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Theme being analyzed"</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    current_findings: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Evidence found so far"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    available_sections: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Remaining sections to explore"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    next_section: <span class="bu">str</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Next section key to explore, or 'DONE' if sufficient"</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    reasoning: <span class="bu">str</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Why this section or why stopping"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-35" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>exploration <span class="op">=</span> dspy.ChainOfThought(Exploration)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>result_exploration <span class="op">=</span> exploration(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    theme <span class="op">=</span> format_enabler_theme(data_evidence),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    current_findings<span class="op">=</span><span class="st">"No evidence collected yet"</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    available_sections<span class="op">=</span><span class="bu">str</span>(result_overview.priority_sections)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Next section:"</span>, result_exploration.next_section)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reasoning:"</span>, result_exploration.reasoning)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Next section: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4.1</span>. Relevance <span style="color: #808000; text-decoration-color: #808000">...</span>. page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10</span>
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Reasoning: To understand how the theme of <span style="color: #008000; text-decoration-color: #008000">"Data and evidence"</span> is addressed in the document, I need to start by 
+exploring the findings section. Specifically, I will start with the <span style="color: #008000; text-decoration-color: #008000">"Relevance"</span> subsection to see if the document 
+discusses the relevance of data and evidence in the context of IOM's work.
+</pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L105" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="assessment" class="level3">
+<h3 class="anchored" data-anchor-id="assessment">Assessment</h3>
+<blockquote class="blockquote">
+<pre><code> Assessment (theme:str, evidence_so_far:str, sections_explored:str,
+             sufficient:bool, confidence_score:float, next_priority:str)</code></pre>
+</blockquote>
+<p><em>Assess if current evidence is sufficient for theme analysis.</em></p>
+<div id="cell-37" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Assessment(dspy.Signature):</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Assess if current evidence is sufficient for theme analysis."</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    theme: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Theme being analyzed"</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    evidence_so_far: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"All evidence collected"</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    sections_explored: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Sections already checked"</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    sufficient: <span class="bu">bool</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Is evidence sufficient to make conclusion?"</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    confidence_score: <span class="bu">float</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Confidence in current findings (0-1)"</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    next_priority: <span class="bu">str</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"If continuing, what type of section to prioritize"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>We treat observability and LLM evaluation as core requirements for our mapping pipeline. While DSPy’s built-in <code>dspy.inspect_history()</code> provides valuable reasoning chains, we enhance it with structured metadata (<code>report_id</code>, <code>phase_nb</code>, <code>framework</code>) to create comprehensive audit trails. This enriched tracing enables systematic evaluation of mapping accuracy, supports human evaluator annotation workflows, and provides the detailed context necessary for debugging and improving our LLM-based document analysis system.</p>
+<p>We define below enum and configuration classes for pipeline tracing and validation. These provide structured metadata for audit trails and evaluation.</p>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L115" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="phase" class="level3">
+<h3 class="anchored" data-anchor-id="phase">Phase</h3>
+<blockquote class="blockquote">
+<pre><code> Phase (value, names=None, module=None, qualname=None, type=None, start=1)</code></pre>
+</blockquote>
+<p><em>Pipeline phase number.</em></p>
+<div id="cell-40" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Phase(Enum):</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Pipeline phase number."</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    STAGE1 <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    STAGE2 <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    STAGE3 <span class="op">=</span> <span class="dv">3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L122" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tracecontext" class="level3">
+<h3 class="anchored" data-anchor-id="tracecontext">TraceContext</h3>
+<blockquote class="blockquote">
+<pre><code> TraceContext (report_id:str, phase_nb:__main__.Phase,
+               framework:evaluatr.frameworks.FrameworkInfo)</code></pre>
+</blockquote>
+<p><em>Context for tracing the mapping process</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>report_id</td>
+<td>str</td>
+<td>Report identifier</td>
+</tr>
+<tr class="even">
+<td>phase_nb</td>
+<td>Phase</td>
+<td>Pipeline phase number</td>
+</tr>
+<tr class="odd">
+<td>framework</td>
+<td>FrameworkInfo</td>
+<td>Framework info (name, category, theme_id)</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-42" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TraceContext(AttrDict):</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Context for tracing the mapping process"</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                 report_id:<span class="bu">str</span>,  <span class="co"># Report identifier</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                 phase_nb:Phase,  <span class="co"># Pipeline phase number</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                 framework:FrameworkInfo,  <span class="co"># Framework info (name, category, theme_id)</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>                 ): </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.run_id <span class="op">=</span> <span class="bu">str</span>(uuid.uuid4())[:<span class="dv">8</span>]  <span class="co"># Short unique ID</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>        store_attr()</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__repr__</span>(<span class="va">self</span>):</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"TraceContext(run_id=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>run_id<span class="sc">}</span><span class="ss">, report_id=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>report_id<span class="sc">}</span><span class="ss">, phase_nb=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>phase_nb<span class="sc">}</span><span class="ss">, framework=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>framework<span class="sc">}</span><span class="ss">)"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-43" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>tr_ctx <span class="op">=</span> TraceContext(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    report_id<span class="op">=</span><span class="st">'49d2fba781b6a7c0d94577479636ee6f'</span>, </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    phase_nb<span class="op">=</span>Phase.STAGE1, </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    framework<span class="op">=</span>FrameworkInfo(<span class="st">"SRF"</span>,<span class="st">"Enablers"</span>,<span class="st">"4"</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>tr_ctx</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="er">TraceContext(run_id=f67aef42,</span> <span class="er">report_id=49d2fba781b6a7c0d94577479636ee6f,</span> <span class="er">phase_nb=Phase.STAGE1,</span> <span class="er">framework=</span><span class="fu">{</span><span class="er">'name'</span><span class="fu">:</span> <span class="er">'SRF'</span><span class="fu">,</span> <span class="er">'category'</span><span class="fu">:</span> <span class="er">'Enablers'</span><span class="fu">,</span> <span class="er">'theme_id'</span><span class="fu">:</span> <span class="er">'</span><span class="dv">4</span><span class="er">'</span><span class="fu">}</span><span class="er">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L136" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="synthesis" class="level3">
+<h3 class="anchored" data-anchor-id="synthesis">Synthesis</h3>
+<blockquote class="blockquote">
+<pre><code> Synthesis (trace_ctx:str, theme:str, all_evidence:str,
+            sections_explored:str, theme_covered:bool,
+            confidence_explanation:str, evidence_summary:str,
+            gaps_identified:str)</code></pre>
+</blockquote>
+<p><em>Provide detailed rationale and synthesis of theme analysis.</em></p>
+<div id="cell-45" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Synthesis(dspy.Signature):</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Provide detailed rationale and synthesis of theme analysis."</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    trace_ctx: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Trace context"</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    theme: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Theme being analyzed"</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    all_evidence: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"All collected evidence"</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    sections_explored: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"List of sections explored"</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    theme_covered: <span class="bu">bool</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Final decision on theme coverage"</span>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    confidence_explanation: <span class="bu">str</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Detailed explanation of confidence score"</span>)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    evidence_summary: <span class="bu">str</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Key evidence supporting the conclusion"</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    gaps_identified: <span class="bu">str</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Any gaps or missing aspects"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+</section>
+<section id="reasoning-acting-react" class="level2">
+<h2 class="anchored" data-anchor-id="reasoning-acting-react">Reasoning &amp; Acting (ReAct)</h2>
+<p><strong>Why We Built a Custom Iterative Analyzer Instead of Using DSPy ReAct?</strong></p>
+<p>We could have leveraged DSPy’s built-in <a href="https://dspy.ai/api/modules/ReAct"><code>ReAct</code> module</a>, which provides an agent-based approach where the LLM automatically decides when and how to use exploration tools. The “ReAct” concept has been introduced in <a href="https://arxiv.org/pdf/2210.03629">this paper</a>. However, we chose to implement our own iterative analyzer from scratch for several critical reasons:</p>
+<ul>
+<li><p><strong>Open-ended vs.&nbsp;Structured Nature</strong>: DSPy’s ReAct is designed for open-ended problem solving where the agent explores freely using available tools. Our use case requires a more structured, methodical approach to document analysis with predictable exploration patterns.</p></li>
+<li><p><strong>Document-Specific Control</strong>: Our approach is tailored specifically for structured document exploration with hierarchical headings, allowing us to implement domain-specific logic for section navigation and content retrieval.</p></li>
+<li><p><strong>Evaluator Requirements</strong>: Since traces will be reviewed by human evaluators for error analysis, we needed explicit, step-by-step decision logging rather than the more implicit reasoning chains that ReAct provides.</p></li>
+</ul>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L156" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="themeanalyzer" class="level3">
+<h3 class="anchored" data-anchor-id="themeanalyzer">ThemeAnalyzer</h3>
+<blockquote class="blockquote">
+<pre><code> ThemeAnalyzer (*args, **kwargs)</code></pre>
+</blockquote>
+<p><em>Analyzes a theme across a document by iteratively exploring sections, collecting evidence, and synthesizing findings. Uses a structured pipeline of overview -&gt; exploration -&gt; assessment -&gt; synthesis.</em></p>
+<div id="cell-49" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>trace_logger <span class="op">=</span> logging.getLogger(<span class="st">'trace'</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>trace_logger.setLevel(logging.INFO)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>handler <span class="op">=</span> logging.StreamHandler()</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> trace_logger.handlers:</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> logging.StreamHandler()</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    trace_logger.addHandler(handler)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-50" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ThemeAnalyzer(dspy.Module):</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Analyzes a theme across a document by iteratively exploring sections, collecting evidence, and synthesizing findings. </span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Uses a structured pipeline of overview -&gt; exploration -&gt; assessment -&gt; synthesis.</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>                 overview_sig:dspy.Signature, <span class="co"># Overview signature</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>                 exploration_sig:dspy.Signature, <span class="co"># Exploration signature</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>                 assessment_sig:dspy.Signature, <span class="co"># Assessment signature</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>                 synthesis_sig:dspy.Signature, <span class="co"># Synthesis signature</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>                 trace_ctx:TraceContext, <span class="co"># Trace context</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>                 confidence_threshold:<span class="bu">float</span><span class="op">=</span><span class="fl">0.8</span>, <span class="co"># Confidence threshold</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>                 max_iter:<span class="bu">int</span><span class="op">=</span><span class="dv">10</span>, <span class="co"># Maximum number of iterations in the ReAct loop</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>                 semaphore<span class="op">=</span><span class="va">None</span> <span class="co"># Semaphore for rate limiting</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>                 ):</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.overview <span class="op">=</span> dspy.ChainOfThought(overview_sig)</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.explore <span class="op">=</span> dspy.ChainOfThought(exploration_sig)</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.assess <span class="op">=</span> dspy.ChainOfThought(assessment_sig)</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.synthesize <span class="op">=</span> dspy.ChainOfThought(synthesis_sig)</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.max_iter <span class="op">=</span> max_iter</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.trace_ctx <span class="op">=</span> trace_ctx</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.confidence_threshold <span class="op">=</span> confidence_threshold</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.semaphore <span class="op">=</span> semaphore</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L190" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="themeanalyzer.aforward" class="level3">
+<h3 class="anchored" data-anchor-id="themeanalyzer.aforward">ThemeAnalyzer.aforward</h3>
+<blockquote class="blockquote">
+<pre><code> ThemeAnalyzer.aforward (theme:str, headings:dict,
+                         get_content_fn=&lt;function get_content_tool&gt;)</code></pre>
+</blockquote>
+<p><em>Executes a structured analysis process.</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>theme</td>
+<td>str</td>
+<td></td>
+<td>The formatted theme to analyze</td>
+</tr>
+<tr class="even">
+<td>headings</td>
+<td>dict</td>
+<td></td>
+<td>The headings TOC of the document</td>
+</tr>
+<tr class="odd">
+<td>get_content_fn</td>
+<td>function</td>
+<td>get_content_tool</td>
+<td>The function to get the content of a section using <code>hdgs[keys_list].text</code> for instance</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>Synthesis</strong></td>
+<td></td>
+<td><strong>Synthesized analysis results including theme coverage, confidence, evidence and gaps</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-52" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> _rate_limited_fn(<span class="va">self</span>:ThemeAnalyzer, mod, <span class="op">**</span>kwargs):</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="cf">with</span> <span class="va">self</span>.semaphore:</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> <span class="cf">await</span> mod.acall(<span class="op">**</span>kwargs)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">await</span> asyncio.sleep(cfg.call_delay)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-53" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> aforward(</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>:ThemeAnalyzer, </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    theme: <span class="bu">str</span>, <span class="co"># The formatted theme to analyze</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    headings: <span class="bu">dict</span>, <span class="co"># The headings TOC of the document</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    get_content_fn<span class="op">=</span>get_content_tool, <span class="co"># The function to get the content of a section using `hdgs[keys_list].text` for instance</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> Synthesis: <span class="co"># Synthesized analysis results including theme coverage, confidence, evidence and gaps</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Executes a structured analysis process."</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    trace_logger.info(json.dumps({</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"run_id"</span>: <span class="va">self</span>.trace_ctx.run_id,</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"timestamp"</span>: datetime.now().isoformat(),</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"event"</span>: <span class="st">"Starting Analysis"</span>, </span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"report_id"</span>: <span class="va">self</span>.trace_ctx.report_id,</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"phase_nb"</span>: <span class="bu">str</span>(<span class="va">self</span>.trace_ctx.phase_nb),</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"framework"</span>: <span class="bu">str</span>(<span class="va">self</span>.trace_ctx.framework.name),</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"framework_category"</span>: <span class="bu">str</span>(<span class="va">self</span>.trace_ctx.framework.category),</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"theme"</span>: theme,</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"framework_theme_id"</span>: <span class="bu">str</span>(<span class="va">self</span>.trace_ctx.framework.theme_id),</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>        }, indent<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>    priority_sections <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>.get_overview(theme, headings)</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>    evidence <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>.explore_iteratively(theme, priority_sections, headings, get_content_fn)</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="cf">await</span> <span class="va">self</span>.synthesize_findings(theme, evidence)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L215" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="themeanalyzer.get_overview" class="level3">
+<h3 class="anchored" data-anchor-id="themeanalyzer.get_overview">ThemeAnalyzer.get_overview</h3>
+<blockquote class="blockquote">
+<pre><code> ThemeAnalyzer.get_overview (theme, headings)</code></pre>
+</blockquote>
+<div id="cell-55" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> get_overview(<span class="va">self</span>:ThemeAnalyzer, theme, headings) <span class="op">-&gt;</span> Overview:</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    overview <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>._rate_limited_fn(<span class="va">self</span>.overview, theme<span class="op">=</span>theme, all_headings<span class="op">=</span><span class="bu">str</span>(headings))</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    trace_logger.info(json.dumps({</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"run_id"</span>: <span class="va">self</span>.trace_ctx.run_id,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"timestamp"</span>: datetime.now().isoformat(),    </span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"event"</span>: <span class="st">"Overview"</span>, </span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"priority_sections"</span>: overview.priority_sections,</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"strategy"</span>: overview.strategy,</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>        }, indent<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> overview.priority_sections</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L230" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="themeanalyzer.explore_iteratively" class="level3">
+<h3 class="anchored" data-anchor-id="themeanalyzer.explore_iteratively">ThemeAnalyzer.explore_iteratively</h3>
+<blockquote class="blockquote">
+<pre><code> ThemeAnalyzer.explore_iteratively (theme, priority_sections, headings,
+                                    get_content_fn)</code></pre>
+</blockquote>
+<div id="cell-57" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> explore_iteratively(<span class="va">self</span>:ThemeAnalyzer, theme, priority_sections, headings, get_content_fn):</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    evidence_collected <span class="op">=</span> []</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    sections_explored <span class="op">=</span> []</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    available_sections <span class="op">=</span> priority_sections.copy()</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.max_iter):</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> available_sections:</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>            trace_logger.info(json.dumps({</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>                <span class="st">"run_id"</span>: <span class="va">self</span>.trace_ctx.run_id,</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>                <span class="st">"timestamp"</span>: datetime.now().isoformat(),</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>                <span class="st">"event"</span>: <span class="st">"Iterative Exploration"</span>, </span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>                <span class="st">"iteration_nb"</span>: i<span class="op">+</span><span class="dv">1</span>,</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>                <span class="st">"decision"</span>: <span class="st">"No more sections to explore, stopping"</span>,</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>                }, indent<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="cf">await</span> <span class="va">self</span>.should_stop_exploring(theme, evidence_collected, sections_explored):   </span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>        decision <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>.make_exploration_decision(theme, evidence_collected, available_sections)</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>        trace_logger.info(json.dumps({</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>                <span class="st">"run_id"</span>: <span class="va">self</span>.trace_ctx.run_id,</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>                <span class="st">"timestamp"</span>: datetime.now().isoformat(),</span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>                <span class="st">"event"</span>: <span class="st">"Iterative Exploration"</span>, </span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>                <span class="st">"iteration_nb"</span>: i<span class="op">+</span><span class="dv">1</span>,</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">"decision"</span>: decision.next_section,</span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>                <span class="st">"reasoning"</span>: decision.reasoning,</span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>                }, indent<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> decision.next_section <span class="op">==</span> <span class="st">'DONE'</span>:</span>
+<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a>            trace_logger.info(json.dumps({</span>
+<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a>                <span class="st">"run_id"</span>: <span class="va">self</span>.trace_ctx.run_id,</span>
+<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a>                <span class="st">"timestamp"</span>: datetime.now().isoformat(),</span>
+<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a>                <span class="st">"event"</span>: <span class="st">"Iterative Exploration"</span>, </span>
+<span id="cb43-37"><a href="#cb43-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">"iteration_nb"</span>: i<span class="op">+</span><span class="dv">1</span>,</span>
+<span id="cb43-38"><a href="#cb43-38" aria-hidden="true" tabindex="-1"></a>                <span class="st">"decision"</span>: <span class="st">"Done"</span>,</span>
+<span id="cb43-39"><a href="#cb43-39" aria-hidden="true" tabindex="-1"></a>                }, indent<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb43-40"><a href="#cb43-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb43-41"><a href="#cb43-41" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb43-42"><a href="#cb43-42" aria-hidden="true" tabindex="-1"></a>        evidence_collected, sections_explored <span class="op">=</span> <span class="va">self</span>.process_section(decision, </span>
+<span id="cb43-43"><a href="#cb43-43" aria-hidden="true" tabindex="-1"></a>                                                                     headings, </span>
+<span id="cb43-44"><a href="#cb43-44" aria-hidden="true" tabindex="-1"></a>                                                                     get_content_fn, </span>
+<span id="cb43-45"><a href="#cb43-45" aria-hidden="true" tabindex="-1"></a>                                                                     evidence_collected, </span>
+<span id="cb43-46"><a href="#cb43-46" aria-hidden="true" tabindex="-1"></a>                                                                     sections_explored, </span>
+<span id="cb43-47"><a href="#cb43-47" aria-hidden="true" tabindex="-1"></a>                                                                     available_sections)</span>
+<span id="cb43-48"><a href="#cb43-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-49"><a href="#cb43-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"evidence"</span>: evidence_collected, <span class="st">"sections"</span>: sections_explored}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L282" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="themeanalyzer.make_exploration_decision" class="level3">
+<h3 class="anchored" data-anchor-id="themeanalyzer.make_exploration_decision">ThemeAnalyzer.make_exploration_decision</h3>
+<blockquote class="blockquote">
+<pre><code> ThemeAnalyzer.make_exploration_decision (theme, evidence_collected,
+                                          available_sections)</code></pre>
+</blockquote>
+<div id="cell-59" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> make_exploration_decision(<span class="va">self</span>:ThemeAnalyzer, theme, evidence_collected, available_sections):    </span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    decision <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>._rate_limited_fn(</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.explore, </span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>        theme<span class="op">=</span>theme, </span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>        current_findings<span class="op">=</span><span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>.join(evidence_collected) <span class="cf">if</span> evidence_collected <span class="cf">else</span> <span class="st">"No evidence collected yet"</span>, available_sections<span class="op">=</span><span class="bu">str</span>(available_sections))</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> decision</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L293" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="themeanalyzer.should_stop_exploring" class="level3">
+<h3 class="anchored" data-anchor-id="themeanalyzer.should_stop_exploring">ThemeAnalyzer.should_stop_exploring</h3>
+<blockquote class="blockquote">
+<pre><code> ThemeAnalyzer.should_stop_exploring (theme, evidence_collected,
+                                      sections_explored)</code></pre>
+</blockquote>
+<div id="cell-61" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> should_stop_exploring(<span class="va">self</span>:ThemeAnalyzer, theme, evidence_collected, sections_explored):</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> evidence_collected:</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    assessment <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>._rate_limited_fn(</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.assess, </span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>        theme<span class="op">=</span>theme,</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>        evidence_so_far<span class="op">=</span><span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>.join(evidence_collected),</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>        sections_explored<span class="op">=</span><span class="bu">str</span>(sections_explored)</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    trace_logger.info(json.dumps({</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>                <span class="st">"run_id"</span>: <span class="va">self</span>.trace_ctx.run_id,</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>                <span class="st">"timestamp"</span>: datetime.now().isoformat(),</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>                <span class="st">"event"</span>: <span class="st">"Should stop exploring"</span>, </span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">"assessment"</span>: assessment.sufficient,</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>                <span class="st">"confidence"</span>: assessment.confidence_score,</span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>                }, indent<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> assessment.sufficient <span class="kw">and</span> assessment.confidence_score <span class="op">&gt;</span> <span class="va">self</span>.confidence_threshold</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L315" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="themeanalyzer.process_section" class="level3">
+<h3 class="anchored" data-anchor-id="themeanalyzer.process_section">ThemeAnalyzer.process_section</h3>
+<blockquote class="blockquote">
+<pre><code> ThemeAnalyzer.process_section (decision, headings, get_content_fn,
+                                evidence_collected, sections_explored,
+                                available_sections)</code></pre>
+</blockquote>
+<div id="cell-63" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_section(<span class="va">self</span>:ThemeAnalyzer, decision, headings, get_content_fn, evidence_collected, sections_explored, available_sections):</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    path <span class="op">=</span> find_section_path(headings, decision.next_section)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> path:</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>        content <span class="op">=</span> get_content_fn(headings, path)</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>        evidence_collected.append(<span class="ss">f"# Section: </span><span class="sc">{</span>decision<span class="sc">.</span>next_section<span class="sc">}</span><span class="ch">\n</span><span class="ss">## Content</span><span class="ch">\n</span><span class="sc">{</span>content<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>        sections_explored.append(decision.next_section)</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> decision.next_section <span class="kw">in</span> available_sections:</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>            available_sections.remove(decision.next_section)</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># No path found for section! </span><span class="al">TBD</span></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> evidence_collected, sections_explored</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/mappr.py#L332" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="themeanalyzer.synthesize_findings" class="level3">
+<h3 class="anchored" data-anchor-id="themeanalyzer.synthesize_findings">ThemeAnalyzer.synthesize_findings</h3>
+<blockquote class="blockquote">
+<pre><code> ThemeAnalyzer.synthesize_findings (theme, evidence)</code></pre>
+</blockquote>
+<div id="cell-65" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> synthesize_findings(<span class="va">self</span>:ThemeAnalyzer, theme, evidence):</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    synthesis <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>._rate_limited_fn(</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.synthesize, </span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>        trace_ctx<span class="op">=</span><span class="bu">str</span>(<span class="va">self</span>.trace_ctx),</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>        theme<span class="op">=</span>theme,</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>        all_evidence<span class="op">=</span><span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>.join(evidence[<span class="st">"evidence"</span>]),</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>        sections_explored<span class="op">=</span><span class="bu">str</span>(evidence[<span class="st">"sections"</span>])</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    trace_logger.info(json.dumps({</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"run_id"</span>: <span class="va">self</span>.trace_ctx.run_id,</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"timestamp"</span>: datetime.now().isoformat(),</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"event"</span>: <span class="st">"Synthesis"</span>, </span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"theme_covered"</span>: synthesis.theme_covered,</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"confidence_explanation"</span>: synthesis.confidence_explanation,</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"evidence_summary"</span>: synthesis.evidence_summary,</span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"gaps_identified"</span>: synthesis.gaps_identified,</span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>    }, indent<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> synthesis</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>To use it:</p>
+<section id="single-theme" class="level4">
+<h4 class="anchored" data-anchor-id="single-theme">Single theme</h4>
+<div id="cell-68" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of concurrent requests to the LM to avoid rate limiting</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>stage1_semaphore <span class="op">=</span> asyncio.Semaphore(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Create the analyzer:</p>
+<div id="cell-70" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Trace Context:</span><span class="ch">\n</span><span class="sc">{</span>tr_ctx<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>theme <span class="op">=</span> format_enabler_theme(eval_data.srf_enablers[<span class="dv">3</span>])  <span class="co"># "Data and evidence"</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test theme:</span><span class="ch">\n</span><span class="sc">{</span>theme<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>analyzer <span class="op">=</span> ThemeAnalyzer(Overview, Exploration, Assessment, Synthesis, tr_ctx, semaphore<span class="op">=</span>stage1_semaphore)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Trace Context:
+<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">TraceContext</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">run_id</span>=<span style="color: #800080; text-decoration-color: #800080">f67aef42</span>, <span style="color: #808000; text-decoration-color: #808000">report_id</span>=<span style="color: #800080; text-decoration-color: #800080">49d2fba781b6a7c0d94577479636ee6f</span>, <span style="color: #808000; text-decoration-color: #808000">phase_nb</span>=<span style="color: #800080; text-decoration-color: #800080">Phase</span>.STAGE1, <span style="color: #808000; text-decoration-color: #808000">framework</span>=<span style="font-weight: bold">{</span><span style="color: #008000; text-decoration-color: #008000">'name'</span>:
+<span style="color: #008000; text-decoration-color: #008000">'SRF'</span>, <span style="color: #008000; text-decoration-color: #008000">'category'</span>: <span style="color: #008000; text-decoration-color: #008000">'Enablers'</span>, <span style="color: #008000; text-decoration-color: #008000">'theme_id'</span>: <span style="color: #008000; text-decoration-color: #008000">'4'</span><span style="font-weight: bold">})</span>
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Test theme:
+## Enabler <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>: Data and evidence
+### Description
+IOM will be the pre-eminent source of migration and displacement data for action, which help save lives and deliver
+solutions; data for insight, which help facilitate regular migration pathways; and data for foresight, which help 
+drive anticipatory action. IOM will have the systems and data fluency to collect, safely store, analyze, share and 
+apply disaggregated data and evidence across the mobility spectrum. Our extensive data and research repositories 
+will underpin evidence-based policies and practices. Data will be central to the internal decision-making and 
+management of the Organization.
+</pre>
+</div>
+</div>
+<p>Then analyze the framework’s theme of choice:</p>
+<div id="cell-72" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> <span class="cf">await</span> analyzer.acall(theme, hdgs, get_content_tool)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:21:40.775455",
+  "event": "Starting Analysis",
+  "report_id": "49d2fba781b6a7c0d94577479636ee6f",
+  "phase_nb": "Phase.STAGE1",
+  "framework": "SRF",
+  "framework_category": "Enablers",
+  "theme": "## Enabler 4: Data and evidence\n### Description\nIOM will be the pre-eminent source of migration and displacement data for action, which help save lives and deliver solutions; data for insight, which help facilitate regular migration pathways; and data for foresight, which help drive anticipatory action. IOM will have the systems and data fluency to collect, safely store, analyze, share and apply disaggregated data and evidence across the mobility spectrum. Our extensive data and research repositories will underpin evidence-based policies and practices. Data will be central to the internal decision-making and management of the Organization.",
+  "framework_theme_id": "4"
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:21:45.881454",
+  "event": "Overview",
+  "priority_sections": [
+    "3. Methodology .... page 8",
+    "4. Findings .... page 10",
+    "4.1. Relevance .... page 10",
+    "4.3. Effectiveness .... page 16",
+    "Data availability .... page 16",
+    "5. Conclusions and Recommendations .... page 27"
+  ],
+  "strategy": "The strategy is to prioritize sections that directly relate to data collection, analysis, and the presentation of findings. This includes sections on methodology, findings, effectiveness (which often relies on data), and conclusions."
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:21:49.687101",
+  "event": "Iterative Exploration",
+  "iteration_nb": 1,
+  "decision": "4. Findings .... page 10",
+  "reasoning": "To understand how the theme of \"Data and evidence\" is addressed in the document, I should start by looking at the main findings section. This will give a general overview of how data and evidence are used or discussed in the document."
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:21:54.498612",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.3
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:21:58.618071",
+  "event": "Iterative Exploration",
+  "iteration_nb": 2,
+  "decision": "4.3. Effectiveness .... page 16",
+  "reasoning": "The current findings cover relevance and coherence, but not effectiveness. Since the theme is data and evidence, and the current findings are focused on relevance and coherence, it is important to explore the effectiveness section to see how data and evidence played a role in the effectiveness of the program."
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:22:03.440604",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.6
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:22:07.753798",
+  "event": "Iterative Exploration",
+  "iteration_nb": 3,
+  "decision": "5. Conclusions and Recommendations .... page 27",
+  "reasoning": "The current findings cover sections 4.1, 4.2, and 4.3, with subsections detailing relevance, coherence, and effectiveness. The theme is \"Enabler 4: Data and evidence\". The next logical step is to explore the conclusions and recommendations to see how the data and evidence were used and what improvements are suggested."
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:22:13.924362",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.75
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:22:18.309131",
+  "event": "Iterative Exploration",
+  "iteration_nb": 4,
+  "decision": "DONE",
+  "reasoning": "The current findings provide a comprehensive overview of the evaluation's findings, conclusions, and recommendations related to the EU-IOM Joint Initiative for Migrant Protection and Reintegration in the Horn of Africa. The focus is on the relevance, coherence, and effectiveness of the program, as well as its impact on migrants, returnees, and communities. The document also highlights the importance of data and evidence in informing policies and practices.\n\nGiven the thoroughness of the current findings, there is no need to explore additional sections. The available sections are either already covered or not directly relevant to the core themes of the evaluation."
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:22:18.310685",
+  "event": "Iterative Exploration",
+  "iteration_nb": 4,
+  "decision": "Done"
+}
+{
+  "run_id": "f67aef42",
+  "timestamp": "2025-09-20T18:22:25.518471",
+  "event": "Synthesis",
+  "theme_covered": true,
+  "confidence_explanation": "My confidence is high (90%) because the evaluation report explicitly mentions the program's efforts to improve data availability, build capacity for data collection and analysis, and promote the use of data in policymaking. The report also provides specific examples of the RDH's activities and the challenges faced in utilizing data effectively. The recommendations further reinforce the importance of data-driven approaches and continued support for the RDH.",
+  "evidence_summary": "Key evidence includes:\n*   The JI exceeded targets for field studies and research conducted.\n*   Increased availability of migration data through the Regional Data Hub (RDH).\n*   Stakeholders reported increased knowledge on return and reintegration issues.\n*   136 stakeholders reported that data produced has supported evidence-based policies, procedures, and program design.\n*   The evaluation recommends continued support for the Regional Data Hub.",
+  "gaps_identified": "While the evidence highlights the program's achievements in data collection and capacity building, it also identifies gaps in the effective use of data for policymaking due to factors such as staff turnover, financial constraints, and external events like COVID-19. The report also mentions that while capacity has increased, this does not necessarily reflect actual capacity due to a lack of financial resources. Further exploration of the specific types of data collected, the methodologies used, and the extent to which this data has directly influenced policy changes could provide a more comprehensive assessment of the program's impact on data-driven decision-making."
+}</code></pre>
+</div>
+</div>
+</section>
+<section id="multiple-themes-in-parallel" class="level4">
+<h4 class="anchored" data-anchor-id="multiple-themes-in-parallel">Multiple themes in parallel</h4>
+<p>Let’s use two SRF enablers:</p>
+<div id="cell-75" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>tr_ctx1 <span class="op">=</span> TraceContext(</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>    report_id<span class="op">=</span><span class="st">'49d2fba781b6a7c0d94577479636ee6f'</span>, </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    phase_nb<span class="op">=</span>Phase.STAGE1, </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>    framework<span class="op">=</span>FrameworkInfo(<span class="st">"SRF"</span>,<span class="st">"Enablers"</span>, theme_id<span class="op">=</span><span class="st">"1"</span>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>tr_ctx2 <span class="op">=</span> TraceContext(</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    report_id<span class="op">=</span><span class="st">'49d2fba781b6a7c0d94577479636ee6f'</span>, </span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>    phase_nb<span class="op">=</span>Phase.STAGE1, </span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>    framework<span class="op">=</span>FrameworkInfo(<span class="st">"SRF"</span>, <span class="st">"Enablers"</span>, theme_id<span class="op">=</span><span class="st">"4"</span>)</span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>    )   </span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tr_ctx1, tr_ctx2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">TraceContext</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">run_id</span>=<span style="color: #800080; text-decoration-color: #800080">73aea7f2</span>, <span style="color: #808000; text-decoration-color: #808000">report_id</span>=<span style="color: #800080; text-decoration-color: #800080">49d2fba781b6a7c0d94577479636ee6f</span>, <span style="color: #808000; text-decoration-color: #808000">phase_nb</span>=<span style="color: #800080; text-decoration-color: #800080">Phase</span>.STAGE1, <span style="color: #808000; text-decoration-color: #808000">framework</span>=<span style="font-weight: bold">{</span><span style="color: #008000; text-decoration-color: #008000">'name'</span>:
+<span style="color: #008000; text-decoration-color: #008000">'SRF'</span>, <span style="color: #008000; text-decoration-color: #008000">'category'</span>: <span style="color: #008000; text-decoration-color: #008000">'Enablers'</span>, <span style="color: #008000; text-decoration-color: #008000">'theme_id'</span>: <span style="color: #008000; text-decoration-color: #008000">'1'</span><span style="font-weight: bold">})</span>
+<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">TraceContext</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">run_id</span>=<span style="color: #800080; text-decoration-color: #800080">bac8b9bc</span>, <span style="color: #808000; text-decoration-color: #808000">report_id</span>=<span style="color: #800080; text-decoration-color: #800080">49d2fba781b6a7c0d94577479636ee6f</span>, <span style="color: #808000; text-decoration-color: #808000">phase_nb</span>=<span style="color: #800080; text-decoration-color: #800080">Phase</span>.STAGE1, <span style="color: #808000; text-decoration-color: #808000">framework</span>=<span style="font-weight: bold">{</span><span style="color: #008000; text-decoration-color: #008000">'name'</span>:
+<span style="color: #008000; text-decoration-color: #008000">'SRF'</span>, <span style="color: #008000; text-decoration-color: #008000">'category'</span>: <span style="color: #008000; text-decoration-color: #008000">'Enablers'</span>, <span style="color: #008000; text-decoration-color: #008000">'theme_id'</span>: <span style="color: #008000; text-decoration-color: #008000">'4'</span><span style="font-weight: bold">})</span>
+</pre>
+</div>
+</div>
+<p>Create analyzers with shared semaphore:</p>
+<div id="cell-77" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>stage_semaphore <span class="op">=</span> asyncio.Semaphore(<span class="dv">3</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>analyzer1 <span class="op">=</span> ThemeAnalyzer(Overview, Exploration, Assessment, Synthesis, tr_ctx1,semaphore<span class="op">=</span>stage_semaphore)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>analyzer2 <span class="op">=</span> ThemeAnalyzer(Overview, Exploration, Assessment, Synthesis, tr_ctx2,semaphore<span class="op">=</span>stage_semaphore)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-78" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>theme1 <span class="op">=</span> format_enabler_theme(eval_data.srf_enablers[<span class="dv">0</span>]) <span class="co"># Workforce</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>theme2 <span class="op">=</span> format_enabler_theme(eval_data.srf_enablers[<span class="dv">3</span>]) <span class="co"># Data and evidence</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Theme 1:</span><span class="ch">\n</span><span class="sc">{</span>theme1<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">Theme 2:</span><span class="ch">\n</span><span class="sc">{</span>theme2<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Theme <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>:
+## Enabler <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>: Workforce
+### Description
+IOM’s diverse and capable people are our most valued asset. Through investing in better workforce planning and 
+people management, we will facilitate their professional development and improve their daily workplace experience. 
+IOM will have flexible systems and procedures in place to ensure it can adapt to the future of work while ensuring 
+the safety, security and well-being of its staff. IOM will strengthen its security posture and foster an inclusive 
+and enabling work environment. Our leadership will have the ability to connect, motivate and inspire a sense of our
+shared vision and values.
+
+Theme <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span>:
+## Enabler <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>: Data and evidence
+### Description
+IOM will be the pre-eminent source of migration and displacement data for action, which help save lives and deliver
+solutions; data for insight, which help facilitate regular migration pathways; and data for foresight, which help 
+drive anticipatory action. IOM will have the systems and data fluency to collect, safely store, analyze, share and 
+apply disaggregated data and evidence across the mobility spectrum. Our extensive data and research repositories 
+will underpin evidence-based policies and practices. Data will be central to the internal decision-making and 
+management of the Organization.
+</pre>
+</div>
+</div>
+<div id="cell-79" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> <span class="cf">await</span> asyncio.gather(</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>    analyzer1.acall(theme1, hdgs, get_content_tool),</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    analyzer2.acall(theme2, hdgs, get_content_tool)</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:49:42.829135",
+  "event": "Starting Analysis",
+  "report_id": "49d2fba781b6a7c0d94577479636ee6f",
+  "phase_nb": "Phase.STAGE1",
+  "framework": "SRF",
+  "framework_category": "Enablers",
+  "theme": "## Enabler 1: Workforce\n### Description\nIOM\u2019s diverse and capable people are our most valued asset. Through investing in better workforce planning and people management, we will facilitate their professional development and improve their daily workplace experience. IOM will have flexible systems and procedures in place to ensure it can adapt to the future of work while ensuring the safety, security and well-being of its staff. IOM will strengthen its security posture and foster an inclusive and enabling work environment. Our leadership will have the ability to connect, motivate and inspire a sense of our shared vision and values.",
+  "framework_theme_id": "1"
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:49:42.833480",
+  "event": "Starting Analysis",
+  "report_id": "49d2fba781b6a7c0d94577479636ee6f",
+  "phase_nb": "Phase.STAGE1",
+  "framework": "SRF",
+  "framework_category": "Enablers",
+  "theme": "## Enabler 4: Data and evidence\n### Description\nIOM will be the pre-eminent source of migration and displacement data for action, which help save lives and deliver solutions; data for insight, which help facilitate regular migration pathways; and data for foresight, which help drive anticipatory action. IOM will have the systems and data fluency to collect, safely store, analyze, share and apply disaggregated data and evidence across the mobility spectrum. Our extensive data and research repositories will underpin evidence-based policies and practices. Data will be central to the internal decision-making and management of the Organization.",
+  "framework_theme_id": "4"
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:49:50.793014",
+  "event": "Overview",
+  "priority_sections": [
+    "3. Methodology .... page 8",
+    "4. Findings .... page 10",
+    "4.1. Relevance .... page 10",
+    "4.3. Effectiveness .... page 16",
+    "5. Conclusions and Recommendations .... page 27"
+  ],
+  "strategy": "The strategy is to prioritize sections that directly relate to data and evidence. This includes the methodology used to collect data, the findings derived from the data, and any conclusions or recommendations based on the data. The \"Relevance\" and \"Effectiveness\" sections are included because they often contain data-driven assessments of the program's impact."
+}
+{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:49:51.125921",
+  "event": "Overview",
+  "priority_sections": [
+    "4.1.2. Programme's relevance to the needs of stakeholders .... page 12",
+    "4.4. Efficiency .... page 24",
+    "5. Conclusions and Recommendations .... page 27"
+  ],
+  "strategy": "The strategy is to identify sections that are most likely to contain information related to the \"Workforce\" theme, even if they don't explicitly mention it. This involves looking for sections that discuss program efficiency, relevance to stakeholders, and recommendations, as these areas are likely to touch upon workforce-related issues."
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:49:57.877200",
+  "event": "Iterative Exploration",
+  "iteration_nb": 1,
+  "decision": "4.1. Relevance .... page 10",
+  "reasoning": "To understand how the theme of \"Data and evidence\" is addressed in the document, I need to start by exploring the findings section. I will begin with the \"Relevance\" subsection to see if the document discusses the relevance of data and evidence in the context of IOM's work."
+}
+{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:49:58.140373",
+  "event": "Iterative Exploration",
+  "iteration_nb": 1,
+  "decision": "4.1.2. Programme's relevance to the needs of stakeholders .... page 12",
+  "reasoning": "To understand how the \"Workforce\" enabler is relevant to stakeholders, I will explore section \"4.1.2. Programme's relevance to the needs of stakeholders .... page 12\". This section will likely contain information about how the workforce initiatives align with the needs of IOM's staff and other stakeholders."
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:50:05.241795",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.2
+}
+{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:50:06.045055",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.2
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:50:12.080936",
+  "event": "Iterative Exploration",
+  "iteration_nb": 2,
+  "decision": "4.3. Effectiveness .... page 16",
+  "reasoning": "We have started exploring the \"Findings\" section, specifically looking at \"Relevance\". To get a comprehensive understanding of the theme \"Data and evidence\", it's important to continue exploring the \"Findings\" section and move on to \"Effectiveness\"."
+}
+{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:50:13.584785",
+  "event": "Iterative Exploration",
+  "iteration_nb": 2,
+  "decision": "4.4. Efficiency .... page 24",
+  "reasoning": "The current findings discuss the relevance of the program to stakeholders, including governments and implementing partners. While this provides some context, it doesn't directly address the \"Workforce\" enabler. The remaining sections are \"Efficiency\" and \"Conclusions and Recommendations.\" \"Efficiency\" might touch upon workforce productivity or resource allocation, which could be relevant. \"Conclusions and Recommendations\" could contain overall insights related to the workforce. I will explore \"Efficiency\" first."
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:50:20.065454",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.6
+}
+{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:50:21.373267",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.3
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:50:27.403128",
+  "event": "Iterative Exploration",
+  "iteration_nb": 3,
+  "decision": "4.1. Relevance .... page 10",
+  "reasoning": "The current findings focus on the effectiveness of the program in relation to data and evidence, specifically within Specific Objective 1. Since the overall theme is \"Data and evidence,\" it's important to explore the relevance of the program activities to migrants, returnees, and communities. This was the first section listed under \"Findings\" and will provide a more complete picture of the program's impact on data and evidence."
+}
+{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:50:28.632090",
+  "event": "Iterative Exploration",
+  "iteration_nb": 3,
+  "decision": "5. Conclusions and Recommendations .... page 27",
+  "reasoning": "The current findings discuss the relevance of the program to stakeholders, its efficiency, and cost-effectiveness. To understand the overall impact and sustainability of the program, it's crucial to examine the conclusions and recommendations. This section will likely provide insights into the long-term effects of the program and suggest improvements for future initiatives, which directly relates to the workforce enabler by highlighting areas where capacity building and resource allocation can be optimized."
+}
+{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:50:28.635127",
+  "event": "Iterative Exploration",
+  "iteration_nb": 4,
+  "decision": "No more sections to explore, stopping"
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:50:35.413000",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.6
+}
+{
+  "run_id": "73aea7f2",
+  "timestamp": "2025-09-20T18:50:37.793357",
+  "event": "Synthesis",
+  "theme_covered": false,
+  "confidence_explanation": "Confidence: 7/10\nExplanation: The evidence provides some indirect support for the theme, as capacity building for partners could potentially free up IOM staff to focus on their own development. However, the direct link to the specific elements of the \"Workforce\" theme is weak. The evidence focuses more on the program's efficiency and relevance to stakeholders than on internal workforce improvements within IOM.",
+  "evidence_summary": "The evidence indicates that the JI-HoA program addressed gaps in migration management by building capacity among stakeholders. The program also had sufficient human resources to meet its objectives, although there were initial staff shortages. The program's efficiency improved over time, partly due to better-organized return arrangements.",
+  "gaps_identified": "The evidence lacks specific information on IOM's internal workforce planning, people management practices, professional development initiatives for its own staff, efforts to improve the daily workplace experience, or measures to ensure staff safety, security, and well-being. There is also no mention of creating a more inclusive and enabling work environment within IOM."
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:50:42.616100",
+  "event": "Iterative Exploration",
+  "iteration_nb": 4,
+  "decision": "4. Findings .... page 10",
+  "reasoning": "The current findings focus on the effectiveness of the program, specifically regarding data availability and the use of data in policymaking. Since the theme is \"Data and evidence,\" it's important to explore the overall findings to see if there are other sections relevant to this theme. I will move to the \"Findings\" section to see if there are other relevant subsections."
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:50:51.111919",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.6
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:50:58.390077",
+  "event": "Iterative Exploration",
+  "iteration_nb": 5,
+  "decision": "5. Conclusions and Recommendations .... page 27",
+  "reasoning": "The current findings focus on relevance, effectiveness, and coherence, providing a good overview of the program's impact and alignment with objectives. However, the analysis is incomplete without considering the conclusions and recommendations, which might offer further insights into the data and evidence theme. Therefore, the next logical step is to explore the conclusions and recommendations section."
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:51:06.543180",
+  "event": "Should stop exploring",
+  "assessment": false,
+  "confidence": 0.7
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:51:13.670462",
+  "event": "Iterative Exploration",
+  "iteration_nb": 6,
+  "decision": "DONE",
+  "reasoning": "The current findings cover relevance, effectiveness, coherence, conclusions, and recommendations. These sections provide a good overview of the theme. The methodology section is unlikely to provide further insights into the theme of \"Data and evidence\". Therefore, I will mark this task as done."
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:51:13.672394",
+  "event": "Iterative Exploration",
+  "iteration_nb": 6,
+  "decision": "Done"
+}
+{
+  "run_id": "bac8b9bc",
+  "timestamp": "2025-09-20T18:51:23.150184",
+  "event": "Synthesis",
+  "theme_covered": true,
+  "confidence_explanation": "Confidence: 90%\nExplanation: The evidence strongly supports the program's contribution to data availability and capacity building. The evaluation highlights specific achievements, such as exceeding targets for research and stakeholder engagement. However, the identified challenges and the need for continued support indicate that the theme is not fully covered, but significant progress has been made. The high robustness scores for relevance and coherence further increase confidence.",
+  "evidence_summary": "Key evidence includes:\n- The JI exceeded targets for field studies and research conducted.\n- Stakeholders reported increased knowledge on return and reintegration issues.\n- Examples of increased use of data in policymaking were found.\n- The Regional Data Hub's work was appreciated by stakeholders.\n- The number of stakeholders involved in return and reintegration assistance increased significantly.",
+  "gaps_identified": "Gaps include:\n- Challenges in ensuring data is consistently used for policymaking due to staff turnover and financial constraints.\n- The need for continued support to sustain capacity building efforts.\n- The impact of external factors like COVID-19 on data collection and dissemination.\n- Limited integration of post-return psychosocial support."
+}</code></pre>
+</div>
+</div>
+<div id="cell-80" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[Prediction(
+     reasoning='The provided evidence extensively discusses the availability and use of data within the JI-HoA program. The program aimed to strengthen evidence-based return and reintegration procedures, and the evaluation found substantial progress in data availability through field studies, surveys, and research. The Regional Data Hub played a key role in this. The program also exceeded targets for stakeholders strengthened through capacity building.\n\nHowever, the evaluation also highlights challenges in translating increased data and capacity into actual policymaking. Staff turnover, financial constraints, and the COVID-19 pandemic hindered the optimal use of data. Despite these challenges, the evaluation concludes that the JI-HoA made important contributions to data availability and research on migration trends, which can have a long-term positive impact.\n\nThe recommendations also emphasize the need to enhance efforts with stakeholders to build capacity and ownership, suggesting that while progress was made, further work is needed to fully realize the potential of data and evidence in informing policies and practices.\n\nOverall, the evidence suggests that the theme of "Data and evidence" was addressed by the program, but with mixed results. There were clear achievements in increasing data availability and building capacity, but challenges remain in ensuring that this data is effectively used for policymaking and program design.',
+     theme_covered=True,
+     confidence_explanation="I am reasonably confident in this assessment. The evaluation report explicitly discusses the program's efforts to improve data availability and capacity building related to data. The report also provides specific examples of achievements and challenges in this area. The recommendations further reinforce the importance of data and evidence in the program's overall objectives. While there are limitations in the extent to which data is currently being used, the program's focus on this theme is evident.",
+     evidence_summary='Key evidence includes:\n*   The JI exceeded targets for field studies, surveys, and research conducted.\n*   The Regional Data Hub played a key role in increasing data availability.\n*   The program exceeded targets for stakeholders strengthened through capacity building.\n*   Stakeholders appreciated the work of the Regional Data Hub.\n*   Challenges remain in translating increased data and capacity into actual policymaking due to staff turnover, financial constraints, and the COVID-19 pandemic.',
+     gaps_identified="The evidence suggests that while data availability increased, the actual use of data in policymaking was limited by various factors. Further information on the specific types of data collected, the extent to which it was disaggregated, and the specific policies it informed would provide a more complete picture of the program's impact on data and evidence. Additionally, more information on the sustainability of the Regional Data Hub and its long-term impact on data collection and analysis in the region would be valuable."
+ ),
+ Prediction(
+     reasoning='The provided evidence touches upon several aspects of the "Workforce" theme, although it doesn\'t directly and comprehensively address all elements of the theme description. The theme emphasizes workforce planning, people management, professional development, workplace experience, flexible systems, staff safety/security/well-being, security posture, inclusive environment, and leadership.\n\nThe evidence discusses IOM\'s capacity building activities for implementing partners (IPs), which indirectly relates to workforce development. It also mentions staff shortages and the need for more qualified staff, touching upon workforce planning and management. The report highlights the importance of IOM staff in providing support to migrants and returnees, indicating the value placed on their workforce. The recommendations also point to the need for capacity building of national stakeholders, which can be seen as an extension of IOM\'s workforce development efforts.\n\nHowever, there\'s a lack of specific information on internal IOM workforce policies, staff well-being initiatives, leadership development programs, or measures to foster an inclusive work environment. The focus is more on the capacity of partners and external stakeholders rather than the internal IOM workforce.\n\nTherefore, while some aspects of the theme are covered, a significant portion remains unaddressed.',
+     theme_covered=False,
+     confidence_explanation='My confidence is moderate (70%). The evidence provides some support for the theme, particularly regarding capacity building and the importance of qualified staff. However, it lacks specific details on internal IOM workforce management, staff well-being, and leadership development, which are crucial components of the theme. The evidence focuses more on external stakeholders than the internal IOM workforce.',
+     evidence_summary="The evidence indicates that IOM's capacity building activities for implementing partners are useful and necessary. It also mentions staff shortages and the need for more qualified staff. The report highlights the importance of IOM staff in providing support to migrants and returnees. Recommendations emphasize the need for capacity building of national stakeholders.",
+     gaps_identified="The evidence lacks specific information on internal IOM workforce policies, staff well-being initiatives, leadership development programs, or measures to foster an inclusive work environment. There is limited discussion of flexible systems and procedures to adapt to the future of work, or specific measures to strengthen IOM's security posture. The focus is primarily on external stakeholders and capacity building rather than the internal IOM workforce and its development."
+ )]</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="stage-1-srf-enablers-cross-cutting-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="stage-1-srf-enablers-cross-cutting-analysis">Stage 1: SRF Enablers &amp; Cross-cutting Analysis</h2>
+</section>
+<section id="stage-2-informed-gcm-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="stage-2-informed-gcm-analysis">Stage 2: Informed GCM Analysis</h2>
+</section>
+<section id="stage-3-targeted-srf-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="stage-3-targeted-srf-analysis">Stage 3: Targeted SRF Analysis</h2>
+</section>
+<section id="iom-mapping-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="iom-mapping-pipeline">IOM Mapping Pipeline</h2>
+<div id="cell-85" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>condensed_gcm <span class="op">=</span> {</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"7"</span>: {</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"title"</span>: <span class="st">"Address and reduce vulnerabilities in migration"</span>,</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"core_theme"</span>: <span class="st">"Protect migrants in vulnerable situations through comprehensive support and rights-based approaches"</span>,</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"key_principles"</span>: [<span class="st">"Human rights-based approach"</span>, <span class="st">"Best interests of the child"</span>, <span class="st">"Gender-responsive policies"</span>, <span class="st">"Non-discrimination"</span>],</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target_groups"</span>: [<span class="st">"Unaccompanied children"</span>, <span class="st">"Women at risk"</span>, <span class="st">"Trafficking victims"</span>, <span class="st">"Workers facing exploitation"</span>, <span class="st">"Persons with disabilities"</span>],</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"main_activities"</span>: [<span class="st">"Identification and assistance"</span>, <span class="st">"Legal protection and remedies"</span>, <span class="st">"Child protection systems"</span>, <span class="st">"Status regularization procedures"</span>, <span class="st">"Crisis response"</span>]</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"21"</span>: {</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"title"</span>: <span class="st">"Cooperate in facilitating safe and dignified return and readmission, as well as sustainable reintegration"</span>,</span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"core_theme"</span>: <span class="st">"Safe and dignified return, readmission, and sustainable reintegration of migrants"</span>,</span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"key_principles"</span>: [<span class="st">"Due process and individual assessment"</span>, <span class="st">"Prohibition of collective expulsion"</span>, <span class="st">"Non-refoulement"</span>, <span class="st">"Human right to return"</span>],</span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target_groups"</span>: [<span class="st">"Returning migrants"</span>, <span class="st">"Children in return processes"</span>, <span class="st">"Communities of origin"</span>],</span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"main_activities"</span>: [<span class="st">"Cooperation frameworks"</span>, <span class="st">"Travel documents and identification"</span>, <span class="st">"Consular assistance"</span>, <span class="st">"Reintegration support"</span>, <span class="st">"Monitoring mechanisms"</span>]</span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/franckalbinet\.github\.io\/evaluatr");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/franckalbinet/evaluatr/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
