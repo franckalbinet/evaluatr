@@ -18,9 +18,10 @@ from enum import Enum
 import logging
 import uuid
 from datetime import datetime
-from typing import List
+from typing import List, Callable
 import dspy
 import asyncio
+import time
 
 from .frameworks import EvalData, IOMEvalData, FrameworkInfo
 
@@ -119,6 +120,7 @@ class Assessment(dspy.Signature):
     sufficient: bool = dspy.OutputField(desc="Is evidence sufficient to make conclusion?")
     confidence_score: float = dspy.OutputField(desc="Confidence in current findings (0-1)")
     next_priority: str = dspy.OutputField(desc="If continuing, what type of section to prioritize")
+    reasoning: str = dspy.OutputField(desc="Why this assessment was made")
 
 # %% ../nbs/06_mappr.ipynb 33
 class Phase(Enum):
@@ -170,7 +172,9 @@ def setup_logger(name, handler, level=logging.INFO, **kwargs):
 # %% ../nbs/06_mappr.ipynb 41
 def setup_trace_logging(report_id, verbosity=cfg.verbosity):
     "Setup the trace logging (verbosity and report_id)"
-    file_handler = logging.FileHandler(traces_dir / f'{report_id}.jsonl')
+    file_handler = logging.FileHandler(traces_dir / f'{report_id}.jsonl', mode='w')
+    
+    
     setup_logger('trace.file', file_handler)
     
     console_handler = logging.StreamHandler()
@@ -233,7 +237,7 @@ def _log_trace(self:ThemeAnalyzer, event, **extra_data):
         
         console_logger.info(console_msg)
 
-# %% ../nbs/06_mappr.ipynb 45
+# %% ../nbs/06_mappr.ipynb 44
 @patch    
 async def _rate_limited_fn(self:ThemeAnalyzer, mod, **kwargs):
     async with self.semaphore:
@@ -242,18 +246,16 @@ async def _rate_limited_fn(self:ThemeAnalyzer, mod, **kwargs):
         
         # Check if cached (fast response + no usage)
         elapsed = time.time() - start
-        if elapsed > cfg.cache.delay:  # Not cached, apply delay
-            await asyncio.sleep(cfg.call_delay)
-        
+        if elapsed > cfg.cache.delay: await asyncio.sleep(cfg.call_delay)
         return result
 
-# %% ../nbs/06_mappr.ipynb 46
+# %% ../nbs/06_mappr.ipynb 45
 @patch
 async def aforward(
     self:ThemeAnalyzer, 
     theme: str, # The formatted theme to analyze
     headings: dict, # The headings TOC of the document
-    get_content_fn=get_content_tool, # The function to get the content of a section using `hdgs[keys_list].text` for instance
+    get_content_fn:Callable=get_content_tool, # The function to get the content of a section using `hdgs[keys_list].text` for instance
     ) -> Synthesis: # Synthesized analysis results including theme coverage, confidence, evidence and gaps
     "Executes a structured analysis process."
     self._log_trace(event="Starting Analysis", theme=theme)
@@ -261,16 +263,31 @@ async def aforward(
     evidence = await self.explore_iteratively(theme, priority_sections, headings, get_content_fn)
     return await self.synthesize_findings(theme, evidence)
 
-# %% ../nbs/06_mappr.ipynb 47
+# %% ../nbs/06_mappr.ipynb 46
 @patch
-async def get_overview(self:ThemeAnalyzer, theme, headings) -> Overview:
+async def get_overview(
+    self:ThemeAnalyzer, 
+    theme: str, # The formatted theme to analyze
+    headings: dict, # The headings TOC of the document
+    ) -> Overview:
+    "Based on framework theme to map and report's TOC determine the sections to explore first."
     overview = await self._rate_limited_fn(self.overview, theme=theme, all_headings=str(headings))
-    self._log_trace(event="Overview", priority_sections=overview.priority_sections, strategy=overview.strategy)
+    self._log_trace(
+        event="Overview", 
+        priority_sections=overview.priority_sections, 
+        strategy=overview.strategy)
     return overview.priority_sections
 
-# %% ../nbs/06_mappr.ipynb 48
+# %% ../nbs/06_mappr.ipynb 47
 @patch
-async def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, headings, get_content_fn):
+async def explore_iteratively(
+    self:ThemeAnalyzer, 
+    theme: str, # The formatted theme to analyze
+    priority_sections: list, # The sections to explore first
+    headings: dict, # The headings TOC of the document
+    get_content_fn: Callable, # The function to get the content of a section using `hdgs[keys_list].text` for instance
+    ) -> dict:
+    "Iteratively explore the sections to collect evidence."
     evidence_collected = []
     sections_explored = []
     available_sections = priority_sections.copy()
@@ -284,7 +301,11 @@ async def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, head
             break
         
         decision = await self.make_exploration_decision(theme, evidence_collected, available_sections)
-        self._log_trace(event="Iterative Exploration", iteration_nb=i+1, decision=decision.next_section, reasoning=decision.reasoning)
+        self._log_trace(
+            event="Iterative Exploration", 
+            iteration_nb=i+1, 
+            decision=decision.next_section, 
+            reasoning=decision.reasoning)
         
         if decision.next_section == 'DONE':
             self._log_trace(event="Iterative Exploration", iteration_nb=i+1, decision="Done")
@@ -300,9 +321,15 @@ async def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, head
     return {"evidence": evidence_collected, "sections": sections_explored}
 
 
-# %% ../nbs/06_mappr.ipynb 49
+# %% ../nbs/06_mappr.ipynb 48
 @patch
-async def make_exploration_decision(self:ThemeAnalyzer, theme, evidence_collected, available_sections):    
+async def make_exploration_decision(
+    self:ThemeAnalyzer, 
+    theme: str, # The formatted theme to analyze
+    evidence_collected: list, # The evidence collected so far
+    available_sections: list # The sections to explore
+    ):    
+    "Make a decision on the next section to explore."
     decision = await self._rate_limited_fn(
         self.explore, 
         theme=theme, 
@@ -311,9 +338,15 @@ async def make_exploration_decision(self:ThemeAnalyzer, theme, evidence_collecte
     return decision
 
 
-# %% ../nbs/06_mappr.ipynb 50
+# %% ../nbs/06_mappr.ipynb 49
 @patch
-async def should_stop_exploring(self:ThemeAnalyzer, theme, evidence_collected, sections_explored):
+async def should_stop_exploring(
+    self:ThemeAnalyzer, 
+    theme: str, # The formatted theme to analyze
+    evidence_collected: list, # The evidence collected so far
+    sections_explored: list # The sections explored so far
+    ):
+    "Check if the exploration should stop based on the evidence collected and the sections explored."
     if not evidence_collected:
         return False
     assessment = await self._rate_limited_fn(
@@ -323,11 +356,16 @@ async def should_stop_exploring(self:ThemeAnalyzer, theme, evidence_collected, s
         sections_explored=str(sections_explored)
     )
     
-    self._log_trace("Should stop exploring", assessment=assessment.sufficient, confidence=assessment.confidence_score)
+    self._log_trace(
+        "Should stop exploring", 
+        assessment=assessment.sufficient, 
+        confidence=assessment.confidence_score,
+        reasoning=assessment.reasoning
+        )
     
     return assessment.sufficient and assessment.confidence_score > self.confidence_threshold
 
-# %% ../nbs/06_mappr.ipynb 51
+# %% ../nbs/06_mappr.ipynb 50
 @patch
 def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evidence_collected, sections_explored, available_sections):
     path = find_section_path(headings, decision.next_section)
@@ -344,7 +382,7 @@ def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evid
     
     return evidence_collected, sections_explored
 
-# %% ../nbs/06_mappr.ipynb 52
+# %% ../nbs/06_mappr.ipynb 51
 @patch
 async def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
     synthesis = await self._rate_limited_fn(
@@ -355,6 +393,15 @@ async def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
         sections_explored=str(evidence["sections"])
     )
     
-    self._log_trace("Synthesis", theme=theme, framework_theme_id=str(self.trace_ctx.framework.theme_id))
+    self._log_trace("Synthesis", 
+                    theme=theme, 
+                    reasoning=synthesis.reasoning,
+                    theme_covered=synthesis.theme_covered,
+                    confidence_explanation=synthesis.confidence_explanation,
+                    evidence_summary=synthesis.evidence_summary,
+                    gaps_identified=synthesis.gaps_identified
+                    )
+    synthesis.framework_name = self.trace_ctx.framework.name
+    synthesis.framework_category = self.trace_ctx.framework.category  
+    synthesis.framework_theme_id = self.trace_ctx.framework.theme_id
     return synthesis
-
