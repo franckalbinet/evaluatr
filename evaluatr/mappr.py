@@ -4,8 +4,8 @@
 
 # %% auto 0
 __all__ = ['GEMINI_API_KEY', 'cfg', 'lm', 'traces_dir', 'find_section_path', 'get_content_tool', 'format_enabler_theme',
-           'Overview', 'Exploration', 'Assessment', 'Phase', 'TraceContext', 'Synthesis', 'setup_trace_logging',
-           'ThemeAnalyzer']
+           'Overview', 'Exploration', 'Assessment', 'Phase', 'TraceContext', 'Synthesis', 'setup_logger',
+           'setup_trace_logging', 'ThemeAnalyzer']
 
 # %% ../nbs/06_mappr.ipynb 5
 from pathlib import Path
@@ -44,11 +44,14 @@ cfg = AttrDict({
         'trace': 'traces'
     }),
     'verbosity': 1,
-    'cache': True
+    'cache': AttrDict({
+        'is_active': True,
+        'delay': 0.1 # threshold in seconds below which we consider the response is cached
+    })
 })
 
 # %% ../nbs/06_mappr.ipynb 8
-lm = dspy.LM(cfg.lm, api_key=cfg.api_key, cache=cfg.cache)
+lm = dspy.LM(cfg.lm, api_key=cfg.api_key, cache=cfg.cache.is_active)
 dspy.configure(lm=lm)
 
 # %% ../nbs/06_mappr.ipynb 13
@@ -155,23 +158,25 @@ traces_dir = Path.home() / cfg.dirs.data / cfg.dirs.trace
 traces_dir.mkdir(parents=True, exist_ok=True)
 
 # %% ../nbs/06_mappr.ipynb 40
-def setup_trace_logging(report_id, verbosity=cfg.verbosity):
-    # File logger - always JSON
-    file_logger = logging.getLogger('trace.file')
-    file_handler = logging.FileHandler(traces_dir / f'{report_id}.jsonl')
-    file_logger.handlers.clear()
-    file_logger.addHandler(file_handler)
-    file_logger.setLevel(logging.INFO)
-    
-    # Console logger - verbosity-based
-    console_logger = logging.getLogger('trace.console')
-    console_handler = logging.StreamHandler()
-    console_logger.handlers.clear()
-    console_logger.addHandler(console_handler)
-    console_logger.setLevel(logging.INFO)
-    console_logger.verbosity = verbosity
+def setup_logger(name, handler, level=logging.INFO, **kwargs):
+    "Helper function to setup a logger with common configuration"
+    logger = logging.getLogger(name)
+    logger.handlers.clear()
+    logger.addHandler(handler)
+    logger.setLevel(level)
+    for k,v in kwargs.items(): setattr(logger, k, v)
+    return logger
 
 # %% ../nbs/06_mappr.ipynb 41
+def setup_trace_logging(report_id, verbosity=cfg.verbosity):
+    "Setup the trace logging (verbosity and report_id)"
+    file_handler = logging.FileHandler(traces_dir / f'{report_id}.jsonl')
+    setup_logger('trace.file', file_handler)
+    
+    console_handler = logging.StreamHandler()
+    setup_logger('trace.console', console_handler, verbosity=verbosity)
+
+# %% ../nbs/06_mappr.ipynb 42
 class ThemeAnalyzer(dspy.Module):
     """
     Analyzes a theme across a document by iteratively exploring sections, collecting evidence, and synthesizing findings. 
@@ -196,7 +201,7 @@ class ThemeAnalyzer(dspy.Module):
         self.confidence_threshold = confidence_threshold
         self.semaphore = semaphore
 
-# %% ../nbs/06_mappr.ipynb 42
+# %% ../nbs/06_mappr.ipynb 43
 @patch
 def _log_trace(self:ThemeAnalyzer, event, **extra_data):
     file_logger = logging.getLogger('trace.file')
@@ -228,15 +233,21 @@ def _log_trace(self:ThemeAnalyzer, event, **extra_data):
         
         console_logger.info(console_msg)
 
-# %% ../nbs/06_mappr.ipynb 43
-@patch
+# %% ../nbs/06_mappr.ipynb 45
+@patch    
 async def _rate_limited_fn(self:ThemeAnalyzer, mod, **kwargs):
     async with self.semaphore:
+        start = time.time()
         result = await mod.acall(**kwargs)
-        await asyncio.sleep(cfg.call_delay)
+        
+        # Check if cached (fast response + no usage)
+        elapsed = time.time() - start
+        if elapsed > cfg.cache.delay:  # Not cached, apply delay
+            await asyncio.sleep(cfg.call_delay)
+        
         return result
 
-# %% ../nbs/06_mappr.ipynb 44
+# %% ../nbs/06_mappr.ipynb 46
 @patch
 async def aforward(
     self:ThemeAnalyzer, 
@@ -250,14 +261,14 @@ async def aforward(
     evidence = await self.explore_iteratively(theme, priority_sections, headings, get_content_fn)
     return await self.synthesize_findings(theme, evidence)
 
-# %% ../nbs/06_mappr.ipynb 45
+# %% ../nbs/06_mappr.ipynb 47
 @patch
 async def get_overview(self:ThemeAnalyzer, theme, headings) -> Overview:
     overview = await self._rate_limited_fn(self.overview, theme=theme, all_headings=str(headings))
     self._log_trace(event="Overview", priority_sections=overview.priority_sections, strategy=overview.strategy)
     return overview.priority_sections
 
-# %% ../nbs/06_mappr.ipynb 46
+# %% ../nbs/06_mappr.ipynb 48
 @patch
 async def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, headings, get_content_fn):
     evidence_collected = []
@@ -289,7 +300,7 @@ async def explore_iteratively(self:ThemeAnalyzer, theme, priority_sections, head
     return {"evidence": evidence_collected, "sections": sections_explored}
 
 
-# %% ../nbs/06_mappr.ipynb 47
+# %% ../nbs/06_mappr.ipynb 49
 @patch
 async def make_exploration_decision(self:ThemeAnalyzer, theme, evidence_collected, available_sections):    
     decision = await self._rate_limited_fn(
@@ -300,7 +311,7 @@ async def make_exploration_decision(self:ThemeAnalyzer, theme, evidence_collecte
     return decision
 
 
-# %% ../nbs/06_mappr.ipynb 48
+# %% ../nbs/06_mappr.ipynb 50
 @patch
 async def should_stop_exploring(self:ThemeAnalyzer, theme, evidence_collected, sections_explored):
     if not evidence_collected:
@@ -316,7 +327,7 @@ async def should_stop_exploring(self:ThemeAnalyzer, theme, evidence_collected, s
     
     return assessment.sufficient and assessment.confidence_score > self.confidence_threshold
 
-# %% ../nbs/06_mappr.ipynb 49
+# %% ../nbs/06_mappr.ipynb 51
 @patch
 def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evidence_collected, sections_explored, available_sections):
     path = find_section_path(headings, decision.next_section)
@@ -333,7 +344,7 @@ def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evid
     
     return evidence_collected, sections_explored
 
-# %% ../nbs/06_mappr.ipynb 50
+# %% ../nbs/06_mappr.ipynb 52
 @patch
 async def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
     synthesis = await self._rate_limited_fn(
