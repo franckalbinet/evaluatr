@@ -23,7 +23,11 @@ import dspy
 import asyncio
 import time
 
-from .frameworks import EvalData, IOMEvalData, FrameworkInfo
+from .frameworks import (EvalData, 
+                                 IOMEvalData, 
+                                 FrameworkInfo, 
+                                 Framework,
+                                 FrameworkCat)
 
 # %% ../nbs/06_mappr.ipynb 6
 from dotenv import load_dotenv
@@ -405,3 +409,10 @@ async def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
     synthesis.framework_category = self.trace_ctx.framework.category  
     synthesis.framework_theme_id = self.trace_ctx.framework.theme_id
     return synthesis
+
+# %% ../nbs/06_mappr.ipynb 71
+# class PipelineResults:
+#     def __init__(self):
+#         self.stage1 = AttrDict({FrameworkCat.ENABLERS: {}, FrameworkCat.CROSSCUT: {}})
+#         self.stage2 = AttrDict({"gcm_objectives": {}})
+#         self.stage3 = AttrDict({"srf_outputs": {}})
