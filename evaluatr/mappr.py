@@ -23,6 +23,7 @@ import dspy
 from asyncio import Semaphore, gather, sleep
 import time
 from collections import defaultdict
+import copy
 
 from .frameworks import (EvalData, 
                                  IOMEvalData, 
@@ -142,9 +143,9 @@ class Assessment(dspy.Signature):
 # %% ../nbs/06_mappr.ipynb 34
 class Phase(Enum):
     "Pipeline phase number."
-    STAGE1 = "1"
-    STAGE2 = "2"
-    STAGE3 = "3"
+    STAGE1 = "stage1"
+    STAGE2 = "stage2"
+    STAGE3 = "stage3"
     def __str__(self): return self.value
 
 # %% ../nbs/06_mappr.ipynb 35
@@ -152,17 +153,14 @@ class TraceContext(AttrDict):
     "Context for tracing the mapping process"
     def __init__(self, 
                  report_id:str,  # Report identifier
-                 phase_nb:Phase,  # Pipeline phase number
+                 phase:Phase,  # Pipeline phase number
                  framework:FrameworkInfo,  # Framework info (name, category, theme_id)
                  ): 
-        # self.report_id = report_id
-        self.run_id = str(uuid.uuid4())[:8]  # Short unique ID
-        # self.phase_nb = str(phase_nb)
-        # self.framework = str(framework)
+        # self.run_id = str(uuid.uuid4())[:8]  # Short unique ID
         store_attr()
-    
+
     def __repr__(self):
-        return f"TraceContext(run_id={self.run_id}, report_id={self.report_id}, phase_nb={self.phase_nb}, framework={self.framework})"
+        return f"TraceContext(report_id={self.report_id}, phase={self.phase}, framework={self.framework})"
 
 # %% ../nbs/06_mappr.ipynb 37
 class Synthesis(dspy.Signature):
@@ -194,10 +192,7 @@ def setup_logger(name, handler, level=logging.INFO, **kwargs):
 def setup_trace_logging(report_id, verbosity=cfg.verbosity):
     "Setup the trace logging (verbosity and report_id)"
     file_handler = logging.FileHandler(traces_dir / f'{report_id}.jsonl', mode='w')
-    
-    
-    setup_logger('trace.file', file_handler)
-    
+    setup_logger('trace.file', file_handler)    
     console_handler = logging.StreamHandler()
     setup_logger('trace.console', console_handler, verbosity=verbosity)
 
@@ -233,11 +228,10 @@ def _log_trace(self:ThemeAnalyzer, event, **extra_data):
     console_logger = logging.getLogger('trace.console')
     
     base_data = {
-        "run_id": self.trace_ctx.run_id,
         "timestamp": datetime.now().isoformat(),
         "event": event,
         "report_id": self.trace_ctx.report_id,
-        "phase_nb": str(self.trace_ctx.phase_nb),
+        "phase": str(self.trace_ctx.phase),
         "framework": str(self.trace_ctx.framework.name),
         "framework_category": str(self.trace_ctx.framework.category),
         "framework_theme_id": str(self.trace_ctx.framework.theme_id),
@@ -250,9 +244,9 @@ def _log_trace(self:ThemeAnalyzer, event, **extra_data):
     # Console logger - verbosity-based formatting
     if hasattr(console_logger, 'verbosity'):
         if console_logger.verbosity == 1:
-            console_msg = f"{base_data['report_id']} - {base_data['phase_nb']}"
+            console_msg = f"{base_data['report_id']} - {base_data['phase']}"
         elif console_logger.verbosity == 2:
-            console_msg = f"{base_data['report_id']} - {base_data['phase_nb']} - {base_data['framework']} - {base_data['framework_category']} - {base_data['framework_theme_id']} - {base_data['event']}"
+            console_msg = f"{base_data['report_id']} - {base_data['phase']} - {base_data['framework']} - {base_data['framework_category']} - {base_data['framework_theme_id']} - {base_data['event']}"
         else:  # verbosity == 3
             console_msg = json.dumps(base_data, indent=2)
         
@@ -422,19 +416,34 @@ async def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
                     evidence_summary=synthesis.evidence_summary,
                     gaps_identified=synthesis.gaps_identified
                     )
+    
     synthesis.framework_name = self.trace_ctx.framework.name
     synthesis.framework_category = self.trace_ctx.framework.category  
     synthesis.framework_theme_id = self.trace_ctx.framework.theme_id
     return synthesis
 
 # %% ../nbs/06_mappr.ipynb 72
-class PipelineResults:
+class PipelineResults(dict):
     def __init__(self):
-        self.stage1 = defaultdict(lambda: defaultdict(dict))
-        self.stage2 = defaultdict(lambda: defaultdict(dict))
-        self.stage3 = defaultdict(lambda: defaultdict(dict))
+        super().__init__()
+        self[Phase.STAGE1] = defaultdict(lambda: defaultdict(dict))
+        self[Phase.STAGE2] = defaultdict(lambda: defaultdict(dict))
+        self[Phase.STAGE3] = defaultdict(lambda: defaultdict(dict))
 
 # %% ../nbs/06_mappr.ipynb 73
+@patch
+def __call__(self:PipelineResults, stage=Phase.STAGE1, filter_type="all"):
+    themes = []
+    for frameworks in self[stage].values():
+        for categories in frameworks.values():
+            for theme in categories.values():
+                if filter_type == "all" or \
+                   (filter_type == "covered" and theme.theme_covered) or \
+                   (filter_type == "uncovered" and not theme.theme_covered):
+                    themes.append(theme)
+    return themes
+
+# %% ../nbs/06_mappr.ipynb 74
 class PipelineOrchestrator:
     "Orchestrator for the IOM evaluation report mapping pipeline"
     def __init__(self, 
@@ -448,7 +457,7 @@ class PipelineOrchestrator:
         setup_trace_logging(report_id, verbosity)
         self.results = PipelineResults()
 
-# %% ../nbs/06_mappr.ipynb 74
+# %% ../nbs/06_mappr.ipynb 75
 @patch
 async def run_stage1(self:PipelineOrchestrator, semaphore):
     "Run stage 1 of the pipeline"
@@ -469,4 +478,4 @@ async def run_stage1(self:PipelineOrchestrator, semaphore):
     results = await gather(*[analyzer.acall(theme, self.headings, self.get_content_fn) 
                              for analyzer, theme in analyzers])
     for result in results: 
-        self.results.stage1[result.framework_name][result.framework_category][result.framework_theme_id] = result
+        self.results[Phase.STAGE1][result.framework_name][result.framework_category][result.framework_theme_id] = result
