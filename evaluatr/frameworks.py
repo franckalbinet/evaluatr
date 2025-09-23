@@ -71,6 +71,8 @@ class IOMEvalData(EvalData):
     @property
     def gcm_objectives(self): return evalify(self._data['gcm'])
     @property
+    def gcm_objectives_small(self): return evalify(self._data['gcm_small'])
+    @property
     def srf_enablers(self): return evalify(self._data['srf_enablers'])
     @property 
     def srf_objectives(self): return evalify(self._data['srf_objectives'])
