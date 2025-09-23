@@ -82,20 +82,22 @@ class FrameworkCat(Enum):
     ENABLERS = "Enablers"
     CROSSCUT = "Crosscutting Priorities"
     OBJS = "Objectives"
+    def __str__(self): return self.value
 
-# %% ../nbs/05_frameworks.ipynb 18
+# %% ../nbs/05_frameworks.ipynb 19
 class Framework(Enum):
     "Framework type"
     SRF = "SRF"
     GCM = "GCM"
+    def __str__(self): return self.value
 
-# %% ../nbs/05_frameworks.ipynb 19
+# %% ../nbs/05_frameworks.ipynb 20
 VALID_FRAMEWORKS = {
     Framework.SRF: [FrameworkCat.ENABLERS,  FrameworkCat.CROSSCUT, FrameworkCat.OBJS],
     Framework.GCM: [FrameworkCat.OBJS]
 }
 
-# %% ../nbs/05_frameworks.ipynb 20
+# %% ../nbs/05_frameworks.ipynb 21
 class FrameworkInfo(AttrDict):
     def __init__(self, 
                  name,  # Framework name
@@ -103,8 +105,8 @@ class FrameworkInfo(AttrDict):
                  theme_id  # Theme identifier (e.g. "4" for "Data and evidence" in SRF Enablers)
                  ): 
         "Framework information"
-        if name not in VALID_FRAMEWORKS:
-            raise ValueError(f"Invalid framework: {name}")
-        if category not in VALID_FRAMEWORKS[name]:
-            raise ValueError(f"Invalid category for {name}: {category}")
-        store_attr()
+        if name not in VALID_FRAMEWORKS: raise ValueError(f"Invalid framework: {name}")
+        if category not in VALID_FRAMEWORKS[name]: raise ValueError(f"Invalid category for {name}: {category}")
+        self.category = str(category)
+        self.theme_id = theme_id
+        self.name = str(name)
