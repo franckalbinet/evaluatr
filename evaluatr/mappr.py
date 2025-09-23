@@ -4,9 +4,10 @@
 
 # %% auto 0
 __all__ = ['GEMINI_API_KEY', 'cfg', 'lm', 'traces_dir', 'find_section_path', 'get_content_tool', 'format_enabler_theme',
-           'format_crosscutting_theme', 'format_gcm_theme', 'Overview', 'Exploration', 'Assessment', 'Phase',
-           'TraceContext', 'Synthesis', 'setup_logger', 'setup_trace_logging', 'ThemeAnalyzer', 'PipelineResults',
-           'PipelineOrchestrator', 'get_stage1_covered_context']
+           'format_crosscutting_theme', 'format_gcm_theme', 'format_srf_output', 'Overview', 'Exploration',
+           'Assessment', 'Phase', 'TraceContext', 'Synthesis', 'setup_logger', 'setup_trace_logging', 'ThemeAnalyzer',
+           'PipelineResults', 'PipelineOrchestrator', 'get_stage1_covered_context', 'get_filtered_srf_output_ids',
+           'get_combined_context']
 
 # %% ../nbs/06_mappr.ipynb 5
 from pathlib import Path
@@ -30,7 +31,8 @@ from .frameworks import (EvalData,
                                  IOMEvalData, 
                                  FrameworkInfo, 
                                  Framework,
-                                 FrameworkCat)
+                                 FrameworkCat,
+                                 find_srf_output_by_id)
 
 # %% ../nbs/06_mappr.ipynb 6
 from dotenv import load_dotenv
@@ -41,12 +43,12 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 # %% ../nbs/06_mappr.ipynb 7
 cfg = AttrDict({
-    'lm': 'gemini/gemini-2.0-flash-exp',
+    'lm': 'gemini/gemini-2.0-flash',
     'api_key': GEMINI_API_KEY,
     'max_tokens': 8192,
     'track_usage': False,
     'rpm_limit': 15, 
-    'call_delay': 6, # in seconds
+    'call_delay': 3, # in seconds
     'dirs': AttrDict({
         'data': '.evaluator',
         'trace': 'traces'
@@ -135,7 +137,20 @@ def format_gcm_theme(
     
     return '\n'.join(parts)
 
-# %% ../nbs/06_mappr.ipynb 32
+# %% ../nbs/06_mappr.ipynb 30
+def format_srf_output(output_context: dict) -> str:
+    "Format SRF output with full hierarchical context for LM processing."
+    parts = [
+        f'## SRF Output {output_context["output"]["id"]}: {output_context["output"]["title"]}',
+        '### Strategic Context',
+        f'**Objective {output_context["objective"]["id"]}**: {output_context["objective"]["title"]}',
+        f'**Long-term Outcome {output_context["long_outcome"]["id"]}**: {output_context["long_outcome"]["title"]}',
+        f'**Short-term Outcome {output_context["short_outcome"]["id"]}**: {output_context["short_outcome"]["title"]}'
+    ]
+    
+    return '\n'.join(parts)
+
+# %% ../nbs/06_mappr.ipynb 35
 class Overview(dspy.Signature):
     "Based on framework theme to map and report's TOC determine the sections to explore first."
     theme: str = dspy.InputField(desc="Theme being analyzed")
@@ -144,7 +159,7 @@ class Overview(dspy.Signature):
     priority_sections: List[str] = dspy.OutputField(desc="Ordered list of section keys to explore first")
     strategy: str = dspy.OutputField(desc="Reasoning for this exploration strategy")
 
-# %% ../nbs/06_mappr.ipynb 35
+# %% ../nbs/06_mappr.ipynb 38
 class Exploration(dspy.Signature):
     "Decide next exploration step for theme to be mapped based on current findings and available sections."
     theme: str = dspy.InputField(desc="Theme being analyzed")
@@ -154,7 +169,7 @@ class Exploration(dspy.Signature):
     next_section: str = dspy.OutputField(desc="Next section key to explore, or 'DONE' if sufficient")
     reasoning: str = dspy.OutputField(desc="Why this section or why stopping")
 
-# %% ../nbs/06_mappr.ipynb 37
+# %% ../nbs/06_mappr.ipynb 40
 class Assessment(dspy.Signature):
     "Assess if current evidence is sufficient for theme analysis."
     theme: str = dspy.InputField(desc="Theme being analyzed")
@@ -166,7 +181,7 @@ class Assessment(dspy.Signature):
     next_priority: str = dspy.OutputField(desc="If continuing, what type of section to prioritize")
     reasoning: str = dspy.OutputField(desc="Why this assessment was made")
 
-# %% ../nbs/06_mappr.ipynb 39
+# %% ../nbs/06_mappr.ipynb 42
 class Phase(Enum):
     "Pipeline phase number."
     STAGE1 = "stage1"
@@ -174,7 +189,7 @@ class Phase(Enum):
     STAGE3 = "stage3"
     def __str__(self): return self.value
 
-# %% ../nbs/06_mappr.ipynb 40
+# %% ../nbs/06_mappr.ipynb 43
 class TraceContext(AttrDict):
     "Context for tracing the mapping process"
     def __init__(self, 
@@ -188,7 +203,7 @@ class TraceContext(AttrDict):
     def __repr__(self):
         return f"TraceContext(report_id={self.report_id}, phase={self.phase}, framework={self.framework})"
 
-# %% ../nbs/06_mappr.ipynb 42
+# %% ../nbs/06_mappr.ipynb 45
 class Synthesis(dspy.Signature):
     "Provide detailed rationale and synthesis of theme analysis."
     trace_ctx: str = dspy.InputField(desc="Trace context")
@@ -201,11 +216,11 @@ class Synthesis(dspy.Signature):
     evidence_summary: str = dspy.OutputField(desc="Key evidence supporting the conclusion")
     gaps_identified: str = dspy.OutputField(desc="Any gaps or missing aspects")
 
-# %% ../nbs/06_mappr.ipynb 45
+# %% ../nbs/06_mappr.ipynb 48
 traces_dir = Path.home() / cfg.dirs.data / cfg.dirs.trace
 traces_dir.mkdir(parents=True, exist_ok=True)
 
-# %% ../nbs/06_mappr.ipynb 46
+# %% ../nbs/06_mappr.ipynb 49
 def setup_logger(name, handler, level=logging.INFO, **kwargs):
     "Helper function to setup a logger with common configuration"
     logger = logging.getLogger(name)
@@ -215,7 +230,7 @@ def setup_logger(name, handler, level=logging.INFO, **kwargs):
     for k,v in kwargs.items(): setattr(logger, k, v)
     return logger
 
-# %% ../nbs/06_mappr.ipynb 47
+# %% ../nbs/06_mappr.ipynb 50
 def setup_trace_logging(report_id, verbosity=cfg.verbosity):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f'{report_id}_{timestamp}.jsonl'
@@ -224,7 +239,7 @@ def setup_trace_logging(report_id, verbosity=cfg.verbosity):
     console_handler = logging.StreamHandler()
     setup_logger('trace.console', console_handler, verbosity=verbosity)
 
-# %% ../nbs/06_mappr.ipynb 48
+# %% ../nbs/06_mappr.ipynb 51
 class ThemeAnalyzer(dspy.Module):
     """
     Analyzes a theme across a document by iteratively exploring sections, collecting evidence, and synthesizing findings. 
@@ -249,7 +264,7 @@ class ThemeAnalyzer(dspy.Module):
         self.confidence_threshold = confidence_threshold
         self.semaphore = semaphore
 
-# %% ../nbs/06_mappr.ipynb 49
+# %% ../nbs/06_mappr.ipynb 52
 @patch
 def _log_trace(self:ThemeAnalyzer, event, **extra_data):
     file_logger = logging.getLogger('trace.file')
@@ -280,7 +295,7 @@ def _log_trace(self:ThemeAnalyzer, event, **extra_data):
         
         console_logger.info(console_msg)
 
-# %% ../nbs/06_mappr.ipynb 50
+# %% ../nbs/06_mappr.ipynb 53
 @patch    
 async def _rate_limited_fn(self:ThemeAnalyzer, mod, **kwargs):
     async with self.semaphore:
@@ -292,7 +307,7 @@ async def _rate_limited_fn(self:ThemeAnalyzer, mod, **kwargs):
         if elapsed > cfg.cache.delay: await sleep(cfg.call_delay)
         return result
 
-# %% ../nbs/06_mappr.ipynb 51
+# %% ../nbs/06_mappr.ipynb 54
 @patch
 async def aforward(
     self:ThemeAnalyzer, 
@@ -307,7 +322,7 @@ async def aforward(
     evidence = await self.explore_iteratively(theme, priority_sections, headings, get_content_fn, prior_coverage_context)
     return await self.synthesize_findings(theme, evidence, prior_coverage_context)
 
-# %% ../nbs/06_mappr.ipynb 52
+# %% ../nbs/06_mappr.ipynb 55
 @patch
 async def get_overview(
     self:ThemeAnalyzer, 
@@ -328,7 +343,7 @@ async def get_overview(
         strategy=overview.strategy)
     return overview.priority_sections
 
-# %% ../nbs/06_mappr.ipynb 53
+# %% ../nbs/06_mappr.ipynb 56
 @patch
 async def explore_iteratively(
     self:ThemeAnalyzer, 
@@ -372,7 +387,7 @@ async def explore_iteratively(
     return {"evidence": evidence_collected, "sections": sections_explored}
 
 
-# %% ../nbs/06_mappr.ipynb 54
+# %% ../nbs/06_mappr.ipynb 57
 @patch
 async def make_exploration_decision(
     self:ThemeAnalyzer, 
@@ -393,7 +408,7 @@ async def make_exploration_decision(
     return decision
 
 
-# %% ../nbs/06_mappr.ipynb 55
+# %% ../nbs/06_mappr.ipynb 58
 @patch
 async def should_stop_exploring(
     self:ThemeAnalyzer, 
@@ -422,7 +437,7 @@ async def should_stop_exploring(
     
     return assessment.sufficient and assessment.confidence_score > self.confidence_threshold
 
-# %% ../nbs/06_mappr.ipynb 56
+# %% ../nbs/06_mappr.ipynb 59
 @patch
 def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evidence_collected, sections_explored, available_sections):
     path = find_section_path(headings, decision.next_section)
@@ -439,7 +454,7 @@ def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evid
     
     return evidence_collected, sections_explored
 
-# %% ../nbs/06_mappr.ipynb 57
+# %% ../nbs/06_mappr.ipynb 60
 @patch
 async def synthesize_findings(self:ThemeAnalyzer, theme, evidence, prior_coverage_context):
     synthesis = await self._rate_limited_fn(
@@ -465,7 +480,7 @@ async def synthesize_findings(self:ThemeAnalyzer, theme, evidence, prior_coverag
     synthesis.framework_theme_id = self.trace_ctx.framework.theme_id
     return synthesis
 
-# %% ../nbs/06_mappr.ipynb 77
+# %% ../nbs/06_mappr.ipynb 80
 class PipelineResults(dict):
     def __init__(self):
         super().__init__()
@@ -473,7 +488,7 @@ class PipelineResults(dict):
         self[Phase.STAGE2] = defaultdict(lambda: defaultdict(dict))
         self[Phase.STAGE3] = defaultdict(lambda: defaultdict(dict))
 
-# %% ../nbs/06_mappr.ipynb 78
+# %% ../nbs/06_mappr.ipynb 81
 @patch
 def __call__(self:PipelineResults, stage=Phase.STAGE1, filter_type="all"):
     themes = []
@@ -486,7 +501,7 @@ def __call__(self:PipelineResults, stage=Phase.STAGE1, filter_type="all"):
                     themes.append(theme)
     return themes
 
-# %% ../nbs/06_mappr.ipynb 79
+# %% ../nbs/06_mappr.ipynb 82
 class PipelineOrchestrator:
     "Orchestrator for the IOM evaluation report mapping pipeline"
     def __init__(self, 
@@ -500,7 +515,7 @@ class PipelineOrchestrator:
         setup_trace_logging(report_id, verbosity)
         self.results = PipelineResults()
 
-# %% ../nbs/06_mappr.ipynb 80
+# %% ../nbs/06_mappr.ipynb 83
 @patch
 async def run_stage1(self:PipelineOrchestrator, semaphore):
     "Run stage 1 of the pipeline"
@@ -524,7 +539,7 @@ async def run_stage1(self:PipelineOrchestrator, semaphore):
     for result in results: 
         self.results[Phase.STAGE1][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
-# %% ../nbs/06_mappr.ipynb 84
+# %% ../nbs/06_mappr.ipynb 87
 def get_stage1_covered_context(results: PipelineResults, eval_data: EvalData) -> str:
     "Get and format covered themes in Stage 1."
     covered_themes = results(Phase.STAGE1, filter_type="covered")
@@ -542,7 +557,7 @@ def get_stage1_covered_context(results: PipelineResults, eval_data: EvalData) ->
     return f"### Report Preliminary Context\nThis evaluation report covers the following Strategic Results Framework themes:\n" + "\n".join(context_parts)
 
 
-# %% ../nbs/06_mappr.ipynb 87
+# %% ../nbs/06_mappr.ipynb 90
 @patch
 async def run_stage2(self:PipelineOrchestrator, semaphore):
     "Run stage 2 of the pipeline - GCM objectives analysis"
@@ -561,3 +576,60 @@ async def run_stage2(self:PipelineOrchestrator, semaphore):
     
     for result in results: 
         self.results[Phase.STAGE2][result.framework_name][result.framework_category][result.framework_theme_id] = result
+
+# %% ../nbs/06_mappr.ipynb 93
+def get_filtered_srf_output_ids(
+    results: PipelineResults, # PipelineResults
+    eval_data: EvalData # EvalData
+    ) -> list: # list of SRF output IDs
+    "Get filtered SRF output IDs based on covered GCM themes."
+    covered_gcm = results(Phase.STAGE2, filter_type="covered")
+    srf_output_ids = set()
+    
+    for gcm_theme in covered_gcm:
+        gcm_id = gcm_theme.framework_theme_id
+        if gcm_id in eval_data.gcm_srf_lut:
+            srf_output_ids.update(eval_data.gcm_srf_lut[gcm_id])
+    
+    return list(srf_output_ids)
+
+# %% ../nbs/06_mappr.ipynb 96
+def get_combined_context(
+    results: PipelineResults, # PipelineResults
+    eval_data: EvalData, # EvalData
+    ) -> str: # combined context
+    "Get combined context from previous stages (1 and 2)."
+    stage1_context = get_stage1_covered_context(results, eval_data)
+    covered_gcm = results(Phase.STAGE2, filter_type="covered")
+    
+    if not covered_gcm: return stage1_context
+    
+    gcm_context = "\n".join([f"- **GCM {theme.framework_theme_id}**: {eval_data.gcm_objectives_small[int(theme.framework_theme_id)-1]['title']}" 
+                            for theme in covered_gcm])
+    
+    return f"{stage1_context}\n\n### Covered GCM Objectives\n{gcm_context}"
+
+
+# %% ../nbs/06_mappr.ipynb 99
+@patch
+async def run_stage3(self:PipelineOrchestrator, semaphore):
+    "Run stage 3 of the pipeline - Targeted SRF outputs analysis"
+    setup_trace_logging(self.report_id, self.verbosity)
+    
+    combined_context = get_combined_context(self.results, self.eval_data)
+    filtered_output_ids = get_filtered_srf_output_ids(self.results, self.eval_data)
+    analyzers = []
+    
+    for output_id in filtered_output_ids:
+        output_context = find_srf_output_by_id(self.eval_data, output_id)
+        if output_context:
+            trace_ctx = TraceContext(self.report_id, Phase.STAGE3, FrameworkInfo(Framework.SRF, FrameworkCat.OUTPUTS, output_id))
+            theme = format_srf_output(output_context)
+            analyzer = ThemeAnalyzer(Overview, Exploration, Assessment, Synthesis, trace_ctx, semaphore=semaphore)
+            analyzers.append((analyzer, theme, combined_context))
+
+    results = await gather(*[analyzer.acall(theme, self.headings, self.get_content_fn, context) 
+                             for analyzer, theme, context in analyzers])
+    
+    for result in results: 
+        self.results[Phase.STAGE3][result.framework_name][result.framework_category][result.framework_theme_id] = result
