@@ -4,8 +4,9 @@
 
 # %% auto 0
 __all__ = ['GEMINI_API_KEY', 'cfg', 'lm', 'traces_dir', 'find_section_path', 'get_content_tool', 'format_enabler_theme',
-           'format_crosscutting_theme', 'Overview', 'Exploration', 'Assessment', 'Phase', 'TraceContext', 'Synthesis',
-           'setup_logger', 'setup_trace_logging', 'ThemeAnalyzer', 'PipelineResults', 'PipelineOrchestrator']
+           'format_crosscutting_theme', 'format_gcm_theme', 'Overview', 'Exploration', 'Assessment', 'Phase',
+           'TraceContext', 'Synthesis', 'setup_logger', 'setup_trace_logging', 'ThemeAnalyzer', 'PipelineResults',
+           'PipelineOrchestrator', 'get_stage1_covered_context']
 
 # %% ../nbs/06_mappr.ipynb 5
 from pathlib import Path
@@ -45,7 +46,7 @@ cfg = AttrDict({
     'max_tokens': 8192,
     'track_usage': False,
     'rpm_limit': 15, 
-    'call_delay': 6,
+    'call_delay': 6, # in seconds
     'dirs': AttrDict({
         'data': '.evaluator',
         'trace': 'traces'
@@ -113,26 +114,51 @@ def format_crosscutting_theme(
     return '\n'.join(parts)
 
 # %% ../nbs/06_mappr.ipynb 27
+def format_gcm_theme(
+    theme: dict # The GCM theme object from gcm_small
+    ) -> str: # The formatted theme string
+    "Format GCM objective into structured text for LM processing."
+    parts = [
+        f'## GCM Objective {theme["id"]}: {theme["title"]}',
+        '### Core Theme', 
+        theme["core_theme"]
+    ]
+    
+    if theme.get("key_principles"):
+        parts.extend(['### Key Principles', ', '.join(theme["key_principles"])])
+    
+    if theme.get("target_groups"):
+        parts.extend(['### Target Groups', ', '.join(theme["target_groups"])])
+        
+    if theme.get("main_activities"):
+        parts.extend(['### Main Activities', ', '.join(theme["main_activities"])])
+    
+    return '\n'.join(parts)
+
+# %% ../nbs/06_mappr.ipynb 32
 class Overview(dspy.Signature):
     "Based on framework theme to map and report's TOC determine the sections to explore first."
     theme: str = dspy.InputField(desc="Theme being analyzed")
+    prior_coverage_context: str = dspy.InputField(desc="Themes already covered in this report, indicating its scope and analytical focus", default="")
     all_headings: str = dspy.InputField(desc="Complete document structure")
     priority_sections: List[str] = dspy.OutputField(desc="Ordered list of section keys to explore first")
     strategy: str = dspy.OutputField(desc="Reasoning for this exploration strategy")
 
-# %% ../nbs/06_mappr.ipynb 30
+# %% ../nbs/06_mappr.ipynb 35
 class Exploration(dspy.Signature):
     "Decide next exploration step for theme to be mapped based on current findings and available sections."
     theme: str = dspy.InputField(desc="Theme being analyzed")
+    prior_coverage_context: str = dspy.InputField(desc="Themes already covered in this report, indicating its scope and analytical focus", default="")
     current_findings: str = dspy.InputField(desc="Evidence found so far")
     available_sections: str = dspy.InputField(desc="Remaining sections to explore")
     next_section: str = dspy.OutputField(desc="Next section key to explore, or 'DONE' if sufficient")
     reasoning: str = dspy.OutputField(desc="Why this section or why stopping")
 
-# %% ../nbs/06_mappr.ipynb 32
+# %% ../nbs/06_mappr.ipynb 37
 class Assessment(dspy.Signature):
     "Assess if current evidence is sufficient for theme analysis."
     theme: str = dspy.InputField(desc="Theme being analyzed")
+    prior_coverage_context: str = dspy.InputField(desc="Themes already covered in this report, indicating its scope and analytical focus", default="")
     evidence_so_far: str = dspy.InputField(desc="All evidence collected")
     sections_explored: str = dspy.InputField(desc="Sections already checked")
     sufficient: bool = dspy.OutputField(desc="Is evidence sufficient to make conclusion?")
@@ -140,7 +166,7 @@ class Assessment(dspy.Signature):
     next_priority: str = dspy.OutputField(desc="If continuing, what type of section to prioritize")
     reasoning: str = dspy.OutputField(desc="Why this assessment was made")
 
-# %% ../nbs/06_mappr.ipynb 34
+# %% ../nbs/06_mappr.ipynb 39
 class Phase(Enum):
     "Pipeline phase number."
     STAGE1 = "stage1"
@@ -148,7 +174,7 @@ class Phase(Enum):
     STAGE3 = "stage3"
     def __str__(self): return self.value
 
-# %% ../nbs/06_mappr.ipynb 35
+# %% ../nbs/06_mappr.ipynb 40
 class TraceContext(AttrDict):
     "Context for tracing the mapping process"
     def __init__(self, 
@@ -162,11 +188,12 @@ class TraceContext(AttrDict):
     def __repr__(self):
         return f"TraceContext(report_id={self.report_id}, phase={self.phase}, framework={self.framework})"
 
-# %% ../nbs/06_mappr.ipynb 37
+# %% ../nbs/06_mappr.ipynb 42
 class Synthesis(dspy.Signature):
     "Provide detailed rationale and synthesis of theme analysis."
     trace_ctx: str = dspy.InputField(desc="Trace context")
     theme: str = dspy.InputField(desc="Theme being analyzed")
+    prior_coverage_context: str = dspy.InputField(desc="Themes already covered in this report, indicating its scope and analytical focus", default="")
     all_evidence: str = dspy.InputField(desc="All collected evidence")
     sections_explored: str = dspy.InputField(desc="List of sections explored")
     theme_covered: bool = dspy.OutputField(desc="Final decision on theme coverage")
@@ -174,11 +201,11 @@ class Synthesis(dspy.Signature):
     evidence_summary: str = dspy.OutputField(desc="Key evidence supporting the conclusion")
     gaps_identified: str = dspy.OutputField(desc="Any gaps or missing aspects")
 
-# %% ../nbs/06_mappr.ipynb 40
+# %% ../nbs/06_mappr.ipynb 45
 traces_dir = Path.home() / cfg.dirs.data / cfg.dirs.trace
 traces_dir.mkdir(parents=True, exist_ok=True)
 
-# %% ../nbs/06_mappr.ipynb 41
+# %% ../nbs/06_mappr.ipynb 46
 def setup_logger(name, handler, level=logging.INFO, **kwargs):
     "Helper function to setup a logger with common configuration"
     logger = logging.getLogger(name)
@@ -188,15 +215,16 @@ def setup_logger(name, handler, level=logging.INFO, **kwargs):
     for k,v in kwargs.items(): setattr(logger, k, v)
     return logger
 
-# %% ../nbs/06_mappr.ipynb 42
+# %% ../nbs/06_mappr.ipynb 47
 def setup_trace_logging(report_id, verbosity=cfg.verbosity):
-    "Setup the trace logging (verbosity and report_id)"
-    file_handler = logging.FileHandler(traces_dir / f'{report_id}.jsonl', mode='w')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f'{report_id}_{timestamp}.jsonl'
+    file_handler = logging.FileHandler(traces_dir / filename, mode='w')
     setup_logger('trace.file', file_handler)    
     console_handler = logging.StreamHandler()
     setup_logger('trace.console', console_handler, verbosity=verbosity)
 
-# %% ../nbs/06_mappr.ipynb 43
+# %% ../nbs/06_mappr.ipynb 48
 class ThemeAnalyzer(dspy.Module):
     """
     Analyzes a theme across a document by iteratively exploring sections, collecting evidence, and synthesizing findings. 
@@ -221,7 +249,7 @@ class ThemeAnalyzer(dspy.Module):
         self.confidence_threshold = confidence_threshold
         self.semaphore = semaphore
 
-# %% ../nbs/06_mappr.ipynb 44
+# %% ../nbs/06_mappr.ipynb 49
 @patch
 def _log_trace(self:ThemeAnalyzer, event, **extra_data):
     file_logger = logging.getLogger('trace.file')
@@ -252,7 +280,7 @@ def _log_trace(self:ThemeAnalyzer, event, **extra_data):
         
         console_logger.info(console_msg)
 
-# %% ../nbs/06_mappr.ipynb 45
+# %% ../nbs/06_mappr.ipynb 50
 @patch    
 async def _rate_limited_fn(self:ThemeAnalyzer, mod, **kwargs):
     async with self.semaphore:
@@ -264,36 +292,43 @@ async def _rate_limited_fn(self:ThemeAnalyzer, mod, **kwargs):
         if elapsed > cfg.cache.delay: await sleep(cfg.call_delay)
         return result
 
-# %% ../nbs/06_mappr.ipynb 46
+# %% ../nbs/06_mappr.ipynb 51
 @patch
 async def aforward(
     self:ThemeAnalyzer, 
     theme: str, # The formatted theme to analyze
     headings: dict, # The headings TOC of the document
     get_content_fn:Callable=get_content_tool, # The function to get the content of a section using `hdgs[keys_list].text` for instance
+    prior_coverage_context: str = "" # The themes already covered in this report, indicating its scope and analytical focus
     ) -> Synthesis: # Synthesized analysis results including theme coverage, confidence, evidence and gaps
     "Executes a structured analysis process."
     self._log_trace(event="Starting Analysis", theme=theme)
-    priority_sections = await self.get_overview(theme, headings)
-    evidence = await self.explore_iteratively(theme, priority_sections, headings, get_content_fn)
-    return await self.synthesize_findings(theme, evidence)
+    priority_sections = await self.get_overview(theme, headings, prior_coverage_context)
+    evidence = await self.explore_iteratively(theme, priority_sections, headings, get_content_fn, prior_coverage_context)
+    return await self.synthesize_findings(theme, evidence, prior_coverage_context)
 
-# %% ../nbs/06_mappr.ipynb 47
+# %% ../nbs/06_mappr.ipynb 52
 @patch
 async def get_overview(
     self:ThemeAnalyzer, 
     theme: str, # The formatted theme to analyze
     headings: dict, # The headings TOC of the document
+    prior_coverage_context: str = ""
     ) -> Overview:
     "Based on framework theme to map and report's TOC determine the sections to explore first."
-    overview = await self._rate_limited_fn(self.overview, theme=theme, all_headings=str(headings))
+    overview = await self._rate_limited_fn(
+        self.overview, 
+        theme=theme, 
+        all_headings=str(headings), 
+        prior_coverage_context=prior_coverage_context)
+    
     self._log_trace(
         event="Overview", 
         priority_sections=overview.priority_sections, 
         strategy=overview.strategy)
     return overview.priority_sections
 
-# %% ../nbs/06_mappr.ipynb 48
+# %% ../nbs/06_mappr.ipynb 53
 @patch
 async def explore_iteratively(
     self:ThemeAnalyzer, 
@@ -301,6 +336,7 @@ async def explore_iteratively(
     priority_sections: list, # The sections to explore first
     headings: dict, # The headings TOC of the document
     get_content_fn: Callable, # The function to get the content of a section using `hdgs[keys_list].text` for instance
+    prior_coverage_context: str = ""
     ) -> dict:
     "Iteratively explore the sections to collect evidence."
     evidence_collected = []
@@ -315,7 +351,7 @@ async def explore_iteratively(
         if await self.should_stop_exploring(theme, evidence_collected, sections_explored):   
             break
         
-        decision = await self.make_exploration_decision(theme, evidence_collected, available_sections)
+        decision = await self.make_exploration_decision(theme, evidence_collected, available_sections, prior_coverage_context)
         self._log_trace(
             event="Iterative Exploration", 
             iteration_nb=i+1, 
@@ -336,30 +372,35 @@ async def explore_iteratively(
     return {"evidence": evidence_collected, "sections": sections_explored}
 
 
-# %% ../nbs/06_mappr.ipynb 49
+# %% ../nbs/06_mappr.ipynb 54
 @patch
 async def make_exploration_decision(
     self:ThemeAnalyzer, 
     theme: str, # The formatted theme to analyze
     evidence_collected: list, # The evidence collected so far
-    available_sections: list # The sections to explore
+    available_sections: list, # The sections to explore
+    prior_coverage_context: str = ""
     ):    
     "Make a decision on the next section to explore."
     decision = await self._rate_limited_fn(
         self.explore, 
         theme=theme, 
-        current_findings="\n\n".join(evidence_collected) if evidence_collected else "No evidence collected yet", available_sections=str(available_sections))
+        current_findings="\n\n".join(evidence_collected) if evidence_collected else "No evidence collected yet", 
+        available_sections=str(available_sections),
+        prior_coverage_context=prior_coverage_context
+        )
     
     return decision
 
 
-# %% ../nbs/06_mappr.ipynb 50
+# %% ../nbs/06_mappr.ipynb 55
 @patch
 async def should_stop_exploring(
     self:ThemeAnalyzer, 
     theme: str, # The formatted theme to analyze
     evidence_collected: list, # The evidence collected so far
-    sections_explored: list # The sections explored so far
+    sections_explored: list, # The sections explored so far
+    prior_coverage_context: str = ""
     ):
     "Check if the exploration should stop based on the evidence collected and the sections explored."
     if not evidence_collected:
@@ -368,7 +409,8 @@ async def should_stop_exploring(
         self.assess, 
         theme=theme,
         evidence_so_far="\n\n".join(evidence_collected),
-        sections_explored=str(sections_explored)
+        sections_explored=str(sections_explored),
+        prior_coverage_context=prior_coverage_context
     )
     
     self._log_trace(
@@ -380,7 +422,7 @@ async def should_stop_exploring(
     
     return assessment.sufficient and assessment.confidence_score > self.confidence_threshold
 
-# %% ../nbs/06_mappr.ipynb 51
+# %% ../nbs/06_mappr.ipynb 56
 @patch
 def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evidence_collected, sections_explored, available_sections):
     path = find_section_path(headings, decision.next_section)
@@ -397,15 +439,16 @@ def process_section(self:ThemeAnalyzer, decision, headings, get_content_fn, evid
     
     return evidence_collected, sections_explored
 
-# %% ../nbs/06_mappr.ipynb 52
+# %% ../nbs/06_mappr.ipynb 57
 @patch
-async def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
+async def synthesize_findings(self:ThemeAnalyzer, theme, evidence, prior_coverage_context):
     synthesis = await self._rate_limited_fn(
         self.synthesize, 
         trace_ctx=str(self.trace_ctx),
         theme=theme,
         all_evidence="\n\n".join(evidence["evidence"]),
-        sections_explored=str(evidence["sections"])
+        sections_explored=str(evidence["sections"]),
+        prior_coverage_context=prior_coverage_context
     )
     
     self._log_trace("Synthesis", 
@@ -422,7 +465,7 @@ async def synthesize_findings(self:ThemeAnalyzer, theme, evidence):
     synthesis.framework_theme_id = self.trace_ctx.framework.theme_id
     return synthesis
 
-# %% ../nbs/06_mappr.ipynb 72
+# %% ../nbs/06_mappr.ipynb 77
 class PipelineResults(dict):
     def __init__(self):
         super().__init__()
@@ -430,7 +473,7 @@ class PipelineResults(dict):
         self[Phase.STAGE2] = defaultdict(lambda: defaultdict(dict))
         self[Phase.STAGE3] = defaultdict(lambda: defaultdict(dict))
 
-# %% ../nbs/06_mappr.ipynb 73
+# %% ../nbs/06_mappr.ipynb 78
 @patch
 def __call__(self:PipelineResults, stage=Phase.STAGE1, filter_type="all"):
     themes = []
@@ -443,7 +486,7 @@ def __call__(self:PipelineResults, stage=Phase.STAGE1, filter_type="all"):
                     themes.append(theme)
     return themes
 
-# %% ../nbs/06_mappr.ipynb 74
+# %% ../nbs/06_mappr.ipynb 79
 class PipelineOrchestrator:
     "Orchestrator for the IOM evaluation report mapping pipeline"
     def __init__(self, 
@@ -457,10 +500,11 @@ class PipelineOrchestrator:
         setup_trace_logging(report_id, verbosity)
         self.results = PipelineResults()
 
-# %% ../nbs/06_mappr.ipynb 75
+# %% ../nbs/06_mappr.ipynb 80
 @patch
 async def run_stage1(self:PipelineOrchestrator, semaphore):
     "Run stage 1 of the pipeline"
+    setup_trace_logging(self.report_id, self.verbosity)
     analyzers = []
     
     collections = [
@@ -479,3 +523,41 @@ async def run_stage1(self:PipelineOrchestrator, semaphore):
                              for analyzer, theme in analyzers])
     for result in results: 
         self.results[Phase.STAGE1][result.framework_name][result.framework_category][result.framework_theme_id] = result
+
+# %% ../nbs/06_mappr.ipynb 84
+def get_stage1_covered_context(results: PipelineResults, eval_data: EvalData) -> str:
+    "Get and format covered themes in Stage 1."
+    covered_themes = results(Phase.STAGE1, filter_type="covered")
+    if not covered_themes: return ""
+    
+    context_parts = []
+    for theme in covered_themes:
+        if theme.framework_category == str(FrameworkCat.ENABLERS):
+            theme_data = next(t for t in eval_data.srf_enablers if t.id == theme.framework_theme_id)
+        elif theme.framework_category == str(FrameworkCat.CROSSCUT):
+            theme_data = next(t for t in eval_data.srf_crosscutting_priorities if t.id == theme.framework_theme_id)
+        
+        context_parts.append(f"- **{theme.framework_category} {theme_data.id}**: {theme_data.title}")
+    
+    return f"### Report Preliminary Context\nThis evaluation report covers the following Strategic Results Framework themes:\n" + "\n".join(context_parts)
+
+
+# %% ../nbs/06_mappr.ipynb 87
+@patch
+async def run_stage2(self:PipelineOrchestrator, semaphore):
+    "Run stage 2 of the pipeline - GCM objectives analysis"
+    setup_trace_logging(self.report_id, self.verbosity)
+    stage1_context = get_stage1_covered_context(self.results, self.eval_data)
+    analyzers = []
+    
+    for gcm_obj in gcm_small:
+        trace_ctx = TraceContext(self.report_id, Phase.STAGE2, FrameworkInfo(Framework.GCM, FrameworkCat.OBJS, gcm_obj["id"]))
+        theme = format_gcm_theme(gcm_obj)
+        analyzer = ThemeAnalyzer(Overview, Exploration, Assessment, Synthesis, trace_ctx, semaphore=semaphore)
+        analyzers.append((analyzer, theme, stage1_context))
+
+    results = await gather(*[analyzer.acall(theme, self.headings, self.get_content_fn, context) 
+                             for analyzer, theme, context in analyzers])
+    
+    for result in results: 
+        self.results[Phase.STAGE2][result.framework_name][result.framework_category][result.framework_theme_id] = result
