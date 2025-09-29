@@ -47,17 +47,18 @@ cfg = AttrDict({
     'api_key': GEMINI_API_KEY,
     'max_tokens': 8192,
     'track_usage': False,
-    'rpm_limit': 15, 
-    'call_delay': 3, # in seconds
+    'call_delay': 0.1, # in seconds
+    'semaphore': 30,
     'dirs': AttrDict({
         'data': '.evaluator',
         'trace': 'traces'
     }),
     'verbosity': 1,
     'cache': AttrDict({
-        'is_active': True,
-        'delay': 0.1 # threshold in seconds below which we consider the response is cached
-    })
+        'is_active': False,
+        'delay': 0.05 # threshold in seconds below which we consider the response is cached
+    }),
+    'max_iter': 5
 })
 
 # %% ../nbs/06_mappr.ipynb 8
@@ -156,7 +157,7 @@ class Overview(dspy.Signature):
     theme: str = dspy.InputField(desc="Theme being analyzed")
     prior_coverage_context: str = dspy.InputField(desc="Themes already covered in this report, indicating its scope and analytical focus", default="")
     all_headings: str = dspy.InputField(desc="Complete document structure")
-    priority_sections: List[str] = dspy.OutputField(desc="Ordered list of section keys to explore first")
+    priority_sections: List[str] = dspy.OutputField(desc=f"Ordered list of different section keys to explore first ({cfg.max_iter} minimum)")
     strategy: str = dspy.OutputField(desc="Reasoning for this exploration strategy")
 
 # %% ../nbs/06_mappr.ipynb 38
@@ -252,7 +253,7 @@ class ThemeAnalyzer(dspy.Module):
                  synthesis_sig:dspy.Signature, # Synthesis signature
                  trace_ctx:TraceContext, # Trace context
                  confidence_threshold:float=0.8, # Confidence threshold
-                 max_iter:int=10, # Maximum number of iterations in the ReAct loop
+                 max_iter:int=cfg.max_iter, # Maximum number of iterations in the ReAct loop
                  semaphore=None # Semaphore for rate limiting
                  ):
         self.overview = dspy.ChainOfThought(overview_sig)
