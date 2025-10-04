@@ -8,8 +8,8 @@ __all__ = ['GEMINI_API_KEY', 'cfg', 'traces_dir', 'lm', 'select_section_sp', 'su
            'format_crosscutting_theme', 'format_gcm_theme', 'format_srf_output', 'SelectSectionOutput',
            'SummarizeContentOutput', 'EvaluateEvidenceOutput', 'State', 'parse_response',
            'format_sections_for_selection', 'select_section', 'summarize_content', 'evaluate_evidence', 'limit',
-           'Stage', 'TraceContext', 'setup_logger', 'setup_trace_logging', 'log_analysis_event', 'analyze_theme',
-           'SectionSelection', 'Assessment', 'Synthesis', 'ThemeAnalyzer', 'PipelineResults', 'PipelineOrchestrator',
+           'Stage', 'TraceContext', 'setup_logger', 'setup_trace_logging', 'log_analysis_event', 'SectionSelection',
+           'Assessment', 'Synthesis', 'ThemeAnalyzer', 'PipelineResults', 'PipelineOrchestrator',
            'get_stage1_covered_context', 'get_filtered_srf_output_ids', 'get_combined_context']
 
 # %% ../nbs/07_mappr.ipynb 5
@@ -267,6 +267,7 @@ Given:
 - Previous evidence summaries from explored sections
 - Your own previous evaluation reasoning (if any) showing how your understanding evolved
 - New content just extracted from the latest section
+- Exploration progress (how many sections explored vs. available)
 
 Your task: Assess whether the theme is adequately covered in the report based on all accumulated evidence.
 
@@ -281,12 +282,18 @@ A theme is considered "adequately covered" when:
 
 Be critical: distinguish between robust evidence-based coverage versus mere mentions or weak claims.
 
+Before concluding a theme is adequately covered:
+- Explore multiple sections to ensure comprehensive coverage
+- Verify evidence from different parts of the report (not just one section)
+- Be especially cautious on first 1-2 iterations - continue exploring unless coverage is exceptionally strong
+
 Output JSON with:
 - theme_covered: boolean, true if the theme is adequately addressed with strong evidence
 - coverage_reasoning: detailed explanation citing specific evidence types and their strength/weakness
 - gaps_identified: what aspects, evidence types, or depth are still missing
 - should_continue: boolean, true if more exploration would be beneficial
 """
+
 
 # %% ../nbs/07_mappr.ipynb 52
 def parse_response(result):
@@ -383,6 +390,7 @@ async def evaluate_evidence(
         f"Theme being analyzed:\n{state.theme}",
         f"Previous evidence summaries:\n{prev_summaries}",
         f"Previous evaluation reasoning:\n{prev_evaluations}",
+        f"Exploration progress: {len(state.explored_sections)} sections explored out of {len(state.explored_sections) + len(state.available_sections)} total available",
         f"New content to evaluate:\n{new_content}"
     ]
     prompt = "\n\n".join(p for p in parts if p)
@@ -470,97 +478,6 @@ def log_analysis_event(event: str, trace_ctx: TraceContext, **extra_data):
             console_msg = json.dumps(base_data, indent=2)
         
         console_logger.info(console_msg)
-
-# %% ../nbs/07_mappr.ipynb 85
-async def analyze_theme(
-    theme: str,
-    sections_lookup: dict,
-    hdgs: dict,
-    semaphore: Semaphore,
-    select_fn: Callable = select_section,
-    summarize_fn: Callable = summarize_content,
-    evaluate_fn: Callable = evaluate_evidence,
-    log_fn: Callable = None,
-    prior_coverage_context: str = "",
-    max_iterations: int = 5,
-    model: str = 'gemini/gemini-2.0-flash'
-):
-    "Analyze if a theme is covered in the evaluation report"
-    log = log_fn or (lambda event, **kw: None)
-    
-    log("Starting Analysis", theme=theme)
-    
-   # Initialize state (no aspects identification step)
-    state = State(
-        theme=theme,
-        prior_coverage_context=prior_coverage_context,
-        available_sections=list(sections_lookup.keys())
-    )
-    
-    # Iterative exploration
-    for i in range(max_iterations):
-        log("Iteration Start", iteration=i+1)
-        
-        # Select section
-        selected = await limit(semaphore, select_fn(state, model))
-        log("Section Selected", section=selected['section_key'], reasoning=selected['reasoning'])
-        
-        # Extract content
-        path = sections_lookup.get(selected['section_key'])
-        if not path:
-            log("Section Not Found", section=selected['section_key'])
-            continue
-        content = get_content_tool(hdgs, path)
-        
-        # Summarize
-        summary = await limit(semaphore, summarize_fn(state, selected['section_key'], content, model))
-        log("Content Summarized", 
-            section=selected['section_key'],
-            summary=summary['summary'],
-            key_findings=summary['key_findings'])
-        
-        state.section_summaries.append(summary)
-        
-        # Evaluate
-        evaluation = await limit(semaphore, evaluate_fn(state, content, model))
-        log("Evidence Evaluated",
-            theme_covered=evaluation['theme_covered'],
-            coverage_reasoning=evaluation['coverage_reasoning'],
-            gaps_identified=evaluation['gaps_identified'],
-            should_continue=evaluation['should_continue'])
-        
-        
-        
-        # Update state
-        state.evaluation_history.append({
-            'iteration': i + 1,
-            'theme_covered': evaluation['theme_covered'],
-            'coverage_reasoning': evaluation['coverage_reasoning'],
-            'gaps_identified': evaluation['gaps_identified']
-        })
-        
-        state.explored_sections.append(selected['section_key'])
-        state.available_sections.remove(selected['section_key'])
-        state.theme_covered = evaluation['theme_covered']
-        state.coverage_reasoning = evaluation['coverage_reasoning']
-        state.gaps_identified = evaluation['gaps_identified']
-            
-        log("State Updated",
-            explored_sections=state.explored_sections,
-            evidence_count=len(state.section_summaries),
-            remaining_sections=len(state.available_sections))
-        
-        # Check stopping
-        if not evaluation['should_continue']:
-            state.stop_reason = "sufficient_evidence"
-            log("Analysis Complete", reason=state.stop_reason)
-            break
-    else:
-        state.stop_reason = "max_iterations"
-        log("Analysis Complete", reason=state.stop_reason)
-
-    return state
-
 
 # %% ../nbs/07_mappr.ipynb 95
 class SectionSelection(dspy.Signature):
