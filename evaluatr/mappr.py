@@ -9,7 +9,7 @@ __all__ = ['GEMINI_API_KEY', 'cfg', 'traces_dir', 'lm', 'select_section_sp', 'su
            'SummarizeContentOutput', 'EvaluateEvidenceOutput', 'State', 'parse_response',
            'format_sections_for_selection', 'select_section', 'summarize_content', 'evaluate_evidence', 'limit',
            'Stage', 'TraceContext', 'setup_logger', 'setup_trace_logging', 'log_analysis_event', 'SectionSelection',
-           'Assessment', 'Synthesis', 'ThemeAnalyzer', 'PipelineResults', 'PipelineOrchestrator',
+           'Assessment', 'Synthesis', 'AnalysisResult', 'PipelineResults', 'PipelineOrchestrator',
            'get_stage1_covered_context', 'get_filtered_srf_output_ids', 'get_combined_context']
 
 # %% ../nbs/07_mappr.ipynb 5
@@ -443,7 +443,7 @@ def log_analysis_event(event: str, trace_ctx: TraceContext, **extra_data):
         
         console_logger.info(console_msg)
 
-# %% ../nbs/07_mappr.ipynb 90
+# %% ../nbs/07_mappr.ipynb 89
 class SectionSelection(dspy.Signature):
     "Choose the next most relevant section based on current evidence summary and gaps."
     theme: str = dspy.InputField(desc="Theme being analyzed")
@@ -454,7 +454,7 @@ class SectionSelection(dspy.Signature):
     next_section: str = dspy.OutputField(desc="Next section key to explore - must be an exact key from all_headings and NOT in sections_explored, or 'DONE'")
     reasoning: str = dspy.OutputField(desc="Why this section was chosen")
 
-# %% ../nbs/07_mappr.ipynb 93
+# %% ../nbs/07_mappr.ipynb 92
 class Assessment(dspy.Signature):
     "Assess evidence sufficiency and update running summary by incorporating new evidence. Calculate confidence as coverage completeness percentage."
     theme: str = dspy.InputField(desc="Theme being analyzed with key aspects to cover")
@@ -469,7 +469,7 @@ class Assessment(dspy.Signature):
     reasoning: str = dspy.OutputField(desc="Assessment reasoning including which key aspects are covered/missing")
 
 
-# %% ../nbs/07_mappr.ipynb 95
+# %% ../nbs/07_mappr.ipynb 94
 class Stage(Enum):
     "Pipeline stage number."
     STAGE1 = "stage1"
@@ -498,7 +498,7 @@ tr_ctx = TraceContext(
 
 tr_ctx
 
-# %% ../nbs/07_mappr.ipynb 96
+# %% ../nbs/07_mappr.ipynb 95
 class Synthesis(dspy.Signature):
     "Provide detailed rationale and synthesis of theme analysis."
     trace_ctx: str = dspy.InputField(desc="Trace context")
@@ -511,305 +511,19 @@ class Synthesis(dspy.Signature):
     evidence_summary: str = dspy.OutputField(desc="Key evidence supporting the conclusion")
     gaps_identified: str = dspy.OutputField(desc="Any gaps or missing aspects")
 
-# %% ../nbs/07_mappr.ipynb 99
-def setup_logger(name, handler, level=logging.INFO, **kwargs):
-    "Helper function to setup a logger with common configuration"
-    logger = logging.getLogger(name)
-    logger.handlers.clear()
-    logger.addHandler(handler)
-    logger.setLevel(level)
-    for k,v in kwargs.items(): setattr(logger, k, v)
-    return logger
+# %% ../nbs/07_mappr.ipynb 127
+class AnalysisResult(AttrDict):
+    "Extracts key results from State with framework metadata"
+    def __init__(self, state: State, framework_info: FrameworkInfo):
+        self.theme_covered = state.theme_covered
+        self.coverage_reasoning = state.coverage_reasoning
+        self.gaps_identified = state.gaps_identified
+        self.explored_sections = state.explored_sections
+        self.framework_name = framework_info.name
+        self.framework_category = framework_info.category
+        self.framework_theme_id = framework_info.theme_id
 
-# %% ../nbs/07_mappr.ipynb 100
-def setup_trace_logging(report_id, verbosity=cfg.verbosity):
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f'{report_id}_{timestamp}.jsonl'
-    file_handler = logging.FileHandler(traces_dir / filename, mode='w')
-    setup_logger('trace.file', file_handler)    
-    console_handler = logging.StreamHandler()
-    setup_logger('trace.console', console_handler, verbosity=verbosity)
-
-# %% ../nbs/07_mappr.ipynb 101
-class ThemeAnalyzer(dspy.Module):
-    """
-    Analyzes a theme across a document by iteratively exploring sections, collecting evidence, and synthesizing findings. 
-    Uses a structured pipeline of section selection -> assessment -> synthesis.
-    """
-    def __init__(self, 
-                 section_selection_sig: dspy.Signature,
-                 assessment_sig: dspy.Signature, 
-                 synthesis_sig: dspy.Signature, 
-                 trace_ctx: TraceContext,
-                 confidence_threshold: float = 0.8,
-                 max_iter: int = cfg.max_iter,
-                 semaphore = None):
-        self.section_selector = dspy.ChainOfThought(section_selection_sig)
-        self.assess = dspy.ChainOfThought(assessment_sig)
-        self.synthesize = dspy.ChainOfThought(synthesis_sig)
-        self.max_iter = max_iter
-        self.trace_ctx = trace_ctx
-        self.confidence_threshold = confidence_threshold
-        self.semaphore = semaphore
-
-
-# %% ../nbs/07_mappr.ipynb 102
-@patch
-async def aforward(
-    self:ThemeAnalyzer, 
-    theme: str, # The formatted theme to analyze
-    hdgs: dict, # The headings TOC of the document
-    get_content_fn: Callable = get_content_tool, # The function to get the content of a section using `hdgs[keys_list].text` for instance
-    prior_coverage_context: str = "" # The themes already covered in this report, indicating its scope and analytical focus
-) -> Synthesis:
-    "Executes a structured analysis process."
-    self._log_trace(event="Starting Analysis", theme=theme)
-    
-    # Main iterative exploration
-    evidence = await self.explore_iteratively(theme, hdgs, get_content_fn, prior_coverage_context)
-    
-    # Final synthesis with summary and gaps from last assessment
-    return await self.synthesize_findings(
-        theme, 
-        evidence["final_summary"], 
-        evidence["final_gaps"], 
-        evidence["sections"], 
-        prior_coverage_context
-    )
-
-# %% ../nbs/07_mappr.ipynb 103
-@patch
-async def explore_iteratively(
-    self:ThemeAnalyzer, 
-    theme: str,
-    hdgs: dict,
-    get_content_fn: Callable,
-    prior_coverage_context: str = ""
-) -> dict:
-    "Iteratively explore sections to collect evidence."
-    evidence_collected = []
-    sections_explored = []
-    evidence_summary = "No evidence collected yet - beginning analysis"
-    gaps = "No gaps identified yet - initial exploration"
-    
-    for i in range(self.max_iter):
-        # 1. Select next section
-        decision = await self.select_next_section(
-            theme, evidence_summary, gaps, str(hdgs), sections_explored, prior_coverage_context)
-        
-        if decision.next_section == 'DONE':
-            self._log_trace(event="Iterative Exploration", iteration_nb=i+1, decision="Done")
-            break
-            
-        # # 2. Process section
-        # evidence_collected, sections_explored = self.process_section(
-        #     decision, hdgs, get_content_fn, evidence_collected, sections_explored, [])
-        
-        # # 3. Assess and update summary/gaps
-        # assessment = await self.assess_evidence(
-        #     theme, evidence_summary, gaps, sections_explored, prior_coverage_context)
-        # 2. Process section
-        old_evidence_count = len(evidence_collected)
-        evidence_collected, sections_explored = self.process_section(decision, hdgs, get_content_fn, evidence_collected, sections_explored, [])
-
-        # Extract new evidence
-        new_evidence = evidence_collected[old_evidence_count:] if len(evidence_collected) > old_evidence_count else ""
-        new_evidence_text = "\n".join(new_evidence) if new_evidence else "No new evidence found"
-
-        # 3. Assess and update summary/gaps  
-        assessment = await self.assess_evidence(
-            theme, evidence_summary, gaps, new_evidence_text, sections_explored, prior_coverage_context)
-        evidence_summary = assessment.updated_evidence_summary
-        gaps = assessment.updated_gaps
-        
-        if assessment.sufficient and assessment.confidence_score > self.confidence_threshold:
-            break
-    
-    return {
-        "evidence": evidence_collected,
-        "sections": sections_explored,
-        "final_summary": evidence_summary,
-        "final_gaps": gaps
-    }
-
-
-# %% ../nbs/07_mappr.ipynb 104
-@patch
-async def assess_evidence(
-    self:ThemeAnalyzer, 
-    theme: str,
-    evidence_summary: str,
-    gaps: str,
-    new_evidence: str,
-    sections_explored: list,
-    prior_coverage_context: str = ""
-):
-    assessment = await self._rate_limited_fn(
-        self.assess,
-        theme=theme,
-        evidence_summary=evidence_summary,
-        gaps_identified=gaps,
-        new_evidence=new_evidence,
-        sections_explored=str(sections_explored),
-        prior_coverage_context=prior_coverage_context
-    )
-    
-    # Log the assessment
-    self._log_trace(
-        event="Evidence Assessment",
-        sufficient=assessment.sufficient,
-        confidence=assessment.confidence_score,
-        updated_evidence_summary=assessment.updated_evidence_summary,
-        updated_gaps=assessment.updated_gaps,
-        sections_explored=sections_explored, 
-        reasoning=assessment.reasoning
-    )
-    
-    return assessment
-
-
-# %% ../nbs/07_mappr.ipynb 105
-@patch
-def process_section(
-    self:ThemeAnalyzer, 
-    decision:SectionSelection, # The next section to explore
-    hdgs: dict, # The headings TOC of the document
-    get_content_fn: Callable, # The function to get the content of a section using `hdgs[keys_list].text` for instance
-    evidence_collected: list, # The evidence collected so far
-    sections_explored: list, # The sections explored so far
-    available_sections: list # Not used anymore but kept for compatibility
-):
-    evidence_collected = evidence_collected.copy()
-    sections_explored = sections_explored.copy()
-    
-    path = find_section_path(hdgs, decision.next_section)
-    if path:
-        content = get_content_fn(hdgs, path)
-        evidence_collected.append(f"# Section: {decision.next_section}\n## Content\n{content}")
-        sections_explored.append(decision.next_section)
-        self._log_trace(
-            event="Section Found", 
-            section=decision.next_section
-        )
-    else:
-        self._log_trace(
-            event="Section Not Found", 
-            section=decision.next_section, 
-            warning="No path found for section"
-        )
-    
-    return evidence_collected, sections_explored
-
-# %% ../nbs/07_mappr.ipynb 106
-@patch
-async def select_next_section(
-    self:ThemeAnalyzer, 
-    theme: str, # The formatted theme to analyze
-    evidence_summary: str, # The summary of the evidence collected so far
-    gaps: str, # The gaps identified so far
-    hdgs: dict, # The headings TOC of the document
-    sections_explored: list, # The sections explored so far
-    prior_coverage_context: str = "" # The themes already covered in this report, indicating its scope and analytical focus
-):
-    decision = await self._rate_limited_fn(
-        self.section_selector,
-        theme=theme,
-        evidence_summary=evidence_summary,
-        gaps_identified=gaps,
-        all_headings=str(hdgs),
-        sections_explored=str(sections_explored),
-        prior_coverage_context=prior_coverage_context
-    )
-    
-    # Log the section selection
-    self._log_trace(
-        event="Section Selection",
-        selected_section=decision.next_section,
-        reasoning=decision.reasoning
-    )
-    
-    return decision
-
-# %% ../nbs/07_mappr.ipynb 107
-@patch
-async def synthesize_findings(
-    self:ThemeAnalyzer, 
-    theme: str,
-    evidence_summary: str,
-    gaps: str,
-    sections_explored: list,
-    prior_coverage_context: str = ""
-):
-    synthesis = await self._rate_limited_fn(
-        self.synthesize,
-        trace_ctx=str(self.trace_ctx),
-        theme=theme,
-        evidence_summary=evidence_summary,
-        gaps_identified=gaps,
-        sections_explored=str(sections_explored),
-        prior_coverage_context=prior_coverage_context
-    )
-    
-    # Log synthesis results
-    self._log_trace(
-        event="Synthesis",
-        theme_covered=synthesis.theme_covered,
-        confidence_explanation=synthesis.confidence_explanation,
-        evidence_summary=synthesis.evidence_summary,
-        gaps_identified=synthesis.gaps_identified
-    )
-    
-    # Add framework metadata
-    synthesis.framework_name = self.trace_ctx.framework.name
-    synthesis.framework_category = self.trace_ctx.framework.category  
-    synthesis.framework_theme_id = self.trace_ctx.framework.theme_id
-    return synthesis
-
-
-# %% ../nbs/07_mappr.ipynb 108
-@patch
-def _log_trace(self:ThemeAnalyzer, event, **extra_data):
-    file_logger = logging.getLogger('trace.file')
-    console_logger = logging.getLogger('trace.console')
-    
-    base_data = {
-        "timestamp": datetime.now().isoformat(),
-        "event": event,
-        "report_id": self.trace_ctx.report_id,
-        "stage": str(self.trace_ctx.stage),
-        "framework": str(self.trace_ctx.framework.name),
-        "framework_category": str(self.trace_ctx.framework.category),
-        "framework_theme_id": str(self.trace_ctx.framework.theme_id),
-    }
-    base_data.update(extra_data)
-    
-    # File logger - always full JSON
-    file_logger.info(json.dumps(base_data, indent=2))
-    
-    # Console logger - verbosity-based formatting
-    if hasattr(console_logger, 'verbosity'):
-        if console_logger.verbosity == 1:
-            console_msg = f"{base_data['report_id']} - {base_data['stage']}"
-        elif console_logger.verbosity == 2:
-            console_msg = f"{base_data['report_id']} - {base_data['stage']} - {base_data['framework']} - {base_data['framework_category']} - {base_data['framework_theme_id']} - {base_data['event']}"
-        else:  # verbosity == 3
-            console_msg = json.dumps(base_data, indent=2)
-        
-        console_logger.info(console_msg)
-
-# %% ../nbs/07_mappr.ipynb 109
-@patch    
-async def _rate_limited_fn(self:ThemeAnalyzer, mod, **kwargs):
-    async with self.semaphore:
-        start = time.time()
-        result = await mod.acall(**kwargs)
-        
-        # Check if cached (fast response + no usage)
-        elapsed = time.time() - start
-        if elapsed > cfg.cache.delay: await sleep(cfg.call_delay)
-        return result
-
-# %% ../nbs/07_mappr.ipynb 131
+# %% ../nbs/07_mappr.ipynb 128
 class PipelineResults(dict):
     def __init__(self):
         super().__init__()
@@ -817,7 +531,7 @@ class PipelineResults(dict):
         self[Stage.STAGE2] = defaultdict(lambda: defaultdict(dict))
         self[Stage.STAGE3] = defaultdict(lambda: defaultdict(dict))
 
-# %% ../nbs/07_mappr.ipynb 132
+# %% ../nbs/07_mappr.ipynb 129
 @patch
 def __call__(self:PipelineResults, stage=Stage.STAGE1, filter_type="all"):
     themes = []
@@ -830,7 +544,7 @@ def __call__(self:PipelineResults, stage=Stage.STAGE1, filter_type="all"):
                     themes.append(theme)
     return themes
 
-# %% ../nbs/07_mappr.ipynb 133
+# %% ../nbs/07_mappr.ipynb 130
 class PipelineOrchestrator:
     "Orchestrator for the IOM evaluation report mapping pipeline"
     def __init__(self, 
@@ -843,13 +557,41 @@ class PipelineOrchestrator:
         store_attr()
         setup_trace_logging(report_id, verbosity)
         self.results = PipelineResults()
+        self.sections_lookup = {key: path for key, path in flatten_sections(headings)}
 
-# %% ../nbs/07_mappr.ipynb 134
+# %% ../nbs/07_mappr.ipynb 131
+@patch
+async def _analyze_with_context(
+    self: PipelineOrchestrator,
+    theme: str,
+    trace_ctx: TraceContext,
+    semaphore: Semaphore,
+    prior_coverage_context: str = ""
+) -> AnalysisResult:
+    "Analyze theme with orchestrator context and return wrapped result"
+    
+    # Create log function with trace context
+    log_fn = lambda event, **kw: log_analysis_event(event, trace_ctx, **kw)
+    
+    # Call analyze_theme
+    state = await analyze_theme(
+        theme=theme,
+        sections_lookup=self.sections_lookup,
+        hdgs=self.headings,
+        semaphore=semaphore,
+        log_fn=log_fn,
+        prior_coverage_context=prior_coverage_context,
+        max_iterations=cfg.max_iter
+    )
+    
+    # Wrap with framework metadata
+    return AnalysisResult(state, trace_ctx.framework)
+
+# %% ../nbs/07_mappr.ipynb 132
 @patch
 async def run_stage1(self:PipelineOrchestrator, semaphore):
     "Run stage 1 of the pipeline"
-    setup_trace_logging(self.report_id, self.verbosity)
-    analyzers = []
+    tasks = []
     
     collections = [
         (self.eval_data.srf_enablers, FrameworkCat.ENABLERS, format_enabler_theme),
@@ -858,20 +600,18 @@ async def run_stage1(self:PipelineOrchestrator, semaphore):
 
     for items, framework_cat, format_fn in collections:
         for item in items:
-            trace_ctx = TraceContext(self.report_id, Phase.STAGE1, FrameworkInfo(Framework.SRF, framework_cat, item.id))
+            trace_ctx = TraceContext(self.report_id, Stage.STAGE1, FrameworkInfo(Framework.SRF, framework_cat, item.id))
             theme = format_fn(item)
-            analyzer = ThemeAnalyzer(Overview, Exploration, Assessment, Synthesis, trace_ctx, semaphore=semaphore)
-            analyzers.append((analyzer, theme))
+            tasks.append(self._analyze_with_context(theme, trace_ctx, semaphore))
 
-    results = await gather(*[analyzer.acall(theme, self.headings, self.get_content_fn) 
-                             for analyzer, theme in analyzers])
+    results = await gather(*tasks)
     for result in results: 
-        self.results[Phase.STAGE1][result.framework_name][result.framework_category][result.framework_theme_id] = result
+        self.results[Stage.STAGE1][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
-# %% ../nbs/07_mappr.ipynb 138
+# %% ../nbs/07_mappr.ipynb 136
 def get_stage1_covered_context(results: PipelineResults, eval_data: EvalData) -> str:
     "Get and format covered themes in Stage 1."
-    covered_themes = results(Phase.STAGE1, filter_type="covered")
+    covered_themes = results(Stage.STAGE1, filter_type="covered")
     if not covered_themes: return ""
     
     context_parts = []
@@ -886,33 +626,29 @@ def get_stage1_covered_context(results: PipelineResults, eval_data: EvalData) ->
     return f"### Report Preliminary Context\nThis evaluation report covers the following Strategic Results Framework themes:\n" + "\n".join(context_parts)
 
 
-# %% ../nbs/07_mappr.ipynb 141
+# %% ../nbs/07_mappr.ipynb 139
 @patch
 async def run_stage2(self:PipelineOrchestrator, semaphore):
     "Run stage 2 of the pipeline - GCM objectives analysis"
-    setup_trace_logging(self.report_id, self.verbosity)
     stage1_context = get_stage1_covered_context(self.results, self.eval_data)
-    analyzers = []
+    tasks = []
     
-    for gcm_obj in gcm_small:
-        trace_ctx = TraceContext(self.report_id, Phase.STAGE2, FrameworkInfo(Framework.GCM, FrameworkCat.OBJS, gcm_obj["id"]))
+    for gcm_obj in self.eval_data.gcm_objectives_small:
+        trace_ctx = TraceContext(self.report_id, Stage.STAGE2, FrameworkInfo(Framework.GCM, FrameworkCat.OBJS, gcm_obj["id"]))
         theme = format_gcm_theme(gcm_obj)
-        analyzer = ThemeAnalyzer(Overview, Exploration, Assessment, Synthesis, trace_ctx, semaphore=semaphore)
-        analyzers.append((analyzer, theme, stage1_context))
+        tasks.append(self._analyze_with_context(theme, trace_ctx, semaphore, stage1_context))
 
-    results = await gather(*[analyzer.acall(theme, self.headings, self.get_content_fn, context) 
-                             for analyzer, theme, context in analyzers])
-    
+    results = await gather(*tasks)
     for result in results: 
-        self.results[Phase.STAGE2][result.framework_name][result.framework_category][result.framework_theme_id] = result
+        self.results[Stage.STAGE2][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
-# %% ../nbs/07_mappr.ipynb 144
+# %% ../nbs/07_mappr.ipynb 142
 def get_filtered_srf_output_ids(
     results: PipelineResults, # PipelineResults
     eval_data: EvalData # EvalData
     ) -> list: # list of SRF output IDs
     "Get filtered SRF output IDs based on covered GCM themes."
-    covered_gcm = results(Phase.STAGE2, filter_type="covered")
+    covered_gcm = results(Stage.STAGE2, filter_type="covered")
     srf_output_ids = set()
     
     for gcm_theme in covered_gcm:
@@ -922,14 +658,14 @@ def get_filtered_srf_output_ids(
     
     return list(srf_output_ids)
 
-# %% ../nbs/07_mappr.ipynb 147
+# %% ../nbs/07_mappr.ipynb 145
 def get_combined_context(
     results: PipelineResults, # PipelineResults
     eval_data: EvalData, # EvalData
     ) -> str: # combined context
     "Get combined context from previous stages (1 and 2)."
     stage1_context = get_stage1_covered_context(results, eval_data)
-    covered_gcm = results(Phase.STAGE2, filter_type="covered")
+    covered_gcm = results(Stage.STAGE2, filter_type="covered")
     
     if not covered_gcm: return stage1_context
     
@@ -939,26 +675,21 @@ def get_combined_context(
     return f"{stage1_context}\n\n### Covered GCM Objectives\n{gcm_context}"
 
 
-# %% ../nbs/07_mappr.ipynb 150
+# %% ../nbs/07_mappr.ipynb 148
 @patch
 async def run_stage3(self:PipelineOrchestrator, semaphore):
     "Run stage 3 of the pipeline - Targeted SRF outputs analysis"
-    setup_trace_logging(self.report_id, self.verbosity)
-    
     combined_context = get_combined_context(self.results, self.eval_data)
     filtered_output_ids = get_filtered_srf_output_ids(self.results, self.eval_data)
-    analyzers = []
+    tasks = []
     
     for output_id in filtered_output_ids:
         output_context = find_srf_output_by_id(self.eval_data, output_id)
         if output_context:
-            trace_ctx = TraceContext(self.report_id, Phase.STAGE3, FrameworkInfo(Framework.SRF, FrameworkCat.OUTPUTS, output_id))
+            trace_ctx = TraceContext(self.report_id, Stage.STAGE3, FrameworkInfo(Framework.SRF, FrameworkCat.OUTPUTS, output_id))
             theme = format_srf_output(output_context)
-            analyzer = ThemeAnalyzer(Overview, Exploration, Assessment, Synthesis, trace_ctx, semaphore=semaphore)
-            analyzers.append((analyzer, theme, combined_context))
+            tasks.append(self._analyze_with_context(theme, trace_ctx, semaphore, combined_context))
 
-    results = await gather(*[analyzer.acall(theme, self.headings, self.get_content_fn, context) 
-                             for analyzer, theme, context in analyzers])
-    
+    results = await gather(*tasks)
     for result in results: 
-        self.results[Phase.STAGE3][result.framework_name][result.framework_category][result.framework_theme_id] = result
+        self.results[Stage.STAGE3][result.framework_name][result.framework_category][result.framework_theme_id] = result
