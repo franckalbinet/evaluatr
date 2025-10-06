@@ -13,5 +13,6 @@ website:
           - 04_enrichr.ipynb
           - 05_frameworks.ipynb
           - 07_mappr.ipynb
+          - 08_mappr_lisette.ipynb
 
 
