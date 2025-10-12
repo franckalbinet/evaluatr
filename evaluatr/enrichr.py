@@ -360,7 +360,9 @@ def process_single_page(
     if not img_refs: return copy_page_to_enriched(page, enriched_dir)
     
     classified_refs = md_page.classify_imgs(img_refs)
+    time.sleep(0.5)
     described_refs = md_page.describe_imgs(classified_refs, img_dir)
+    time.sleep(0.5)
     return md_page.replace_imgs_with_desc(described_refs)
 
 # %% ../nbs/04_enrichr.ipynb 52
