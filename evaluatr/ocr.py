@@ -5,7 +5,8 @@
 # %% auto 0
 __all__ = ['mistral_api_key', 'src_dir', 'get_doc_subtype', 'clean_pdf_name', 'setup_output_dirs', 'get_pdfs_and_dir',
            'save_page_images', 'process_batch_results', 'create_batch_ocr_job', 'submit_and_monitor_batch_job',
-           'download_and_parse_results', 'process_single_evaluation_batch', 'process_all_reports_batch']
+           'download_and_parse_results', 'process_single_evaluation_batch', 'process_all_reports_batch',
+           'ocr_evaluation']
 
 # %% ../nbs/03_ocr.ipynb 2
 import os
@@ -22,6 +23,7 @@ import json
 import logging
 import tempfile
 from PIL import Image
+import time
 
 from mistralai import Mistral
 from .readers import load_evals
@@ -113,7 +115,7 @@ def save_page_images(page, dest_folder: Path):
             output_path = dest_folder / img_id
             pil_img.save(output_path)
 
-# %% ../nbs/03_ocr.ipynb 24
+# %% ../nbs/03_ocr.ipynb 23
 def process_batch_results(results, md_output_dir):
     "Process batch OCR results and save to appropriate folders"
     for result in results:
@@ -147,7 +149,7 @@ def process_batch_results(results, md_output_dir):
         except Exception as e:
             logging.error(f"Error processing result {result.get('custom_id', 'unknown')}: {e}")
 
-# %% ../nbs/03_ocr.ipynb 25
+# %% ../nbs/03_ocr.ipynb 24
 def create_batch_ocr_job(
     pdf_paths: List[Path],
     eval_report_path: str,
@@ -185,7 +187,7 @@ def create_batch_ocr_job(
     return batch_entries, cli
 
 
-# %% ../nbs/03_ocr.ipynb 26
+# %% ../nbs/03_ocr.ipynb 25
 def submit_and_monitor_batch_job(batch_entries, eval_report_path, cli):
     "Submit batch job and monitor until completion"
     with tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=True) as temp_file:
@@ -220,7 +222,7 @@ def submit_and_monitor_batch_job(batch_entries, eval_report_path, cli):
         
         return job
 
-# %% ../nbs/03_ocr.ipynb 27
+# %% ../nbs/03_ocr.ipynb 26
 def download_and_parse_results(job, cli):
     "Download and parse batch job results"
     response = cli.files.download(file_id=job.output_file)
@@ -234,7 +236,7 @@ def download_and_parse_results(job, cli):
     logging.info(f"Downloaded and parsed {len(results)} OCR results")
     return results
 
-# %% ../nbs/03_ocr.ipynb 28
+# %% ../nbs/03_ocr.ipynb 27
 def process_single_evaluation_batch(report: Path, md_output_dir: Path):
     "Process one evaluation report using batch OCR"
     logging.info(f"Processing evaluation: {report.name}")
@@ -255,7 +257,7 @@ def process_single_evaluation_batch(report: Path, md_output_dir: Path):
     else:
         logging.error(f"Job failed for {eval_report_path}")
 
-# %% ../nbs/03_ocr.ipynb 29
+# %% ../nbs/03_ocr.ipynb 28
 def process_all_reports_batch(
     reports: list[Path],
     md_library_path="../_data/md_library"
@@ -268,3 +270,35 @@ def process_all_reports_batch(
         process_single_evaluation_batch(report, md_output_dir)
     
     logging.info("Batch OCR processing completed for all reports")
+
+# %% ../nbs/03_ocr.ipynb 32
+@call_parse
+def ocr_evaluation(
+    eval_id: str,  # Evaluation ID to process
+    pdf_dir: str = "../data/pdf_library",  # Directory containing PDF folders
+    output_dir: str = "../data/md_library",  # Output directory for markdown
+    overwrite: bool = False  # Overwrite if it exists
+):  
+    "Process OCR for a single evaluation report"
+    eval_path = Path(pdf_dir) / eval_id
+    
+    if not eval_path.exists():
+        logging.error(f"Evaluation directory not found: {eval_path}")
+        return
+    
+    output_path = Path(output_dir) / eval_id
+    if output_path.exists() and not overwrite:
+        logging.info(f"Output already exists for {eval_id}. Use --overwrite to reprocess.")
+        return
+    
+    # Get PDFs, excluding those with underscore prefix
+    pdfs = [p for p in eval_path.glob("*.pdf") if not p.name.startswith("_")]
+    
+    if not pdfs:
+        logging.warning(f"No PDFs found in {eval_path}")
+        return
+    
+    logging.info(f"Found {len(pdfs)} PDF(s) to process in {eval_id}")
+    
+    md_output_dir = setup_output_dirs(output_dir)
+    process_single_evaluation_batch(eval_path, md_output_dir)
