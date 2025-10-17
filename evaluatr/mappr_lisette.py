@@ -8,9 +8,10 @@ __all__ = ['GEMINI_API_KEY', 'cfg', 'traces_dir', 'db_path', 'db', 'sections_cac
            'find_section_path', 'get_content_tool', 'flatten_sections', 'format_toc_for_llm', 'format_enabler_theme',
            'format_crosscutting_theme', 'format_gcm_theme', 'format_srf_output', 'CoreSectionsOutput',
            'EvidenceLocation', 'ThemeTaggingOutput', 'parse_response', 'identify_core_sections', 'extract_core_content',
-           'tag_theme', 'Stage', 'TraceContext', 'setup_logger', 'setup_trace_logging', 'log_analysis_event',
-           'get_from_cache', 'store_in_cache', 'limit', 'TaggingResult', 'PipelineResults', 'PipelineOrchestrator',
-           'get_filtered_srf_output_ids']
+           'TagResult', 'tag_theme', 'Stage', 'TraceContext', 'setup_logger', 'setup_trace_logging',
+           'log_analysis_event', 'get_from_cache', 'store_in_cache', 'limit', 'TaggingResult', 'PipelineResults',
+           'PipelineOrchestrator', 'get_filtered_srf_output_ids', 'find_enriched_path', 'parse_force_refresh',
+           'run_selected_stages', 'tag_evaluation']
 
 # %% ../nbs/08_mappr_lisette.ipynb 5
 from pathlib import Path
@@ -25,13 +26,14 @@ import uuid
 from datetime import datetime
 from typing import List, Callable
 import dspy
-from asyncio import Semaphore, gather, sleep
 import time
 from collections import defaultdict
 import copy
-
-from pydantic import BaseModel, Field
+from copy import deepcopy
+from dataclasses import dataclass
 from typing import List
+from pydantic import BaseModel, Field
+from asyncio import Semaphore, gather, sleep
 
 from .frameworks import (EvalData, 
                                  IOMEvalData, 
@@ -40,17 +42,11 @@ from .frameworks import (EvalData,
                                  FrameworkCat,
                                  find_srf_output_by_id)
 
-#from evaluatr.db_traces import TraceDB, Trace
 from fastlite import Database
 from apswutils.db import NotFoundError
 
-from lisette import Chat, AsyncChat, mk_msg
+from lisette import mk_msg
 from lisette.core import acompletion
-import json
-
-from dataclasses import dataclass
-from fastlite import Database
-from pathlib import Path
 
 # %% ../nbs/08_mappr_lisette.ipynb 6
 from dotenv import load_dotenv
@@ -401,6 +397,12 @@ def extract_core_content(
         content_parts.append(content)
     
     return "\n\n---\n\n".join(content_parts)
+
+# %% ../nbs/08_mappr_lisette.ipynb 60
+class TagResult(BaseModel):
+    is_core: bool
+    reasoning: str
+    confidence: str
 
 # %% ../nbs/08_mappr_lisette.ipynb 61
 async def tag_theme(
@@ -903,3 +905,83 @@ async def run_stage3(self:PipelineOrchestrator, semaphore):
     for result in results: 
         self.results[Stage.STAGE3][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
+
+# %% ../nbs/08_mappr_lisette.ipynb 107
+def find_enriched_path(eval_id: str, md_dir: str):
+    "Find the enriched markdown directory for an evaluation"
+    eval_path = Path(md_dir) / eval_id
+    if not eval_path.exists():
+        raise FileNotFoundError(f"Evaluation directory not found: {eval_path}")
+    
+    report_dirs = eval_path.ls().filter(lambda d: d.is_dir() and d.name != 'enriched')
+    if not report_dirs:
+        raise FileNotFoundError(f"No report directory found in {eval_path}")
+    
+    doc_path = report_dirs[0] / 'enriched'
+    if not doc_path.exists():
+        raise FileNotFoundError(f"Enriched directory not found: {doc_path}")
+    
+    return doc_path
+
+# %% ../nbs/08_mappr_lisette.ipynb 108
+def parse_force_refresh(force_refresh_str: str, working_cfg):
+    "Parse and apply force_refresh parameter to config"
+    if force_refresh_str:
+        refresh_items = [s.strip() for s in force_refresh_str.split(',')]
+        for item in refresh_items:
+            if item == 'sections':
+                working_cfg.pipeline.force_refresh.sections = True
+            elif item in ['stage1', 'stage2', 'stage3']:
+                working_cfg.pipeline.force_refresh[item] = True
+
+# %% ../nbs/08_mappr_lisette.ipynb 109
+async def run_selected_stages(orchestrator, semaphore, stages_to_run):
+    "Run only the selected pipeline stages"
+    await orchestrator.identify_sections(semaphore)
+    if 1 in stages_to_run:
+        await orchestrator.run_stage1(semaphore)
+    if 2 in stages_to_run:
+        await orchestrator.run_stage2(semaphore)
+    if 3 in stages_to_run:
+        await orchestrator.run_stage3(semaphore)
+
+# %% ../nbs/08_mappr_lisette.ipynb 110
+@call_parse
+def tag_evaluation(
+    eval_id: str,  # Evaluation ID to process
+    md_dir: str = "_data/md_library",  # Markdown directory
+    stages: str = "1,2,3",  # Stages to run (comma-separated: 1,2,3)
+    force_refresh: str = None  # Force refresh stages (comma-separated: sections,stage1,stage2,stage3)
+):
+    "Tag evaluation report against frameworks"
+    
+    # Use module's default config
+    working_cfg = deepcopy(cfg)
+    
+    # Find enriched markdown path
+    try:
+        doc_path = find_enriched_path(eval_id, md_dir)
+    except FileNotFoundError as e:
+        logging.error(str(e))
+        return
+    
+    # Load report and create heading structure
+    report = load_report(doc_path)
+    hdgs = create_heading_dict(report)
+    
+    # Parse parameters
+    stages_to_run = [int(s.strip()) for s in stages.split(',')]
+    parse_force_refresh(force_refresh, working_cfg)
+    
+    # Run pipeline
+    orchestrator = PipelineOrchestrator(
+        report_id=eval_id,
+        hdgs=hdgs,
+        eval_data=IOMEvalData(),
+        cfg=working_cfg
+    )
+    
+    semaphore = Semaphore(working_cfg.semaphore)
+    run(run_selected_stages(orchestrator, semaphore, stages_to_run))
+    
+    logging.info(f"Completed tagging for {eval_id}")
