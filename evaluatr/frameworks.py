@@ -12,6 +12,7 @@ from rich import print
 import json
 from enum import Enum
 from fastcore.all import *
+from importlib.resources import files
 
 # %% ../nbs/05_frameworks.ipynb 4
 class EvalDict(AttrDict):
@@ -62,9 +63,11 @@ class EvalData:
 
 # %% ../nbs/05_frameworks.ipynb 9
 class IOMEvalData(EvalData):
-    def __init__(self, base_path="./files/eval_frameworks"):
+    def __init__(self, base_path=None):
+        if base_path is None:
+            base_path = files('evaluatr').joinpath('files/eval_frameworks')
         super().__init__(base_path)
-    
+        
     @property
     def srf_crosscutting_priorities(self): return evalify(self._data['crosscutting_priorities'])
     @property
