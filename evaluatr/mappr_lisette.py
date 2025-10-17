@@ -33,6 +33,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import List
 from pydantic import BaseModel, Field
+import asyncio
 from asyncio import Semaphore, gather, sleep
 
 from .frameworks import (EvalData, 
@@ -45,7 +46,7 @@ from .frameworks import (EvalData,
 from fastlite import Database
 from apswutils.db import NotFoundError
 
-from lisette import mk_msg
+from lisette import mk_msg, AsyncChat
 from lisette.core import acompletion
 
 # %% ../nbs/08_mappr_lisette.ipynb 6
@@ -62,7 +63,7 @@ cfg = AttrDict({
     'max_tokens': 8192,
     'track_usage': False,
     'call_delay': 0.1, # in seconds
-    'semaphore': 10,
+    'semaphore': 2,
     'dirs': AttrDict({
         'data': '.evaluatr',
         'trace': 'traces'
@@ -654,15 +655,6 @@ async def identify_sections(self:PipelineOrchestrator, semaphore):
 
 # %% ../nbs/08_mappr_lisette.ipynb 83
 @patch
-async def run(self:PipelineOrchestrator, semaphore):
-    "Run complete pipeline: identify sections, then all stages"
-    await self.identify_sections(semaphore)
-    await self.run_stage1(semaphore)
-    await self.run_stage2(semaphore)
-    await self.run_stage3(semaphore)
-
-# %% ../nbs/08_mappr_lisette.ipynb 84
-@patch
 def _tag_kwargs(self:PipelineOrchestrator):
     return {
         'system_prompt': self.cfg_p.tagging_prompt,
@@ -672,7 +664,7 @@ def _tag_kwargs(self:PipelineOrchestrator):
         'cache_theme': self.cfg_p.cache_theme
     }
 
-# %% ../nbs/08_mappr_lisette.ipynb 85
+# %% ../nbs/08_mappr_lisette.ipynb 84
 @patch
 async def process_themes_batch(self:PipelineOrchestrator, 
                                themes, 
@@ -732,7 +724,7 @@ async def process_themes_batch(self:PipelineOrchestrator,
     return results
 
 
-# %% ../nbs/08_mappr_lisette.ipynb 86
+# %% ../nbs/08_mappr_lisette.ipynb 85
 @patch
 async def run_stage1(self:PipelineOrchestrator, semaphore):
     themes = []
@@ -766,7 +758,7 @@ async def run_stage1(self:PipelineOrchestrator, semaphore):
     for result in results:
         self.results[Stage.STAGE1][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
-# %% ../nbs/08_mappr_lisette.ipynb 89
+# %% ../nbs/08_mappr_lisette.ipynb 88
 @patch
 def get_stage1_context(self:PipelineOrchestrator) -> str:
     "Get formatted context from Stage 1 tagged themes"
@@ -788,7 +780,7 @@ def get_stage1_context(self:PipelineOrchestrator) -> str:
     return f"### Report Preliminary Context\nThis evaluation report covers the following Strategic Results Framework themes:\n" + "\n".join(context_parts)
 
 
-# %% ../nbs/08_mappr_lisette.ipynb 92
+# %% ../nbs/08_mappr_lisette.ipynb 91
 @patch
 async def run_stage2(self:PipelineOrchestrator, semaphore):
     "Run stage 2 - GCM objectives analysis with Stage 1 context"
@@ -822,7 +814,7 @@ async def run_stage2(self:PipelineOrchestrator, semaphore):
         self.results[Stage.STAGE2][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
 
-# %% ../nbs/08_mappr_lisette.ipynb 95
+# %% ../nbs/08_mappr_lisette.ipynb 94
 def get_filtered_srf_output_ids(
     results: PipelineResults, # PipelineResults
     eval_data: EvalData # EvalData
@@ -838,7 +830,7 @@ def get_filtered_srf_output_ids(
     
     return list(srf_output_ids)
 
-# %% ../nbs/08_mappr_lisette.ipynb 98
+# %% ../nbs/08_mappr_lisette.ipynb 97
 @patch
 def get_combined_context(self:PipelineOrchestrator) -> str:
     "Get combined context from Stage 1 and Stage 2 tagged themes"
@@ -855,7 +847,7 @@ def get_combined_context(self:PipelineOrchestrator) -> str:
     
     return f"{stage1_context}\n\n### Covered GCM Objectives\n{gcm_context}"
 
-# %% ../nbs/08_mappr_lisette.ipynb 101
+# %% ../nbs/08_mappr_lisette.ipynb 100
 @patch
 def get_filtered_srf_outputs(self:PipelineOrchestrator) -> list:
     "Get filtered SRF output IDs based on tagged GCM themes"
@@ -869,7 +861,7 @@ def get_filtered_srf_outputs(self:PipelineOrchestrator) -> list:
     
     return list(srf_output_ids)
 
-# %% ../nbs/08_mappr_lisette.ipynb 103
+# %% ../nbs/08_mappr_lisette.ipynb 102
 @patch
 async def run_stage3(self:PipelineOrchestrator, semaphore):
     "Run stage 3 - Targeted SRF outputs analysis with combined context"
@@ -906,7 +898,7 @@ async def run_stage3(self:PipelineOrchestrator, semaphore):
         self.results[Stage.STAGE3][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
 
-# %% ../nbs/08_mappr_lisette.ipynb 107
+# %% ../nbs/08_mappr_lisette.ipynb 106
 def find_enriched_path(eval_id: str, md_dir: str):
     "Find the enriched markdown directory for an evaluation"
     eval_path = Path(md_dir) / eval_id
@@ -923,7 +915,7 @@ def find_enriched_path(eval_id: str, md_dir: str):
     
     return doc_path
 
-# %% ../nbs/08_mappr_lisette.ipynb 108
+# %% ../nbs/08_mappr_lisette.ipynb 107
 def parse_force_refresh(force_refresh_str: str, working_cfg):
     "Parse and apply force_refresh parameter to config"
     if force_refresh_str:
@@ -934,7 +926,7 @@ def parse_force_refresh(force_refresh_str: str, working_cfg):
             elif item in ['stage1', 'stage2', 'stage3']:
                 working_cfg.pipeline.force_refresh[item] = True
 
-# %% ../nbs/08_mappr_lisette.ipynb 109
+# %% ../nbs/08_mappr_lisette.ipynb 108
 async def run_selected_stages(orchestrator, semaphore, stages_to_run):
     "Run only the selected pipeline stages"
     await orchestrator.identify_sections(semaphore)
@@ -945,7 +937,7 @@ async def run_selected_stages(orchestrator, semaphore, stages_to_run):
     if 3 in stages_to_run:
         await orchestrator.run_stage3(semaphore)
 
-# %% ../nbs/08_mappr_lisette.ipynb 110
+# %% ../nbs/08_mappr_lisette.ipynb 109
 @call_parse
 def tag_evaluation(
     eval_id: str,  # Evaluation ID to process
@@ -954,7 +946,6 @@ def tag_evaluation(
     force_refresh: str = None  # Force refresh stages (comma-separated: sections,stage1,stage2,stage3)
 ):
     "Tag evaluation report against frameworks"
-    
     # Use module's default config
     working_cfg = deepcopy(cfg)
     
@@ -982,6 +973,6 @@ def tag_evaluation(
     )
     
     semaphore = Semaphore(working_cfg.semaphore)
-    run(run_selected_stages(orchestrator, semaphore, stages_to_run))
+    asyncio.run(run_selected_stages(orchestrator, semaphore, stages_to_run))
     
     logging.info(f"Completed tagging for {eval_id}")
