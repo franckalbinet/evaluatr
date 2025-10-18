@@ -287,8 +287,7 @@ evl_ocr example-report --overwrite
 
 #### `evl_md_plus` - Document Enrichment
 
-Fix markdown heading hierarchy, add page number in title and enrich
-images with AI-generated descriptions.
+# Fix markdown headings hierarchy, append page numbers to each heading, and replace figures with AI-generated descriptions.
 
 **Usage:**
 
