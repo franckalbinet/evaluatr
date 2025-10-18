@@ -12,7 +12,6 @@ website:
           - 03_ocr.ipynb
           - 04_enrichr.ipynb
           - 05_frameworks.ipynb
-          - 07_mappr.ipynb
-          - 08_mappr_lisette.ipynb
+          - 06_mappr.ipynb
 
 

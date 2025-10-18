@@ -242,7 +242,7 @@ evl_tag example-report --md-dir md_library
 
 ### Detailed CLI Usage
 
-### `evl_ocr` - OCR Processing
+#### `evl_ocr` - OCR Processing
 
 Convert PDF evaluation reports to structured markdown with extracted
 images.
@@ -282,7 +282,7 @@ evl_ocr example-report --overwrite
                 ├── img-0.jpeg
                 └── img-1.jpeg
 
-### `evl_md_plus` - Document Enrichment
+#### `evl_md_plus` - Document Enrichment
 
 Fix markdown heading hierarchy and enrich images with AI-generated
 descriptions.
@@ -310,7 +310,7 @@ evl_md_plus example-report --overwrite
 **Output:** Creates `enhanced/` and `enriched/` directories with
 corrected headings and image descriptions.
 
-### `evl_tag` - Framework Tagging
+#### `evl_tag` - Framework Tagging
 
 Map evaluation reports against established frameworks (SRF, GCM) using
 AI-assisted analysis.
@@ -352,9 +352,9 @@ trails of AI decisions.
 - **Full Documentation**: [GitHub
   Pages](https://franckalbinet.github.io/evaluatr/)
 - **Module Notebooks** (literate programming with nbdev):
-  - [OCR Processing](nbs/03_ocr.ipynb)
-  - [Document Enrichment](nbs/04_enrichr.ipynb)
-  - [Framework Mapping](nbs/08_mappr_lisette.ipynb)
+  - [OCR Processing](https://fr.anckalbi.net/evaluatr/ocr.html)
+  - [Document Enrichment](https://fr.anckalbi.net/evaluatr/enrichr.html)
+  - [Framework Mapping](https://fr.anckalbi.net/evaluatr/mappr.html)
 - **Examples**: See the `nbs/` directory for Jupyter notebooks
 
 ## Contributing
