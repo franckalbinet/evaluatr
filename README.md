@@ -253,10 +253,13 @@ images.
 evl_ocr <eval-id> [OPTIONS]
 ```
 
-**Options:** - `--pdf-dir`: Directory containing PDF folders (default:
-`../data/pdf_library`) - `--output-dir`: Output directory for markdown
-(default: `../data/md_library`) - `--overwrite`: Reprocess if output
-already exists
+**Options:**
+
+- `--pdf-dir`: Directory containing PDF folders (default:
+  `../data/pdf_library`)
+- `--output-dir`: Output directory for markdown (default:
+  `../data/md_library`)
+- `--overwrite`: Reprocess if output already exists
 
 **Examples:**
 
@@ -284,8 +287,8 @@ evl_ocr example-report --overwrite
 
 #### `evl_md_plus` - Document Enrichment
 
-Fix markdown heading hierarchy and enrich images with AI-generated
-descriptions.
+Fix markdown heading hierarchy, add page number in title and enrich
+images with AI-generated descriptions.
 
 **Usage:**
 
@@ -293,9 +296,11 @@ descriptions.
 evl_md_plus <eval-id> [OPTIONS]
 ```
 
-**Options:** - `--md-dir`: Directory containing markdown folders
-(default: `../data/md_library`) - `--overwrite`: Reprocess if
-enhanced/enriched already exists
+**Options:**
+
+- `--md-dir`: Directory containing markdown folders (default:
+  `../data/md_library`)
+- `--overwrite`: Reprocess if enhanced/enriched already exists
 
 **Examples:**
 
@@ -310,7 +315,7 @@ evl_md_plus example-report --overwrite
 **Output:** Creates `enhanced/` and `enriched/` directories with
 corrected headings and image descriptions.
 
-#### `evl_tag` - Framework Tagging
+#### `evl_tag` \[IOM only for now\]
 
 Map evaluation reports against established frameworks (SRF, GCM) using
 AI-assisted analysis.
@@ -321,12 +326,16 @@ AI-assisted analysis.
 evl_tag <eval-id> [OPTIONS]
 ```
 
-**Options:** - `--md-dir`: Directory containing markdown folders
-(default: `_data/md_library`) - `--stages`: Comma-separated stages to
-run (default: `1,2,3`) - Stage 1: SRF Enablers & Cross-cutting
-Priorities - Stage 2: GCM Objectives - Stage 3: SRF Outputs -
-`--force-refresh`: Force refresh specific stages (comma-separated:
-`sections,stage1,stage2,stage3`)
+**Options:**
+
+- `--md-dir`: Directory containing markdown folders (default:
+  `_data/md_library`)
+- `--stages`: Comma-separated stages to run (default: `1,2,3`)
+  - Stage 1: SRF Enablers & Cross-cutting Priorities
+  - Stage 2: GCM Objectives
+  - Stage 3: SRF Outputs
+- `--force-refresh`: Force refresh specific stages (comma-separated:
+  `sections,stage1,stage2,stage3`)
 
 **Examples:**
 
@@ -399,9 +408,11 @@ This project is licensed under the MIT License - see the
 ## Dependencies
 
 See [`settings.ini`](settings.ini) for the complete list of
-dependencies. Key packages include: - **fastcore** & **pandas** - Core
-data processing - **lisette**, **litellm** & **dspy** - AI/LLM
-integration - **mistralai** - OCR processing
+dependencies. Key packages include:
+
+- **fastcore** & **pandas** - Core data processing
+- **lisette**, **litellm** & **dspy** - AI/LLM integration
+- **mistralai** - OCR processing
 
 ## Support
 
