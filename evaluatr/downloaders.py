@@ -10,13 +10,16 @@ from pathlib import Path
 from rich import print
 from fastcore.all import *
 from urllib.parse import urlparse
-import requests
 from functools import partial
 
-from .readers import load_evals, default_config
+from .readers import load_evals, default_config, Evaluation
 
 # %% ../nbs/02_downloaders.ipynb 3
-def download_eval(eval, base_path='files/test/eval_reports', cfg:dict=default_config):
+def download_eval(
+    eval:Evaluation, # Evaluation object 
+    base_path:str='files/test/eval_reports', # Base path to save files
+    cfg:dict=default_config # Configuration dictionary
+    ):
     "Download all documents for an evaluation to base_path/eval_id/"
     eval_dir = Path(base_path)/getattr(eval, cfg.id)
     eval_dir.mkdir(parents=True, exist_ok=True)
