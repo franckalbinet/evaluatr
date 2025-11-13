@@ -221,12 +221,8 @@ find_eval(evals, url, by='url')
 ### Downloading Evaluation Documents
 
 ``` python
-from evaluatr.downloaders import download_docs
-from pathlib import Path
-
-fname = 'files/test/evaluations.json'
-base_dir = Path("files/test/pdf_library")
-download_docs(fname, base_dir=base_dir, n_workers=0, overwrite=True)
+from evaluatr.downloaders import download_evals
+download_evals(evals)
 ```
 
 ### Command Line Interface (CLI) Workflow
