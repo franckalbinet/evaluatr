@@ -215,7 +215,7 @@ def format_gcm_theme(
     
     return '\n'.join(parts)
 
-# %% ../nbs/06_mappr.ipynb 41
+# %% ../nbs/06_mappr.ipynb 42
 def format_srf_output(output_context: dict) -> str:
     "Format SRF output with full hierarchical context for LM processing."
     parts = [
@@ -228,19 +228,19 @@ def format_srf_output(output_context: dict) -> str:
     
     return '\n'.join(parts)
 
-# %% ../nbs/06_mappr.ipynb 45
+# %% ../nbs/06_mappr.ipynb 46
 class CoreSectionsOutput(BaseModel):
     "Identify the core sections of the report"
     section_names: list[str]
     reasoning: str
 
-# %% ../nbs/06_mappr.ipynb 46
+# %% ../nbs/06_mappr.ipynb 47
 class EvidenceLocation(BaseModel):
     "Identify the location of the evidence in the report"
     section: str
     citation: str
 
-# %% ../nbs/06_mappr.ipynb 47
+# %% ../nbs/06_mappr.ipynb 48
 class ThemeTaggingOutput(BaseModel):
     "Tag the theme in the report"
     is_core: bool
@@ -248,7 +248,7 @@ class ThemeTaggingOutput(BaseModel):
     evidence_locations: list[EvidenceLocation]
     confidence: str  # low/medium/high
 
-# %% ../nbs/06_mappr.ipynb 49
+# %% ../nbs/06_mappr.ipynb 50
 select_section_sp = """### ROLE AND OBJECTIVE
 You are an expert evaluation report analyst. Your task is to identify sections that would help determine if specific themes are CORE to this report for synthesis and retrieval purposes.
 
@@ -279,7 +279,7 @@ Example: If ToC shows "4.1. Relevance of programme activities .... page 34"
 Return exactly: "4.1. Relevance of programme activities .... page 34"
 """
 
-# %% ../nbs/06_mappr.ipynb 50
+# %% ../nbs/06_mappr.ipynb 51
 tagging_sp = """### ROLE AND OBJECTIVE
 You are an evaluation synthesis specialist. Your task is to determine if this report should be tagged with a specific theme for future retrieval in synthesis work.
 
@@ -320,7 +320,7 @@ JSON with:
 - confidence: low/medium/high
 """
 
-# %% ../nbs/06_mappr.ipynb 51
+# %% ../nbs/06_mappr.ipynb 52
 tagging_sp_no_citation = """### ROLE AND OBJECTIVE
 You are an evaluation synthesis specialist. Your task is to determine if this report should be tagged with a 
 specific theme for future retrieval in synthesis work.
@@ -361,12 +361,12 @@ JSON with:
 - reasoning: explain centrality (or lack thereof) with specific evidence (max 150 words)
 - confidence: low/medium/high"""
 
-# %% ../nbs/06_mappr.ipynb 53
+# %% ../nbs/06_mappr.ipynb 54
 def parse_response(result):
     "Extract JSON from Lisette response"
     return json.loads(result.choices[0].message.content)
 
-# %% ../nbs/06_mappr.ipynb 55
+# %% ../nbs/06_mappr.ipynb 56
 async def identify_core_sections(
     hdgs: dict, # The nested dictionary-like structure of the report also allowing to pull content from 
     system_prompt: str, # The system prompt for the core sections identification
@@ -380,7 +380,7 @@ async def identify_core_sections(
     )
     return parse_response(result)
 
-# %% ../nbs/06_mappr.ipynb 57
+# %% ../nbs/06_mappr.ipynb 58
 def extract_core_content(
     core_section_names: list[str],  # Section names from Step 1
     hdgs: dict  # Nested heading structure
@@ -403,14 +403,14 @@ def extract_core_content(
     
     return "\n\n---\n\n".join(content_parts)
 
-# %% ../nbs/06_mappr.ipynb 60
+# %% ../nbs/06_mappr.ipynb 62
 class TagResult(BaseModel):
     "The result of the theme tagging"
     is_core: bool
     reasoning: str
     confidence: str
 
-# %% ../nbs/06_mappr.ipynb 61
+# %% ../nbs/06_mappr.ipynb 63
 async def tag_theme(
     doc_content: str, # The content of the document to analyze
     theme: str, # The theme to tag
@@ -438,7 +438,7 @@ async def tag_theme(
     )
     return response
 
-# %% ../nbs/06_mappr.ipynb 64
+# %% ../nbs/06_mappr.ipynb 66
 class Stage(Enum):
     "Pipeline stage number"
     STAGE1 = "stage1"
@@ -446,7 +446,7 @@ class Stage(Enum):
     STAGE3 = "stage3"
     def __str__(self): return self.value
 
-# %% ../nbs/06_mappr.ipynb 66
+# %% ../nbs/06_mappr.ipynb 68
 class TraceContext(AttrDict):
     "Context for tracing the mapping process"
     def __init__(self, 
@@ -459,7 +459,7 @@ class TraceContext(AttrDict):
     def __repr__(self):
         return f"TraceContext(report_id={self.report_id}, stage={self.stage}, framework={self.framework})"
 
-# %% ../nbs/06_mappr.ipynb 68
+# %% ../nbs/06_mappr.ipynb 70
 def setup_logger(
     name: str, # The name of the logger
     handler: logging.Handler, # The handler to use
@@ -474,7 +474,7 @@ def setup_logger(
     for k,v in kwargs.items(): setattr(logger, k, v)
     return logger
 
-# %% ../nbs/06_mappr.ipynb 69
+# %% ../nbs/06_mappr.ipynb 71
 def setup_trace_logging(
     report_id: str, # The report identifier
     verbosity: int = cfg.verbosity # The verbosity level
@@ -487,7 +487,7 @@ def setup_trace_logging(
     console_handler = logging.StreamHandler()
     setup_logger('trace.console', console_handler, verbosity=verbosity)
 
-# %% ../nbs/06_mappr.ipynb 70
+# %% ../nbs/06_mappr.ipynb 72
 def _build_base_data(
     event: str, # The event to log
     report_id: str, # The report identifier
@@ -515,7 +515,7 @@ def _build_base_data(
     base_data.update(extra_data)
     return base_data
 
-# %% ../nbs/06_mappr.ipynb 71
+# %% ../nbs/06_mappr.ipynb 73
 def _format_console_msg(
     base_data: dict, # The base data to format
     verbosity: int, # The verbosity level
@@ -538,7 +538,7 @@ def _format_console_msg(
     else:  # verbosity == 3
         return json.dumps(base_data, indent=2)
 
-# %% ../nbs/06_mappr.ipynb 72
+# %% ../nbs/06_mappr.ipynb 74
 def log_analysis_event(
     event: str, # The event to log
     report_id: str, # The report identifier
@@ -562,7 +562,7 @@ def log_analysis_event(
         console_logger.info(console_msg)
 
 
-# %% ../nbs/06_mappr.ipynb 74
+# %% ../nbs/06_mappr.ipynb 76
 def get_from_cache(
     table, # The cache table
     pk_value: str # The primary key value
@@ -573,7 +573,7 @@ def get_from_cache(
     except NotFoundError:
         return None
 
-# %% ../nbs/06_mappr.ipynb 75
+# %% ../nbs/06_mappr.ipynb 77
 def store_in_cache(
     table, # The cache table
     data: dict # The data to store
@@ -582,7 +582,7 @@ def store_in_cache(
     data['timestamp'] = datetime.now().isoformat()
     table.upsert(data)
 
-# %% ../nbs/06_mappr.ipynb 76
+# %% ../nbs/06_mappr.ipynb 78
 async def limit(
     semaphore, # The semaphore to use
     coro, # The coroutine to execute
@@ -594,7 +594,7 @@ async def limit(
         if delay: await sleep(delay)
         return result
 
-# %% ../nbs/06_mappr.ipynb 77
+# %% ../nbs/06_mappr.ipynb 79
 class TaggingResult(AttrDict):
     "The result of the theme tagging"
     def __init__(self, response: dict, framework_info: FrameworkInfo):
@@ -605,7 +605,7 @@ class TaggingResult(AttrDict):
         self.framework_category = framework_info.category
         self.framework_theme_id = framework_info.theme_id
 
-# %% ../nbs/06_mappr.ipynb 78
+# %% ../nbs/06_mappr.ipynb 80
 class PipelineResults(dict):
     "The results of the pipeline"
     def __init__(self):
@@ -614,7 +614,7 @@ class PipelineResults(dict):
         self[Stage.STAGE2] = defaultdict(lambda: defaultdict(dict))
         self[Stage.STAGE3] = defaultdict(lambda: defaultdict(dict))
 
-# %% ../nbs/06_mappr.ipynb 79
+# %% ../nbs/06_mappr.ipynb 81
 @patch
 def __call__(
     self:PipelineResults, 
@@ -632,7 +632,7 @@ def __call__(
                     themes.append(theme)
     return themes
 
-# %% ../nbs/06_mappr.ipynb 80
+# %% ../nbs/06_mappr.ipynb 82
 cfg.pipeline = AttrDict({
     'select_section_prompt': select_section_sp,
     'tagging_prompt': tagging_sp_no_citation,
@@ -650,7 +650,7 @@ cfg.pipeline = AttrDict({
     })
 })
 
-# %% ../nbs/06_mappr.ipynb 81
+# %% ../nbs/06_mappr.ipynb 83
 class PipelineOrchestrator:
     "The orchestrator of the pipeline"
     def __init__(self, 
@@ -666,7 +666,7 @@ class PipelineOrchestrator:
         self.core_sections = None
         self.doc_content = None
 
-# %% ../nbs/06_mappr.ipynb 82
+# %% ../nbs/06_mappr.ipynb 84
 @patch
 async def identify_sections(self:PipelineOrchestrator, semaphore):
     "Identify core sections and log the selection"
@@ -703,7 +703,7 @@ async def identify_sections(self:PipelineOrchestrator, semaphore):
         reasoning=core_sections_result['reasoning']
     )
 
-# %% ../nbs/06_mappr.ipynb 83
+# %% ../nbs/06_mappr.ipynb 85
 @patch
 def _tag_kwargs(self:PipelineOrchestrator):
     return {
@@ -714,7 +714,7 @@ def _tag_kwargs(self:PipelineOrchestrator):
         'cache_theme': self.cfg_p.cache_theme
     }
 
-# %% ../nbs/06_mappr.ipynb 84
+# %% ../nbs/06_mappr.ipynb 86
 @patch
 async def process_themes_batch(self:PipelineOrchestrator, 
                                themes, 
@@ -774,7 +774,7 @@ async def process_themes_batch(self:PipelineOrchestrator,
     return results
 
 
-# %% ../nbs/06_mappr.ipynb 85
+# %% ../nbs/06_mappr.ipynb 87
 @patch
 async def run_stage1(self:PipelineOrchestrator, semaphore):
     themes = []
@@ -808,7 +808,7 @@ async def run_stage1(self:PipelineOrchestrator, semaphore):
     for result in results:
         self.results[Stage.STAGE1][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
-# %% ../nbs/06_mappr.ipynb 88
+# %% ../nbs/06_mappr.ipynb 90
 @patch
 def get_stage1_context(self:PipelineOrchestrator) -> str:
     "Get formatted context from Stage 1 tagged themes"
@@ -830,7 +830,7 @@ def get_stage1_context(self:PipelineOrchestrator) -> str:
     return f"### Report Preliminary Context\nThis evaluation report covers the following Strategic Results Framework themes:\n" + "\n".join(context_parts)
 
 
-# %% ../nbs/06_mappr.ipynb 91
+# %% ../nbs/06_mappr.ipynb 93
 @patch
 async def run_stage2(self:PipelineOrchestrator, semaphore):
     "Run stage 2 - GCM objectives analysis with Stage 1 context"
@@ -864,7 +864,7 @@ async def run_stage2(self:PipelineOrchestrator, semaphore):
         self.results[Stage.STAGE2][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
 
-# %% ../nbs/06_mappr.ipynb 94
+# %% ../nbs/06_mappr.ipynb 99
 def get_filtered_srf_output_ids(
     results: PipelineResults, # PipelineResults
     eval_data: EvalData # EvalData
@@ -880,7 +880,7 @@ def get_filtered_srf_output_ids(
     
     return list(srf_output_ids)
 
-# %% ../nbs/06_mappr.ipynb 97
+# %% ../nbs/06_mappr.ipynb 102
 @patch
 def get_combined_context(self:PipelineOrchestrator) -> str:
     "Get combined context from Stage 1 and Stage 2 tagged themes"
@@ -897,7 +897,7 @@ def get_combined_context(self:PipelineOrchestrator) -> str:
     
     return f"{stage1_context}\n\n### Covered GCM Objectives\n{gcm_context}"
 
-# %% ../nbs/06_mappr.ipynb 100
+# %% ../nbs/06_mappr.ipynb 105
 @patch
 def get_filtered_srf_outputs(self:PipelineOrchestrator) -> list:
     "Get filtered SRF output IDs based on tagged GCM themes"
@@ -911,7 +911,7 @@ def get_filtered_srf_outputs(self:PipelineOrchestrator) -> list:
     
     return list(srf_output_ids)
 
-# %% ../nbs/06_mappr.ipynb 102
+# %% ../nbs/06_mappr.ipynb 107
 @patch
 async def run_stage3(self:PipelineOrchestrator, semaphore):
     "Run stage 3 - Targeted SRF outputs analysis with combined context"
@@ -948,7 +948,7 @@ async def run_stage3(self:PipelineOrchestrator, semaphore):
         self.results[Stage.STAGE3][result.framework_name][result.framework_category][result.framework_theme_id] = result
 
 
-# %% ../nbs/06_mappr.ipynb 106
+# %% ../nbs/06_mappr.ipynb 111
 def find_enriched_path(eval_id: str, md_dir: str):
     "Find the enriched markdown directory for an evaluation"
     eval_path = Path(md_dir) / eval_id
@@ -965,7 +965,7 @@ def find_enriched_path(eval_id: str, md_dir: str):
     
     return doc_path
 
-# %% ../nbs/06_mappr.ipynb 107
+# %% ../nbs/06_mappr.ipynb 112
 def parse_force_refresh(force_refresh_str: str, working_cfg):
     "Parse and apply force_refresh parameter to config"
     if force_refresh_str:
@@ -976,7 +976,7 @@ def parse_force_refresh(force_refresh_str: str, working_cfg):
             elif item in ['stage1', 'stage2', 'stage3']:
                 working_cfg.pipeline.force_refresh[item] = True
 
-# %% ../nbs/06_mappr.ipynb 108
+# %% ../nbs/06_mappr.ipynb 113
 async def run_selected_stages(orchestrator, semaphore, stages_to_run):
     "Run only the selected pipeline stages"
     await orchestrator.identify_sections(semaphore)
@@ -987,7 +987,7 @@ async def run_selected_stages(orchestrator, semaphore, stages_to_run):
     if 3 in stages_to_run:
         await orchestrator.run_stage3(semaphore)
 
-# %% ../nbs/06_mappr.ipynb 109
+# %% ../nbs/06_mappr.ipynb 114
 @call_parse
 def tag_evaluation(
     eval_id: str,  # Evaluation ID to process
