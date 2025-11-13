@@ -25,7 +25,25 @@ def flatten_evals_id_doc(
              for eval_data in evals 
              for doc in eval_data[cfg['docs_field']])
 
-# %% ../nbs/02_downloaders.ipynb 5
+# %% ../nbs/02_downloaders.ipynb 4
+def flatten_evals_id_doc(evals:L, cfg:dict=default_config) -> L:
+    "Flatten evaluation records into list of (id, url) tuples"
+    id,url,docs = cfg['id_field'],cfg['url_field'],cfg['docs_field']
+    #return L((getattr(evl, id), doc[url]) for evl in evals for doc in getattr(evl, docs))
+    for evl in evals:
+        for doc in getattr(evl, docs):
+            print(doc)
+            break
+    
+    #return L((getattr(evl, id), doc[url]) for evl in evals for doc in getattr(evl, docs))
+
+# %% ../nbs/02_downloaders.ipynb 6
+def flatten_evals_id_doc(evals:L, cfg:dict=default_config) -> L:
+    "Flatten evaluation records into list of (id, url) tuples"
+    #id,url,docs = cfg.id_field,cfg.url_field,cfg.docs_field
+    return L((getattr(evl, cfg.id_field), d[cfg.url]) for evl in evals for d in getattr(evl, cfg.docs_field))
+
+# %% ../nbs/02_downloaders.ipynb 11
 def mk_dirs(
     docs_to_download: L, # list of (eval_id, url) tuples
     base_dir: Path # path to the base directory
@@ -35,13 +53,13 @@ def mk_dirs(
     for eval_id in unique_eval_ids:
         (base_dir / eval_id).mkdir(parents=True, exist_ok=True)
 
-# %% ../nbs/02_downloaders.ipynb 7
+# %% ../nbs/02_downloaders.ipynb 13
 def extract_fname(url: str) -> str: 
     parsed_url = urlparse(url)
     fname = Path(parsed_url.path).name
     return fname
 
-# %% ../nbs/02_downloaders.ipynb 8
+# %% ../nbs/02_downloaders.ipynb 14
 def download_doc(
     doc_info: tuple[str, str],  # (eval_id, url) for the document to download
     base_dir: Path, # Base directory to save files to
@@ -67,7 +85,7 @@ def download_doc(
     except Exception as e:
         return f"Failed to download {fname}: {e}"
 
-# %% ../nbs/02_downloaders.ipynb 11
+# %% ../nbs/02_downloaders.ipynb 17
 def download_docs(
     json_file: str, # path to the JSON file
     base_dir: Path = Path("./PDF_Library"), # path to the base directory
@@ -79,10 +97,12 @@ def download_docs(
     docs_to_download = flatten_evals_id_doc(load_evals(json_file))
     mk_dirs(docs_to_download, base_dir)
     download_func = partial(download_doc, base_dir=base_dir, overwrite=overwrite)
-    results = parallel(download_func, 
-                      docs_to_download, 
-                      n_workers=n_workers,
-                      total=len(docs_to_download),
-                      progress=True)
+    results = parallel(
+        download_func, 
+        docs_to_download, 
+        n_workers=n_workers,
+        total=len(docs_to_download),
+        progress=True
+        )
     
     return results
