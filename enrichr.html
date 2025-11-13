@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Fix, clean markdown headings and enrich it with figures description, …">
+
+<title>Enrichr – Evaluatr</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-738cac9e5f2ad4ecce05fe3ba55cd681.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Enrichr – Evaluatr">
+<meta property="og:description" content="Fix, clean markdown headings and enrich it with figures description, …">
+<meta property="og:site_name" content="Evaluatr">
+<meta name="twitter:title" content="Enrichr – Evaluatr">
+<meta name="twitter:description" content="Fix, clean markdown headings and enrich it with figures description, …">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Evaluatr</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/franckalbinet/evaluatr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./readers.html">API</a></li><li class="breadcrumb-item"><a href="./enrichr.html">Enrichr</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluatr</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/eval_reports_eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation reports EDA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./readers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./downloaders.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Downloaders</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ocr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OCR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./enrichr.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Enrichr</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./frameworks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frameworks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mappr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mappr</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#fixing-markdown-headings" id="toc-fixing-markdown-headings" class="nav-link active" data-scroll-target="#fixing-markdown-headings">Fixing Markdown Headings</a>
+  <ul>
+  <li><a href="#setup_enhanced_dir" id="toc-setup_enhanced_dir" class="nav-link" data-scroll-target="#setup_enhanced_dir">setup_enhanced_dir</a></li>
+  <li><a href="#get_hdgs" id="toc-get_hdgs" class="nav-link" data-scroll-target="#get_hdgs">get_hdgs</a></li>
+  <li><a href="#get_hdgs_with_pages" id="toc-get_hdgs_with_pages" class="nav-link" data-scroll-target="#get_hdgs_with_pages">get_hdgs_with_pages</a></li>
+  <li><a href="#format_hdgs" id="toc-format_hdgs" class="nav-link" data-scroll-target="#format_hdgs">format_hdgs</a></li>
+  <li><a href="#headingresult" id="toc-headingresult" class="nav-link" data-scroll-target="#headingresult">HeadingResult</a></li>
+  <li><a href="#fixheadinghierarchy" id="toc-fixheadinghierarchy" class="nav-link" data-scroll-target="#fixheadinghierarchy">FixHeadingHierarchy</a></li>
+  <li><a href="#fix_md" id="toc-fix_md" class="nav-link" data-scroll-target="#fix_md">fix_md</a></li>
+  <li><a href="#group_corrections_by_page" id="toc-group_corrections_by_page" class="nav-link" data-scroll-target="#group_corrections_by_page">group_corrections_by_page</a></li>
+  <li><a href="#apply_corrections_to_page" id="toc-apply_corrections_to_page" class="nav-link" data-scroll-target="#apply_corrections_to_page">apply_corrections_to_page</a></li>
+  <li><a href="#apply_all_corrections" id="toc-apply_all_corrections" class="nav-link" data-scroll-target="#apply_all_corrections">apply_all_corrections</a></li>
+  <li><a href="#fix_doc_hdgs" id="toc-fix_doc_hdgs" class="nav-link" data-scroll-target="#fix_doc_hdgs">fix_doc_hdgs</a></li>
+  </ul></li>
+  <li><a href="#enrich-with-figures-description" id="toc-enrich-with-figures-description" class="nav-link" data-scroll-target="#enrich-with-figures-description">Enrich with figures description</a>
+  <ul>
+  <li><a href="#has_images" id="toc-has_images" class="nav-link" data-scroll-target="#has_images">has_images</a></li>
+  <li><a href="#markdownpage" id="toc-markdownpage" class="nav-link" data-scroll-target="#markdownpage">MarkdownPage</a></li>
+  <li><a href="#imgref" id="toc-imgref" class="nav-link" data-scroll-target="#imgref">ImgRef</a></li>
+  <li><a href="#markdownpage.find_img_refs" id="toc-markdownpage.find_img_refs" class="nav-link" data-scroll-target="#markdownpage.find_img_refs">MarkdownPage.find_img_refs</a></li>
+  <li><a href="#imagerelevance" id="toc-imagerelevance" class="nav-link" data-scroll-target="#imagerelevance">ImageRelevance</a></li>
+  <li><a href="#markdownpage.classify_imgs" id="toc-markdownpage.classify_imgs" class="nav-link" data-scroll-target="#markdownpage.classify_imgs">MarkdownPage.classify_imgs</a></li>
+  <li><a href="#describe_img" id="toc-describe_img" class="nav-link" data-scroll-target="#describe_img">describe_img</a></li>
+  <li><a href="#markdownpage.describe_imgs" id="toc-markdownpage.describe_imgs" class="nav-link" data-scroll-target="#markdownpage.describe_imgs">MarkdownPage.describe_imgs</a></li>
+  <li><a href="#markdownpage.replace_imgs_with_desc" id="toc-markdownpage.replace_imgs_with_desc" class="nav-link" data-scroll-target="#markdownpage.replace_imgs_with_desc">MarkdownPage.replace_imgs_with_desc</a></li>
+  <li><a href="#copy_page_to_enriched" id="toc-copy_page_to_enriched" class="nav-link" data-scroll-target="#copy_page_to_enriched">copy_page_to_enriched</a></li>
+  <li><a href="#process_single_page" id="toc-process_single_page" class="nav-link" data-scroll-target="#process_single_page">process_single_page</a></li>
+  <li><a href="#enrich_images" id="toc-enrich_images" class="nav-link" data-scroll-target="#enrich_images">enrich_images</a></li>
+  </ul></li>
+  <li><a href="#cli" id="toc-cli" class="nav-link" data-scroll-target="#cli">CLI</a>
+  <ul>
+  <li><a href="#md_plus_evaluation" id="toc-md_plus_evaluation" class="nav-link" data-scroll-target="#md_plus_evaluation">md_plus_evaluation</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/franckalbinet/evaluatr/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./readers.html">API</a></li><li class="breadcrumb-item"><a href="./enrichr.html">Enrichr</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Enrichr</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+</div>
+
+<div>
+  <div class="description">
+    Fix, clean markdown headings and enrich it with figures description, …
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>This module aims to fix and enrich markdown headings from OCR’d PDF files by:</p>
+<ol type="1">
+<li>Fixing heading hierarchy that was corrupted during OCR</li>
+<li>Adding page numbers to headings for better navigation</li>
+<li>Enriching figure references with descriptive text and creating a table of figures</li>
+</ol>
+<div id="cell-3" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> AttrDict({</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'enhanced_dir'</span>: <span class="st">'enhanced'</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'enriched_dir'</span>: <span class="st">'enriched'</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'lm'</span>: <span class="st">'gemini/gemini-2.0-flash'</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'api_key'</span>: GEMINI_API_KEY,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'max_tokens'</span>: <span class="dv">8192</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'track_usage'</span>: <span class="va">False</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'img_dir'</span>: <span class="st">'img'</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="fixing-markdown-headings" class="level2">
+<h2 class="anchored" data-anchor-id="fixing-markdown-headings">Fixing Markdown Headings</h2>
+<div id="cell-5" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># doc = src_dir / 'abridged_evaluation_report_final_olta_ndoja_pdf'</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> src_dir <span class="op">/</span> <span class="st">'final_evaluation_report_final_olta_ndoja_pdf'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>pages <span class="op">=</span> doc.ls(file_exts<span class="op">=</span><span class="st">".md"</span>).<span class="bu">sorted</span>(key<span class="op">=</span><span class="kw">lambda</span> p: <span class="bu">int</span>(p.stem.split(<span class="st">'_'</span>)[<span class="dv">1</span>]))<span class="op">;</span> pages</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>(#142) [Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_1.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_2.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_3.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_4.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_5.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_6.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_7.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_8.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_9.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_10.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_11.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_12.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_13.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_14.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_15.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_16.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_17.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_18.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_19.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/page_20.md')...]</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L64" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="setup_enhanced_dir" class="level3">
+<h3 class="anchored" data-anchor-id="setup_enhanced_dir">setup_enhanced_dir</h3>
+<blockquote class="blockquote">
+<pre><code> setup_enhanced_dir (src_dir, enhanced_dir_name='enhanced')</code></pre>
+</blockquote>
+<p><em>Create enhanced directory and copy all markdown files to it</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>src_dir</td>
+<td></td>
+<td></td>
+<td>Source directory path</td>
+</tr>
+<tr class="even">
+<td>enhanced_dir_name</td>
+<td>str</td>
+<td>enhanced</td>
+<td>Name of enhanced subdirectory</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-7" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setup_enhanced_dir(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    src_dir, <span class="co"># Source directory path</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    enhanced_dir_name<span class="op">=</span>cfg.enhanced_dir <span class="co"># Name of enhanced subdirectory</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Create enhanced directory and copy all markdown files to it"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    src_path <span class="op">=</span> Path(src_dir)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    enhanced_path <span class="op">=</span> src_path <span class="op">/</span> enhanced_dir_name</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    enhanced_path.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> src_path.ls(file_exts<span class="op">=</span><span class="st">".md"</span>): shutil.copy(f, enhanced_path)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> enhanced_path</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For instance:</p>
+<div id="cell-9" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>setup_enhanced_dir(doc, <span class="st">'enhanced'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced')</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L76" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_hdgs" class="level3">
+<h3 class="anchored" data-anchor-id="get_hdgs">get_hdgs</h3>
+<blockquote class="blockquote">
+<pre><code> get_hdgs (md_txt)</code></pre>
+</blockquote>
+<div id="cell-11" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_hdgs(md_txt): <span class="cf">return</span> re.findall(<span class="vs">r'</span><span class="dv">^</span><span class="vs">#</span><span class="op">+</span><span class="dv">.</span><span class="op">*</span><span class="dv">$</span><span class="vs">'</span>, md_txt, re.MULTILINE)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L79" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_hdgs_with_pages" class="level3">
+<h3 class="anchored" data-anchor-id="get_hdgs_with_pages">get_hdgs_with_pages</h3>
+<blockquote class="blockquote">
+<pre><code> get_hdgs_with_pages (pages:list[pathlib.Path])</code></pre>
+</blockquote>
+<p><em>Get headings and the page number they are on</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pages</td>
+<td>list</td>
+<td>List of pages</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-13" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_hdgs_with_pages(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    pages: <span class="bu">list</span>[Path] <span class="co"># List of pages</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Get headings and the page number they are on"</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    headings <span class="op">=</span> []</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, page <span class="kw">in</span> <span class="bu">enumerate</span>(pages, <span class="dv">1</span>):  <span class="co"># page numbers start at 1</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        page_headings <span class="op">=</span> get_hdgs(page.read_text())</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> o <span class="kw">in</span> page_headings: headings.append({<span class="st">'heading'</span>: o, <span class="st">'page'</span>: i})</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> headings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-14" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>hdgs <span class="op">=</span> get_hdgs_with_pages(pages)<span class="op">;</span> hdgs[:<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'heading': '# **PPMi**', 'page': 1},
+ {'heading': '# LIST OF FIGURES ', 'page': 5},
+ {'heading': '# Abbreviations and terminology ', 'page': 6},
+ {'heading': '# Key terminology ', 'page': 8},
+ {'heading': '# Executive summary ', 'page': 10}]</code></pre>
+</div>
+</div>
+<div id="cell-15" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>toc <span class="op">=</span> L([get_hdgs(p.read_text()) <span class="cf">for</span> p <span class="kw">in</span> pages]).concat()<span class="op">;</span> toc[:<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>(#5) ['# **PPMi**','# LIST OF FIGURES ','# Abbreviations and terminology ','# Key terminology ','# Executive summary ']</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L90" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="format_hdgs" class="level3">
+<h3 class="anchored" data-anchor-id="format_hdgs">format_hdgs</h3>
+<blockquote class="blockquote">
+<pre><code> format_hdgs (hdgs:list[dict])</code></pre>
+</blockquote>
+<p><em>Format headings with page numbers</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>hdgs</td>
+<td>list</td>
+<td>List of headings with page numbers</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-17" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> format_hdgs(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    hdgs: <span class="bu">list</span>[<span class="bu">dict</span>] <span class="co"># List of headings with page numbers</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Format headings with page numbers"</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    formatted <span class="op">=</span> []</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    page_positions <span class="op">=</span> {}</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> item <span class="kw">in</span> hdgs:</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        page <span class="op">=</span> item[<span class="st">'page'</span>]</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        page_positions[page] <span class="op">=</span> page_positions.get(page, <span class="dv">0</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        formatted.append(<span class="ss">f"</span><span class="sc">{</span>item[<span class="st">'heading'</span>]<span class="sc">}</span><span class="ss"> (Page </span><span class="sc">{</span>page<span class="sc">}</span><span class="ss">, Position </span><span class="sc">{</span>page_positions[page]<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(formatted)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-18" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(format_hdgs(hdgs)[:<span class="dv">500</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"># **PPMi** <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+# LIST OF FIGURES  <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+# Abbreviations and terminology  <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+# Key terminology  <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">8</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+# Executive summary  <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+## Background <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span><span style="font-weight: bold">)</span>
+# Methodology  <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">11</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+# Findings  <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+## Relevance <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span><span style="font-weight: bold">)</span>
+# Coherence  <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">13</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+## $<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4.3</span> <span style="color: #800080; text-decoration-color: #800080">/</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span>$ <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">13</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span><span style="font-weight: bold">)</span>
+# Effectiveness  <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">14</span>, Position <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span><span style="font-weight: bold">)</span>
+## Specific Outcome <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>: <span style="font-weight: bold">(</span>Page <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">14</span>, Positio
+</pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L110" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="headingresult" class="level3">
+<h3 class="anchored" data-anchor-id="headingresult">HeadingResult</h3>
+<blockquote class="blockquote">
+<pre><code> HeadingResult (old:str, page:int, position:int, new:str, changed:bool)</code></pre>
+</blockquote>
+<p>*!!! abstract “Usage Documentation” <a href="../concepts/models.md">Models</a></p>
+<p>A base class for creating Pydantic models.</p>
+<p>Attributes: <strong>class_vars</strong>: The names of the class variables defined on the model. <strong>private_attributes</strong>: Metadata about the private attributes of the model. <strong>signature</strong>: The synthesized <code>__init__</code> [<code>Signature</code>][inspect.Signature] of the model.</p>
+<pre><code>__pydantic_complete__: Whether model building is completed, or if there are still undefined fields.
+__pydantic_core_schema__: The core schema of the model.
+__pydantic_custom_init__: Whether the model has a custom `__init__` function.
+__pydantic_decorators__: Metadata containing the decorators defined on the model.
+    This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
+__pydantic_generic_metadata__: Metadata for generic models; contains data used for a similar purpose to
+    __args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.
+__pydantic_parent_namespace__: Parent namespace of the model, used for automatic rebuilding of models.
+__pydantic_post_init__: The name of the post-init method for the model, if defined.
+__pydantic_root_model__: Whether the model is a [`RootModel`][pydantic.root_model.RootModel].
+__pydantic_serializer__: The `pydantic-core` `SchemaSerializer` used to dump instances of the model.
+__pydantic_validator__: The `pydantic-core` `SchemaValidator` used to validate instances of the model.
+
+__pydantic_fields__: A dictionary of field names and their corresponding [`FieldInfo`][pydantic.fields.FieldInfo] objects.
+__pydantic_computed_fields__: A dictionary of computed field names and their corresponding [`ComputedFieldInfo`][pydantic.fields.ComputedFieldInfo] objects.
+
+__pydantic_extra__: A dictionary containing extra values, if [`extra`][pydantic.config.ConfigDict.extra]
+    is set to `'allow'`.
+__pydantic_fields_set__: The names of fields explicitly set during instantiation.
+__pydantic_private__: Values of private attributes set on the model instance.*</code></pre>
+<div id="cell-20" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>lm <span class="op">=</span> dspy.LM(cfg.lm, api_key<span class="op">=</span>cfg.api_key)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>dspy.configure(lm<span class="op">=</span>lm)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>dspy.settings.configure(track_usage<span class="op">=</span>cfg.track_usage)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-21" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> HeadingResult(BaseModel):</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    old: <span class="bu">str</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    page: <span class="bu">int</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    position: <span class="bu">int</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    new: <span class="bu">str</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    changed: <span class="bu">bool</span>  <span class="co"># True if correction was made</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L118" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="fixheadinghierarchy" class="level3">
+<h3 class="anchored" data-anchor-id="fixheadinghierarchy">FixHeadingHierarchy</h3>
+<blockquote class="blockquote">
+<pre><code> FixHeadingHierarchy (headings_with_pages:str,
+                      results:List[__main__.HeadingResult])</code></pre>
+</blockquote>
+<p><em>Fix markdown heading hierarchy by analyzing the document’s numbering patterns: - Detect numbering scheme (1.2.3, I.A.1, A.1.a, etc.) - Apply hierarchy levels based on nesting depth: # for top level, ## for second level, ### for third level - When a section number is lower than a previously seen number at the same level (e.g., seeing ‘2.’ after ‘3.1’), it’s likely a subsection or list item, not a main section - Unnumbered headings: keep as-is if at document boundaries, treat as subsections if within numbered sections - Return ALL headings with their corrected form</em></p>
+<div id="cell-23" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FixHeadingHierarchy(dspy.Signature):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Fix markdown heading hierarchy by analyzing the document's numbering patterns:</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">    - Detect numbering scheme (1.2.3, I.A.1, A.1.a, etc.)</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">    - Apply hierarchy levels based on nesting depth: # for top level, ## for second level, </span><span class="al">###</span><span class="co"> for third level</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">    - When a section number is lower than a previously seen number at the same level (e.g., seeing '2.' after '3.1'), it's likely a subsection or list item, not a main section</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">    - Unnumbered headings: keep as-is if at document boundaries, treat as subsections if within numbered sections</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">    - Return ALL headings with their corrected form</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    headings_with_pages: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"List of headings with page numbers"</span>)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    results: List[HeadingResult] <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"All headings with corrections and change status"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L131" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="fix_md" class="level3">
+<h3 class="anchored" data-anchor-id="fix_md">fix_md</h3>
+<blockquote class="blockquote">
+<pre><code> fix_md (hdgs:list[dict], track_usage:bool=False)</code></pre>
+</blockquote>
+<p><em>Fix markdown headings</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>hdgs</td>
+<td>list</td>
+<td></td>
+<td>List of headings with page numbers</td>
+</tr>
+<tr class="even">
+<td>track_usage</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-25" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fix_md(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    hdgs: <span class="bu">list</span>[<span class="bu">dict</span>], <span class="co"># List of headings with page numbers</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    track_usage: <span class="bu">bool</span><span class="op">=</span>cfg.track_usage,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Fix markdown headings"</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    lm <span class="op">=</span> dspy.LM(cfg.lm, api_key<span class="op">=</span>cfg.api_key, max_tokens<span class="op">=</span>cfg.max_tokens)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    dspy.configure(lm<span class="op">=</span>lm)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    dspy.settings.configure(track_usage<span class="op">=</span>track_usage)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    inp <span class="op">=</span> format_hdgs(hdgs)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    fix_hdgs <span class="op">=</span> dspy.ChainOfThought(FixHeadingHierarchy)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> fix_hdgs(headings_with_pages<span class="op">=</span>inp)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-26" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> fix_md(hdgs, track_usage<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L146" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="group_corrections_by_page" class="level3">
+<h3 class="anchored" data-anchor-id="group_corrections_by_page">group_corrections_by_page</h3>
+<blockquote class="blockquote">
+<pre><code> group_corrections_by_page (results:list[__main__.HeadingResult])</code></pre>
+</blockquote>
+<p><em>Group HeadingResult corrections by page number into dict with page nums as keys</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>results</td>
+<td>list</td>
+<td>List of headings with corrections and change status</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-28" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> group_corrections_by_page(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    results: <span class="bu">list</span>[HeadingResult], <span class="co"># List of headings with corrections and change status</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Group HeadingResult corrections by page number into dict with page nums as keys"</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    page_groups <span class="op">=</span> {}</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> result <span class="kw">in</span> results:</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>        page <span class="op">=</span> result.page</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> page <span class="kw">not</span> <span class="kw">in</span> page_groups:</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>            page_groups[page] <span class="op">=</span> []</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>        page_groups[page].append(result)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> page_groups</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-29" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>group_corrections_by_page(result.results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L159" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="apply_corrections_to_page" class="level3">
+<h3 class="anchored" data-anchor-id="apply_corrections_to_page">apply_corrections_to_page</h3>
+<blockquote class="blockquote">
+<pre><code> apply_corrections_to_page (page_nb, corrections, enhanced_path)</code></pre>
+</blockquote>
+<p><em>Apply corrections to a page in the enhanced directory</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>page_nb</td>
+<td>Page number</td>
+</tr>
+<tr class="even">
+<td>corrections</td>
+<td>List of corrections</td>
+</tr>
+<tr class="odd">
+<td>enhanced_path</td>
+<td>Path to enhanced directory</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-31" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apply_corrections_to_page(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    page_nb, <span class="co"># Page number</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    corrections, <span class="co"># List of corrections</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    enhanced_path, <span class="co"># Path to enhanced directory</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Apply corrections to a page in the enhanced directory"</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    page_file <span class="op">=</span> enhanced_path <span class="op">/</span> <span class="ss">f"page_</span><span class="sc">{</span>page_nb<span class="sc">}</span><span class="ss">.md"</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    lines <span class="op">=</span> page_file.read_text().splitlines()</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    corrections_copy <span class="op">=</span> corrections.copy()</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, line <span class="kw">in</span> <span class="bu">enumerate</span>(lines):</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> correction <span class="kw">in</span> corrections_copy:</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> line.strip() <span class="op">==</span> correction.old.strip():</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>                lines[i] <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>correction<span class="sc">.</span>new<span class="sc">}</span><span class="ss"> .... page </span><span class="sc">{</span>page_nb<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>                corrections_copy.remove(correction)</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>    page_file.write_text(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>.join(lines))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-32" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>enhanced_path <span class="op">=</span> doc <span class="op">/</span> cfg.enhanced_dir</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>apply_corrections_to_page(<span class="dv">5</span>, result.results, enhanced_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L179" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="apply_all_corrections" class="level3">
+<h3 class="anchored" data-anchor-id="apply_all_corrections">apply_all_corrections</h3>
+<blockquote class="blockquote">
+<pre><code> apply_all_corrections (results, enhanced_path)</code></pre>
+</blockquote>
+<p><em>Apply all corrections to the pages in enhanced directory</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>results</td>
+<td>List of headings with corrections and change status</td>
+</tr>
+<tr class="even">
+<td>enhanced_path</td>
+<td>Path to enhanced directory</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-34" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apply_all_corrections(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    results, <span class="co"># List of headings with corrections and change status</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    enhanced_path, <span class="co"># Path to enhanced directory</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Apply all corrections to the pages in enhanced directory"</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    grouped <span class="op">=</span> group_corrections_by_page(results)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> page_nb, corrections <span class="kw">in</span> grouped.items(): </span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>        apply_corrections_to_page(page_nb, corrections, enhanced_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-35" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>apply_all_corrections(result.results, enhanced_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L189" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="fix_doc_hdgs" class="level3">
+<h3 class="anchored" data-anchor-id="fix_doc_hdgs">fix_doc_hdgs</h3>
+<blockquote class="blockquote">
+<pre><code> fix_doc_hdgs (src_dir, force=False)</code></pre>
+</blockquote>
+<p><em>Process the document directory</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>src_dir</td>
+<td></td>
+<td></td>
+<td>Path to the folder containing the document</td>
+</tr>
+<tr class="even">
+<td>force</td>
+<td>bool</td>
+<td>False</td>
+<td>Whether to overwrite the existing enhanced directory</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-37" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fix_doc_hdgs(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    src_dir, <span class="co"># Path to the folder containing the document</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    force<span class="op">=</span><span class="va">False</span>, <span class="co"># Whether to overwrite the existing enhanced directory</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Process the document directory"</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    src_path <span class="op">=</span> Path(src_dir)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    enhanced_path <span class="op">=</span> src_path <span class="op">/</span> cfg.enhanced_dir</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> enhanced_path.exists() <span class="kw">and</span> <span class="kw">not</span> force:</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Enhanced directory '</span><span class="sc">{</span>cfg<span class="sc">.</span>enhanced_dir<span class="sc">}</span><span class="ss">' already exists. Use force=True to overwrite."</span>)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> enhanced_path.exists() <span class="kw">and</span> force: </span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>        shutil.rmtree(enhanced_path)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    enhanced_path <span class="op">=</span> setup_enhanced_dir(src_dir)</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>    pages <span class="op">=</span> enhanced_path.ls(file_exts<span class="op">=</span><span class="st">".md"</span>).<span class="bu">sorted</span>(key<span class="op">=</span><span class="kw">lambda</span> p: <span class="bu">int</span>(p.stem.split(<span class="st">'_'</span>)[<span class="dv">1</span>]))</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> fix_md(get_hdgs_with_pages(pages))</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    apply_all_corrections(result.results, enhanced_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-38" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(doc)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>fix_doc_hdgs(doc, force<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">..<span style="color: #800080; text-decoration-color: #800080">/_data/md_library/49d2fba781b6a7c0d94577479636ee6f/</span><span style="color: #ff00ff; text-decoration-color: #ff00ff">final_evaluation_report_final_olta_ndoja_pdf</span>
+</pre>
+</div>
+</div>
+</section>
+</section>
+<section id="enrich-with-figures-description" class="level2">
+<h2 class="anchored" data-anchor-id="enrich-with-figures-description">Enrich with figures description</h2>
+<div id="cell-40" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># doc = src_dir / 'abridged_evaluation_report_final_olta_ndoja_pdf/enhanced'</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> src_dir <span class="op">/</span> <span class="st">'final_evaluation_report_final_olta_ndoja_pdf/enhanced'</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>pages <span class="op">=</span> doc.ls(file_exts<span class="op">=</span><span class="st">".md"</span>).<span class="bu">sorted</span>(key<span class="op">=</span><span class="kw">lambda</span> p: <span class="bu">int</span>(p.stem.split(<span class="st">'_'</span>)[<span class="dv">1</span>]))<span class="op">;</span> pages</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>(#142) [Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_1.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_2.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_3.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_4.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_5.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_6.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_7.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_8.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_9.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_10.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_11.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_12.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_13.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_14.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_15.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_16.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_17.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_18.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_19.md'),Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_20.md')...]</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L209" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="has_images" class="level3">
+<h3 class="anchored" data-anchor-id="has_images">has_images</h3>
+<blockquote class="blockquote">
+<pre><code> has_images (page_path)</code></pre>
+</blockquote>
+<div id="cell-42" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> has_images(page_path):</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    content <span class="op">=</span> Path(page_path).read_text()</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">bool</span>(re.search(<span class="vs">r'!</span><span class="ch">\[</span><span class="pp">[^</span><span class="ch">\]</span><span class="pp">]</span><span class="op">*</span><span class="ch">\]\(</span><span class="pp">[^)]</span><span class="op">+</span><span class="ch">\)</span><span class="vs">'</span>, content))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For instance:</p>
+<div id="cell-44" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>[page <span class="cf">for</span> page <span class="kw">in</span> pages <span class="cf">if</span> has_images(page)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_1.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_11.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_12.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_14.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_15.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_16.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_21.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_22.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_23.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_29.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_30.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_38.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_59.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_60.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_63.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_68.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_84.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_95.md'),
+ Path('../_data/md_library/49d2fba781b6a7c0d94577479636ee6f/final_evaluation_report_final_olta_ndoja_pdf/enhanced/page_114.md')]</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L214" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="markdownpage" class="level3">
+<h3 class="anchored" data-anchor-id="markdownpage">MarkdownPage</h3>
+<blockquote class="blockquote">
+<pre><code> MarkdownPage (path)</code></pre>
+</blockquote>
+<p><em>A class to represent a markdown page</em></p>
+<div id="cell-46" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MarkdownPage: </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"A class to represent a markdown page"</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, path): <span class="va">self</span>.path <span class="op">=</span> Path(path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L219" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="imgref" class="level3">
+<h3 class="anchored" data-anchor-id="imgref">ImgRef</h3>
+<p><em>A class to represent a image reference</em></p>
+<div id="cell-48" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ImgRef(AttrDict):</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"A class to represent a image reference"</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__repr__</span>(<span class="va">self</span>):</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>        clean_context <span class="op">=</span> <span class="va">self</span>.context.replace(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>, <span class="st">' '</span>)[:<span class="dv">50</span>] <span class="op">+</span> <span class="st">"..."</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>        fields <span class="op">=</span> [<span class="ss">f"filename='</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>filename<span class="sc">}</span><span class="ss">'"</span>, <span class="ss">f"context='</span><span class="sc">{</span>clean_context<span class="sc">}</span><span class="ss">'"</span>]</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">hasattr</span>(<span class="va">self</span>, <span class="st">'is_relevant'</span>): fields.append(<span class="ss">f"is_relevant=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>is_relevant<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">hasattr</span>(<span class="va">self</span>, <span class="st">'reason'</span>): fields.append(<span class="ss">f"reason=</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>reason<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>        <span class="co"># ... add other fields if present</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"ImgRef(</span><span class="sc">{</span><span class="st">', '</span><span class="sc">.</span>join(fields)<span class="sc">}</span><span class="ss">)"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L232" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="markdownpage.find_img_refs" class="level3">
+<h3 class="anchored" data-anchor-id="markdownpage.find_img_refs">MarkdownPage.find_img_refs</h3>
+<blockquote class="blockquote">
+<pre><code> MarkdownPage.find_img_refs (context_lines:int=3)</code></pre>
+</blockquote>
+<p><em>Find all image references in the markdown page and include the context around the image</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>context_lines</td>
+<td>int</td>
+<td>3</td>
+<td>Number of lines of context to include around the image</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-50" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_img_refs(</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>:MarkdownPage, <span class="co"># Markdown page of interest</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    context_lines: <span class="bu">int</span> <span class="op">=</span> <span class="dv">3</span>, <span class="co"># Number of lines of context to include around the image</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Find all image references in the markdown page and include the context around the image"</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    content <span class="op">=</span> <span class="va">self</span>.path.read_text()</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    lines <span class="op">=</span> content.splitlines()</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, line <span class="kw">in</span> <span class="bu">enumerate</span>(lines):</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> re.search(<span class="vs">r'!</span><span class="ch">\[</span><span class="pp">[^</span><span class="ch">\]</span><span class="pp">]</span><span class="op">*</span><span class="ch">\]\(</span><span class="kw">(</span><span class="pp">[^)]</span><span class="op">+</span><span class="kw">)</span><span class="ch">\)</span><span class="vs">'</span>, line):</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Extract context around this line</span></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>            start <span class="op">=</span> <span class="bu">max</span>(<span class="dv">0</span>, i <span class="op">-</span> context_lines)</span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>            end <span class="op">=</span> <span class="bu">min</span>(<span class="bu">len</span>(lines), i <span class="op">+</span> context_lines <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>            context <span class="op">=</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>.join(lines[start:end])</span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Extract image filename</span></span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>            match <span class="op">=</span> re.search(<span class="vs">r'!</span><span class="ch">\[</span><span class="pp">[^</span><span class="ch">\]</span><span class="pp">]</span><span class="op">*</span><span class="ch">\]\(</span><span class="kw">(</span><span class="pp">[^)]</span><span class="op">+</span><span class="kw">)</span><span class="ch">\)</span><span class="vs">'</span>, line)</span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>            results.append(ImgRef({</span>
+<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a>                <span class="st">"filename"</span>: match.group(<span class="dv">1</span>),</span>
+<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a>                <span class="st">"context"</span>: context</span>
+<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a>            }))</span>
+<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For instance:</p>
+<div id="cell-52" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> page <span class="kw">in</span> pages: </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    img_refs <span class="op">=</span> MarkdownPage(page).find_img_refs()</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> img_refs: <span class="bu">print</span>(<span class="ss">f"In </span><span class="sc">{</span>page<span class="sc">.</span>stem<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>img_refs<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L258" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="imagerelevance" class="level3">
+<h3 class="anchored" data-anchor-id="imagerelevance">ImageRelevance</h3>
+<blockquote class="blockquote">
+<pre><code> ImageRelevance (img_filename:str, surrounding_context:str,
+                 is_relevant:bool, reason:str)</code></pre>
+</blockquote>
+<p>*Determine if an image contains substantive content for document understanding.</p>
+<p>RELEVANT: Charts, graphs, diagrams, figures, tables, screenshots, flowcharts IRRELEVANT: Logos, cover images, decorative elements, headers, footers*</p>
+<div id="cell-54" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ImageRelevance(dspy.Signature):</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Determine if an image contains substantive content for document understanding.</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co">    RELEVANT: Charts, graphs, diagrams, figures, tables, screenshots, flowcharts</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="co">    IRRELEVANT: Logos, cover images, decorative elements, headers, footers</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    img_filename: <span class="bu">str</span> <span class="op">=</span> dspy.InputField()</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>    surrounding_context: <span class="bu">str</span> <span class="op">=</span> dspy.InputField(desc<span class="op">=</span><span class="st">"Text context around the image"</span>)</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>    is_relevant: <span class="bu">bool</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"True only for substantive content like data visualizations"</span>)</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>    reason: <span class="bu">str</span> <span class="op">=</span> dspy.OutputField(desc<span class="op">=</span><span class="st">"Brief explanation of decision"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L272" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="markdownpage.classify_imgs" class="level3">
+<h3 class="anchored" data-anchor-id="markdownpage.classify_imgs">MarkdownPage.classify_imgs</h3>
+<blockquote class="blockquote">
+<pre><code> MarkdownPage.classify_imgs (img_refs:list[__main__.ImgRef])</code></pre>
+</blockquote>
+<p><em>Classify images in the markdown page</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>img_refs</td>
+<td>list</td>
+<td>List of image references</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-56" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_imgs(</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>:MarkdownPage, <span class="co"># Markdown page of interest</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    img_refs: <span class="bu">list</span>[ImgRef], <span class="co"># List of image references</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Classify images in the markdown page"</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    classifier <span class="op">=</span> dspy.ChainOfThought(ImageRelevance)</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> img_ref <span class="kw">in</span> img_refs:</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> classifier(</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>            img_filename<span class="op">=</span>img_ref.filename,</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>            surrounding_context<span class="op">=</span>img_ref.context,</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>            page_nb<span class="op">=</span><span class="dv">1</span>  <span class="co"># We could make this dynamic if needed</span></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>        img_ref.is_relevant <span class="op">=</span> result.is_relevant</span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>        img_ref.reason <span class="op">=</span> result.reason</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> img_refs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For instance:</p>
+<div id="cell-58" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>img_refs <span class="op">=</span> MarkdownPage(pages[<span class="dv">0</span>]).find_img_refs()<span class="op">;</span> <span class="bu">print</span>(img_refs)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>md_page <span class="op">=</span> MarkdownPage(pages[<span class="dv">5</span>]) </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>img_refs <span class="op">=</span> md_page.find_img_refs()</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>clf_img_refs <span class="op">=</span> md_page.classify_imgs(img_refs)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(clf_img_refs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[</span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">ImgRef</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">filename</span>=<span style="color: #008000; text-decoration-color: #008000">'img-0.jpeg'</span>, <span style="color: #808000; text-decoration-color: #808000">context</span>=<span style="color: #008000; text-decoration-color: #008000">' Final Evaluation Report, 17 March 2023  ![img-0.j...'</span><span style="font-weight: bold">)]</span>
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[]</span>
+</pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L289" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="describe_img" class="level3">
+<h3 class="anchored" data-anchor-id="describe_img">describe_img</h3>
+<blockquote class="blockquote">
+<pre><code> describe_img (img_path:pathlib.Path, context:str, api_key:str=None,
+               model:str='gemini/gemini-2.0-flash')</code></pre>
+</blockquote>
+<p><em>Describe an image using an LLM</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>img_path</td>
+<td>Path</td>
+<td></td>
+<td>Path to the image</td>
+</tr>
+<tr class="even">
+<td>context</td>
+<td>str</td>
+<td></td>
+<td>Context of the image</td>
+</tr>
+<tr class="odd">
+<td>api_key</td>
+<td>str</td>
+<td>None</td>
+<td>API key for the LLM model</td>
+</tr>
+<tr class="even">
+<td>model</td>
+<td>str</td>
+<td>gemini/gemini-2.0-flash</td>
+<td>Model to use</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-60" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> describe_img(</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>    img_path: Path, <span class="co"># Path to the image</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>    context: <span class="bu">str</span>, <span class="co"># Context of the image</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>    api_key: <span class="bu">str</span> <span class="op">=</span> cfg.api_key, <span class="co"># API key for the LLM model</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>    model: <span class="bu">str</span> <span class="op">=</span> cfg.lm, <span class="co"># Model to use</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Describe an image using an LLM"</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(img_path, <span class="st">"rb"</span>) <span class="im">as</span> image_file:</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>        base64_image <span class="op">=</span> base64.b64encode(image_file.read()).decode(<span class="st">'utf-8'</span>)</span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Auto-detect image format</span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>    img_format <span class="op">=</span> img_path.suffix.lower().replace(<span class="st">'.'</span>, <span class="st">''</span>)</span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> img_format <span class="op">==</span> <span class="st">'jpg'</span>: img_format <span class="op">=</span> <span class="st">'jpeg'</span></span>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f"""Provide a concise paragraph description of this image for evaluation report analysis. Include: type of content, main topic, key data/statistics, trends, and takeaways. Write as flowing text, not numbered points. Context: </span><span class="sc">{</span>context<span class="sc">}</span><span class="ss">"""</span></span>
+<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> completion(</span>
+<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>        model<span class="op">=</span>model,</span>
+<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a>        messages<span class="op">=</span>[{</span>
+<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">"role"</span>: <span class="st">"user"</span>, </span>
+<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">"content"</span>: [</span>
+<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"type"</span>: <span class="st">"text"</span>, <span class="st">"text"</span>: prompt},</span>
+<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"type"</span>: <span class="st">"image_url"</span>, <span class="st">"image_url"</span>: {<span class="st">"url"</span>: <span class="ss">f"data:image/</span><span class="sc">{</span>img_format<span class="sc">}</span><span class="ss">;base64,</span><span class="sc">{</span>base64_image<span class="sc">}</span><span class="ss">"</span>}}</span>
+<span id="cb58-23"><a href="#cb58-23" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<span id="cb58-24"><a href="#cb58-24" aria-hidden="true" tabindex="-1"></a>        }],</span>
+<span id="cb58-25"><a href="#cb58-25" aria-hidden="true" tabindex="-1"></a>        api_key<span class="op">=</span>api_key</span>
+<span id="cb58-26"><a href="#cb58-26" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb58-27"><a href="#cb58-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response.choices[<span class="dv">0</span>].message.content</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L319" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="markdownpage.describe_imgs" class="level3">
+<h3 class="anchored" data-anchor-id="markdownpage.describe_imgs">MarkdownPage.describe_imgs</h3>
+<blockquote class="blockquote">
+<pre><code> MarkdownPage.describe_imgs (img_refs:list[__main__.ImgRef], img_dir:str)</code></pre>
+</blockquote>
+<p><em>Describe images in the markdown page</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>img_refs</td>
+<td>list</td>
+<td>List of image references</td>
+</tr>
+<tr class="even">
+<td>img_dir</td>
+<td>str</td>
+<td>Image directory</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-62" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> describe_imgs(</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>:MarkdownPage, <span class="co"># Markdown page of interest</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    img_refs: <span class="bu">list</span>[ImgRef], <span class="co"># List of image references</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>    img_dir: <span class="bu">str</span> <span class="co"># Image directory</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Describe images in the markdown page"</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> img_ref <span class="kw">in</span> img_refs:</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> img_ref.is_relevant:</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>            img_path <span class="op">=</span> Path(img_dir) <span class="op">/</span> img_ref.filename</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>            description <span class="op">=</span> describe_img(img_path, img_ref.context, GEMINI_API_KEY)</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>            img_ref.description <span class="op">=</span> description</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> img_refs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>For instance:</p>
+<div id="cell-64" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># md_page = MarkdownPage(pages[5]) </span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="co"># img_refs = md_page.find_img_refs()</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="co"># clf_img_refs = md_page.classify_imgs(img_refs)</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co"># img_refs_desc = md_page.describe_imgs(clf_img_refs, doc.parent / 'img')</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(img_refs_desc[0].description)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L334" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="markdownpage.replace_imgs_with_desc" class="level3">
+<h3 class="anchored" data-anchor-id="markdownpage.replace_imgs_with_desc">MarkdownPage.replace_imgs_with_desc</h3>
+<blockquote class="blockquote">
+<pre><code> MarkdownPage.replace_imgs_with_desc (img_refs,
+                                      enriched_dir:str='enriched')</code></pre>
+</blockquote>
+<p><em>Replace images with their descriptions in the markdown page</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>img_refs</td>
+<td></td>
+<td></td>
+<td>List of image references</td>
+</tr>
+<tr class="even">
+<td>enriched_dir</td>
+<td>str</td>
+<td>enriched</td>
+<td>Enriched directory</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-66" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> replace_imgs_with_desc(</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>:MarkdownPage, <span class="co"># Markdown page of interest</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>    img_refs, <span class="co"># List of image references</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>    enriched_dir: <span class="bu">str</span> <span class="op">=</span> cfg.enriched_dir, <span class="co"># Enriched directory</span></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Replace images with their descriptions in the markdown page"</span></span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>    enriched_path <span class="op">=</span> <span class="va">self</span>.path.parent.parent <span class="op">/</span> enriched_dir</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>    enriched_path.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>    content <span class="op">=</span> <span class="va">self</span>.path.read_text()</span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> img_ref <span class="kw">in</span> img_refs:</span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> img_ref.is_relevant <span class="kw">and</span> <span class="bu">hasattr</span>(img_ref, <span class="st">'description'</span>):</span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a>            pattern <span class="op">=</span> <span class="ss">f'!</span><span class="ch">\\</span><span class="ss">[[^</span><span class="ch">\\</span><span class="ss">]]*</span><span class="ch">\\</span><span class="ss">]</span><span class="ch">\\</span><span class="ss">(</span><span class="sc">{</span>re<span class="sc">.</span>escape(img_ref.filename)<span class="sc">}</span><span class="ch">\\</span><span class="ss">)'</span></span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>            content <span class="op">=</span> re.sub(pattern, img_ref.description, content)</span>
+<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb63-17"><a href="#cb63-17" aria-hidden="true" tabindex="-1"></a>    enriched_file <span class="op">=</span> enriched_path <span class="op">/</span> <span class="va">self</span>.path.name</span>
+<span id="cb63-18"><a href="#cb63-18" aria-hidden="true" tabindex="-1"></a>    enriched_file.write_text(content)</span>
+<span id="cb63-19"><a href="#cb63-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> enriched_file</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L354" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="copy_page_to_enriched" class="level3">
+<h3 class="anchored" data-anchor-id="copy_page_to_enriched">copy_page_to_enriched</h3>
+<blockquote class="blockquote">
+<pre><code> copy_page_to_enriched (page, enriched_dir:str='enriched')</code></pre>
+</blockquote>
+<p><em>Copy a page to the enriched directory</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>page</td>
+<td></td>
+<td></td>
+<td>Page to copy</td>
+</tr>
+<tr class="even">
+<td>enriched_dir</td>
+<td>str</td>
+<td>enriched</td>
+<td>Enriched directory</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-68" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> copy_page_to_enriched(</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>    page, <span class="co"># Page to copy</span></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>    enriched_dir: <span class="bu">str</span> <span class="op">=</span> cfg.enriched_dir, <span class="co"># Enriched directory</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Copy a page to the enriched directory"</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>    enriched_path <span class="op">=</span> page.parent.parent <span class="op">/</span> enriched_dir</span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>    enriched_path.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> shutil.copy(page, enriched_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L364" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="process_single_page" class="level3">
+<h3 class="anchored" data-anchor-id="process_single_page">process_single_page</h3>
+<blockquote class="blockquote">
+<pre><code> process_single_page (page, img_dir, enriched_dir:str='enriched')</code></pre>
+</blockquote>
+<p><em>Process a single page</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>page</td>
+<td></td>
+<td></td>
+<td>Page to process</td>
+</tr>
+<tr class="even">
+<td>img_dir</td>
+<td></td>
+<td></td>
+<td>Image directory</td>
+</tr>
+<tr class="odd">
+<td>enriched_dir</td>
+<td>str</td>
+<td>enriched</td>
+<td>Enriched directory</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-70" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_single_page(</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>    page, <span class="co"># Page to process</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>    img_dir, <span class="co"># Image directory</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>    enriched_dir: <span class="bu">str</span> <span class="op">=</span> cfg.enriched_dir, <span class="co"># Enriched directory</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Process a single page"</span></span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>    md_page <span class="op">=</span> MarkdownPage(page)</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Pipeline: find → classify → describe → replace</span></span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>    img_refs <span class="op">=</span> md_page.find_img_refs()</span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> img_refs: <span class="cf">return</span> copy_page_to_enriched(page, enriched_dir)</span>
+<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>    classified_refs <span class="op">=</span> md_page.classify_imgs(img_refs)</span>
+<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="fl">0.5</span>)</span>
+<span id="cb67-15"><a href="#cb67-15" aria-hidden="true" tabindex="-1"></a>    described_refs <span class="op">=</span> md_page.describe_imgs(classified_refs, img_dir)</span>
+<span id="cb67-16"><a href="#cb67-16" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="fl">0.5</span>)</span>
+<span id="cb67-17"><a href="#cb67-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> md_page.replace_imgs_with_desc(described_refs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L383" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="enrich_images" class="level3">
+<h3 class="anchored" data-anchor-id="enrich_images">enrich_images</h3>
+<blockquote class="blockquote">
+<pre><code> enrich_images (pages_dir, img_dir, n_workers=2)</code></pre>
+</blockquote>
+<p><em>Enrich images in the pages directory</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pages_dir</td>
+<td></td>
+<td></td>
+<td>Pages directory</td>
+</tr>
+<tr class="even">
+<td>img_dir</td>
+<td></td>
+<td></td>
+<td>Image directory</td>
+</tr>
+<tr class="odd">
+<td>n_workers</td>
+<td>int</td>
+<td>2</td>
+<td>Number of workers</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-72" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> enrich_images(</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>    pages_dir, <span class="co"># Pages directory</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>    img_dir, <span class="co"># Image directory</span></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>    n_workers<span class="op">=</span><span class="dv">2</span>, <span class="co"># Number of workers</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Enrich images in the pages directory"</span></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>    pages <span class="op">=</span> Path(pages_dir).ls(file_exts<span class="op">=</span><span class="st">".md"</span>)</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>    pages_with_imgs <span class="op">=</span> []</span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> page <span class="kw">in</span> pages:</span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> has_images(page):</span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a>            pages_with_imgs.append(page)</span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a>            copy_page_to_enriched(page)</span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb69-16"><a href="#cb69-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pages_with_imgs:</span>
+<span id="cb69-17"><a href="#cb69-17" aria-hidden="true" tabindex="-1"></a>        process_fn <span class="op">=</span> partial(process_single_page, img_dir<span class="op">=</span>img_dir)</span>
+<span id="cb69-18"><a href="#cb69-18" aria-hidden="true" tabindex="-1"></a>        parallel(process_fn, pages_with_imgs, n_workers<span class="op">=</span>n_workers, threadpool<span class="op">=</span><span class="va">True</span>, progress<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb69-19"><a href="#cb69-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb69-20"><a href="#cb69-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"✓ Processed </span><span class="sc">{</span><span class="bu">len</span>(pages)<span class="sc">}</span><span class="ss"> pages (</span><span class="sc">{</span><span class="bu">len</span>(pages_with_imgs)<span class="sc">}</span><span class="ss"> with images)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-73" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>enrich_images(doc, doc.parent <span class="op">/</span> <span class="st">'img'</span>, n_workers<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="cli" class="level2">
+<h2 class="anchored" data-anchor-id="cli">CLI</h2>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/enrichr.py#L406" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="md_plus_evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="md_plus_evaluation">md_plus_evaluation</h3>
+<blockquote class="blockquote">
+<pre><code> md_plus_evaluation (eval_id:str, md_dir:str='../data/md_library',
+                     overwrite:bool=False)</code></pre>
+</blockquote>
+<p><em>Fix markdown headings and enrich images for an evaluation report</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>eval_id</td>
+<td>str</td>
+<td></td>
+<td>Evaluation ID to process</td>
+</tr>
+<tr class="even">
+<td>md_dir</td>
+<td>str</td>
+<td>../data/md_library</td>
+<td>Directory containing markdown folders</td>
+</tr>
+<tr class="odd">
+<td>overwrite</td>
+<td>bool</td>
+<td>False</td>
+<td>Overwrite if enhanced/enriched already exists</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/franckalbinet\.github\.io\/evaluatr");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/franckalbinet/evaluatr/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

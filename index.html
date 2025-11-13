@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="AI-Powered Evaluation Report Framework Mapping and Synthesisa">
+
+<title>Evaluatr</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-738cac9e5f2ad4ecce05fe3ba55cd681.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Evaluatr">
+<meta property="og:description" content="AI-Powered Evaluation Report Framework Mapping and Synthesisa">
+<meta property="og:site_name" content="Evaluatr">
+<meta name="twitter:title" content="Evaluatr">
+<meta name="twitter:description" content="AI-Powered Evaluation Report Framework Mapping and Synthesisa">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Evaluatr</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/franckalbinet/evaluatr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Evaluatr</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Evaluatr</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/eval_reports_eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation reports EDA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./readers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./downloaders.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Downloaders</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ocr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OCR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./enrichr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Enrichr</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./frameworks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frameworks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mappr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mappr</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-evaluatr" id="toc-what-is-evaluatr" class="nav-link active" data-scroll-target="#what-is-evaluatr">What is Evaluatr?</a></li>
+  <li><a href="#the-challenge-we-solve" id="toc-the-challenge-we-solve" class="nav-link" data-scroll-target="#the-challenge-we-solve">The Challenge We Solve</a></li>
+  <li><a href="#understanding-evaluation-mapping-in-the-un-context" id="toc-understanding-evaluation-mapping-in-the-un-context" class="nav-link" data-scroll-target="#understanding-evaluation-mapping-in-the-un-context">Understanding Evaluation Mapping in the UN Context</a></li>
+  <li><a href="#key-features" id="toc-key-features" class="nav-link" data-scroll-target="#key-features">Key Features</a>
+  <ul>
+  <li><a href="#document-preparation-pipeline-available" id="toc-document-preparation-pipeline-available" class="nav-link" data-scroll-target="#document-preparation-pipeline-available">1. Document Preparation Pipeline ✅ <strong>Available</strong></a></li>
+  <li><a href="#ai-assisted-framework-mapping-available" id="toc-ai-assisted-framework-mapping-available" class="nav-link" data-scroll-target="#ai-assisted-framework-mapping-available">2. AI-Assisted Framework Mapping ✅ <strong>Available</strong></a></li>
+  <li><a href="#knowledge-synthesis-planned" id="toc-knowledge-synthesis-planned" class="nav-link" data-scroll-target="#knowledge-synthesis-planned">3. Knowledge Synthesis 📋 <strong>Planned</strong></a></li>
+  </ul></li>
+  <li><a href="#installation-setup" id="toc-installation-setup" class="nav-link" data-scroll-target="#installation-setup">️ Installation &amp; Setup</a>
+  <ul>
+  <li><a href="#from-pypi-recommended" id="toc-from-pypi-recommended" class="nav-link" data-scroll-target="#from-pypi-recommended">From PyPI (Recommended)</a></li>
+  <li><a href="#from-github" id="toc-from-github" class="nav-link" data-scroll-target="#from-github">From GitHub</a></li>
+  <li><a href="#development-installation" id="toc-development-installation" class="nav-link" data-scroll-target="#development-installation">Development Installation</a></li>
+  <li><a href="#environment-configuration" id="toc-environment-configuration" class="nav-link" data-scroll-target="#environment-configuration">Environment Configuration</a></li>
+  </ul></li>
+  <li><a href="#quick-start" id="toc-quick-start" class="nav-link" data-scroll-target="#quick-start">Quick Start</a>
+  <ul>
+  <li><a href="#reading-standardizing-evaluations-repository" id="toc-reading-standardizing-evaluations-repository" class="nav-link" data-scroll-target="#reading-standardizing-evaluations-repository">Reading &amp; standardizing evaluations repository</a></li>
+  <li><a href="#downloading-evaluation-documents" id="toc-downloading-evaluation-documents" class="nav-link" data-scroll-target="#downloading-evaluation-documents">Downloading Evaluation Documents</a></li>
+  <li><a href="#command-line-interface-cli-workflow" id="toc-command-line-interface-cli-workflow" class="nav-link" data-scroll-target="#command-line-interface-cli-workflow">Command Line Interface (CLI) Workflow</a></li>
+  <li><a href="#detailed-cli-usage" id="toc-detailed-cli-usage" class="nav-link" data-scroll-target="#detailed-cli-usage">Detailed CLI Usage</a>
+  <ul>
+  <li><a href="#evl_ocr---ocr-processing" id="toc-evl_ocr---ocr-processing" class="nav-link" data-scroll-target="#evl_ocr---ocr-processing"><code>evl_ocr</code> - OCR Processing</a></li>
+  <li><a href="#evl_md_plus---document-enrichment" id="toc-evl_md_plus---document-enrichment" class="nav-link" data-scroll-target="#evl_md_plus---document-enrichment"><code>evl_md_plus</code> - Document Enrichment</a></li>
+  <li><a href="#evl_tag-iom-only-for-now" id="toc-evl_tag-iom-only-for-now" class="nav-link" data-scroll-target="#evl_tag-iom-only-for-now"><code>evl_tag</code> [IOM only for now]</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation">Documentation</a></li>
+  <li><a href="#contributing" id="toc-contributing" class="nav-link" data-scroll-target="#contributing">Contributing</a>
+  <ul>
+  <li><a href="#development-philosophy" id="toc-development-philosophy" class="nav-link" data-scroll-target="#development-philosophy">Development Philosophy</a></li>
+  <li><a href="#adding-cli-commands" id="toc-adding-cli-commands" class="nav-link" data-scroll-target="#adding-cli-commands">Adding CLI Commands</a></li>
+  <li><a href="#development-setup" id="toc-development-setup" class="nav-link" data-scroll-target="#development-setup">Development Setup</a></li>
+  </ul></li>
+  <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license">License</a></li>
+  <li><a href="#dependencies" id="toc-dependencies" class="nav-link" data-scroll-target="#dependencies">Dependencies</a></li>
+  <li><a href="#support" id="toc-support" class="nav-link" data-scroll-target="#support">Support</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/franckalbinet/evaluatr/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Evaluatr</h1>
+</div>
+
+<div>
+  <div class="description">
+    AI-Powered Evaluation Report Framework Mapping and Synthesisa
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p><a href="https://pypi.org/project/evaluatr/"><img src="https://img.shields.io/pypi/v/evaluatr.png" class="img-fluid" alt="PyPI"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" class="img-fluid" alt="License"></a> <a href="https://franckalbinet.github.io/evaluatr/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue.png" class="img-fluid" alt="Documentation"></a></p>
+<section id="what-is-evaluatr" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-evaluatr">What is Evaluatr?</h2>
+<p><code>Evaluatr</code> is an AI-powered system that automates mapping evaluation reports against structured frameworks while maintaining interpretability and human oversight. Initially developed for <a href="https://www.iom.int">IOM (International Organization for Migration)</a> evaluation reports and the <a href="https://srf.iom.int">Strategic Results Framework (SRF)</a>, it transforms a traditionally manual, time-intensive process into an efficient, transparent workflow.</p>
+<p>The system maps evaluation reports against hierarchical frameworks like the SRF (objectives, enablers, cross-cutting priorities, outcomes, outputs, indicators) and connects to broader frameworks like the <a href="https://sdgs.un.org">Sustainable Development Goals (SDGs)</a> for interoperability.</p>
+<p>Beyond automation, <code>Evaluatr</code> prioritizes <strong>interpretability and human-AI collaboration</strong>—enabling evaluators to understand the mapping process, audit AI decisions, perform error analysis, and build training datasets over time, ensuring the system aligns with organizational needs through actionable, transparent, auditable methodology.</p>
+</section>
+<section id="the-challenge-we-solve" class="level2">
+<h2 class="anchored" data-anchor-id="the-challenge-we-solve">The Challenge We Solve</h2>
+<p>IOM evaluators possess deep expertise in mapping evaluation reports against frameworks like the Strategic Results Framework (SRF), but face significant operational challenges when processing reports that often exceed 150 pages of diverse content across multiple projects and contexts.</p>
+<p>The core challenges are:</p>
+<ul>
+<li><strong>Time-intensive process</strong>: Hundreds of staff-hours required per comprehensive mapping exercise</li>
+<li><strong>Individual consistency</strong>: Even expert evaluators may categorize the same content differently across sessions</li>
+<li><strong>Cross-evaluator consistency</strong>: Different evaluators may interpret and map identical content to different framework outputs</li>
+<li><strong>Scale vs.&nbsp;thoroughness</strong>: Growing volume of evaluation reports creates pressure to choose between speed and comprehensive analysis</li>
+</ul>
+</section>
+<section id="understanding-evaluation-mapping-in-the-un-context" class="level2">
+<h2 class="anchored" data-anchor-id="understanding-evaluation-mapping-in-the-un-context">Understanding Evaluation Mapping in the UN Context</h2>
+<p>UN evaluation work encompasses several interconnected domains:</p>
+<ul>
+<li><strong>Quality Check</strong>: Assessing evidence quality and methodological rigor in evaluation reports</li>
+<li><strong>Mapping/Tagging</strong>: Identifying which standardized framework themes are central to each report</li>
+<li><strong>Impact Evaluation</strong>: Measuring program effectiveness using RCTs, quasi-experimental designs, etc.</li>
+<li><strong>Synthesis</strong>: Aggregating findings across reports on specific themes/regions to generate insights</li>
+</ul>
+<p><strong>Mapping/tagging</strong> is a foundational step that identifies which themes from established evaluation frameworks (like IOM’s Strategic Results Framework or the UN Global Compact for Migration) are <em>central</em> to each report. These frameworks provide agreed-upon nomenclature covering all relevant themes, ensuring common terminology across stakeholders and enabling interoperability for UN-wide aggregation and communication.</p>
+<p>Rather than extracting evidence for specific themes, mapping creates a curated index enabling evaluators to retrieve the most relevant reports for subsequent synthesis work, maximizing both precision (finding all relevant reports) and recall (avoiding irrelevant ones).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Throughout this documentation, we use “mapping” and “tagging” interchangeably.</p>
+</div>
+</div>
+</section>
+<section id="key-features" class="level2">
+<h2 class="anchored" data-anchor-id="key-features">Key Features</h2>
+<section id="document-preparation-pipeline-available" class="level3">
+<h3 class="anchored" data-anchor-id="document-preparation-pipeline-available">1. Document Preparation Pipeline ✅ <strong>Available</strong></h3>
+<ul>
+<li><strong>Repository Processing</strong>: Read and preprocess IOM evaluation report repositories with standardized outputs</li>
+<li><strong>Automated Downloads</strong>: Batch download of evaluation documents from diverse sources</li>
+<li><strong>OCR Processing</strong>: Convert scanned PDFs to searchable text using Optical Character Recognition (OCR) technology</li>
+<li><strong>Content Enrichment</strong>: Fix OCR-corrupted headings and enrich documents with AI-generated image descriptions for high-quality input data</li>
+</ul>
+</section>
+<section id="ai-assisted-framework-mapping-available" class="level3">
+<h3 class="anchored" data-anchor-id="ai-assisted-framework-mapping-available">2. AI-Assisted Framework Mapping ✅ <strong>Available</strong></h3>
+<ul>
+<li><strong>Multi-Stage Pipeline</strong>: Three-stage mapping process that progressively narrows from broad themes ( SRF Enablers, Cross-cutting Priorities, GCM objectives) to specific SRF outputs. Each stage enriches context for the next—for example, knowing a report is cross-cutting in nature helps accurately map specific SRF outputs</li>
+<li><strong>Cost Optimization</strong>: Leverages LLM prompt caching to minimize token usage and API costs during repeated analysis</li>
+<li><strong>Command-line Interface</strong>: Streamlined pipeline execution through easy-to-use CLI tools (<code>evl_ocr</code>, <code>evl_md_plus</code>, <code>evl_tag</code>)</li>
+<li><strong>Transparent Tracing</strong>: Complete audit trails of AI decisions stored for human review and evaluation</li>
+</ul>
+</section>
+<section id="knowledge-synthesis-planned" class="level3">
+<h3 class="anchored" data-anchor-id="knowledge-synthesis-planned">3. Knowledge Synthesis 📋 <strong>Planned</strong></h3>
+<ul>
+<li><strong>Knowledge Cards</strong>: Generate structured summaries for downstream AI tasks like proposal writing and synthesis</li>
+</ul>
+</section>
+</section>
+<section id="installation-setup" class="level2">
+<h2 class="anchored" data-anchor-id="installation-setup">️ Installation &amp; Setup</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We recommend using isolated Python environments. <a href="https://docs.astral.sh/uv/concepts/projects/dependencies/">uv</a> provides fast, reliable dependency management for Python projects.</p>
+</div>
+</div>
+<section id="from-pypi-recommended" class="level3">
+<h3 class="anchored" data-anchor-id="from-pypi-recommended">From PyPI (Recommended)</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install evaluatr</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="from-github" class="level3">
+<h3 class="anchored" data-anchor-id="from-github">From GitHub</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install git+https://github.com/franckalbinet/evaluatr.git</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="development-installation" class="level3">
+<h3 class="anchored" data-anchor-id="development-installation">Development Installation</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clone the repository</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/franckalbinet/evaluatr.git</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> evaluatr</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Install in development mode</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Make changes in nbs/ directory, then compile:</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">nbdev_prepare</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This project uses <a href="https://nbdev.fast.ai">nbdev</a> for literate programming - see the Development section for more details.</p>
+</div>
+</div>
+</section>
+<section id="environment-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="environment-configuration">Environment Configuration</h3>
+<p>Create a <code>.env</code> file in your project root with your API keys:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">MISTRAL_API_KEY</span><span class="op">=</span><span class="st">"your_mistral_api_key"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">GEMINI_API_KEY</span><span class="op">=</span><span class="st">"your_gemini_api_key"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="va">ANTHROPIC_API_KEY</span><span class="op">=</span><span class="st">"your_anthropic_api_key"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Note</strong>: Evaluatr uses <a href="https://lisette.answer.ai">lisette</a>, <a href="https://www.litellm.ai">LiteLLM</a> and <a href="https://dspy.ai">DSPy</a> for LLM interactions, giving you flexibility to use any compatible language model provider beyond the examples above.</p>
+</section>
+</section>
+<section id="quick-start" class="level2">
+<h2 class="anchored" data-anchor-id="quick-start">Quick Start</h2>
+<section id="reading-standardizing-evaluations-repository" class="level3">
+<h3 class="anchored" data-anchor-id="reading-standardizing-evaluations-repository">Reading &amp; standardizing evaluations repository</h3>
+<p>For IOM evaluators working with the official evaluation repository, download the most recent evaluations from <a href="https://evaluation.iom.int/evaluation-search-pdf">evaluation.iom.int/evaluation-search-pdf</a> as <code>.csv</code> file, then preprocess/standardize it:</p>
+<div id="e0f7ea28" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> evaluatr.readers <span class="im">import</span> IOMRepoReader</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fname <span class="op">=</span> <span class="st">'files/test/evaluation-search-export-11_13_2025--18_09_44.csv'</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>reader <span class="op">=</span> IOMRepoReader(fname)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>evals <span class="op">=</span> reader()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>evals[<span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="evaluation-of-ioms-migration-data-strategy" class="level3 cell-output cell-output-display cell-output-markdown">
+<h3 class="anchored" data-anchor-id="evaluation-of-ioms-migration-data-strategy">EVALUATION OF IOM’S MIGRATION DATA STRATEGY</h3>
+<p><strong>Year:</strong> 2025 | <strong>Organization:</strong> IOM | <strong>Countries:</strong> Worldwide</p>
+<p><strong>Documents:</strong> 2 available<br>
+<strong>ID:</strong> <code>9992310969aa2f428bc8aba29f865cf3</code></p>
+</section>
+</div>
+<p>To find a particular evaluation by <code>title</code> or <code>url</code>:</p>
+<div id="ef84306d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> evaluatr.readers <span class="im">import</span> find_eval</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>title <span class="op">=</span> <span class="st">'Evaluation of IOM Accountability to Affected Populations'</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>find_eval(evals, title, by<span class="op">=</span><span class="st">'title'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="evaluation-of-iom-accountability-to-affected-populations" class="level3 cell-output cell-output-display cell-output-markdown">
+<h3 class="anchored" data-anchor-id="evaluation-of-iom-accountability-to-affected-populations">Evaluation of IOM Accountability to Affected Populations</h3>
+<p><strong>Year:</strong> 2025 | <strong>Organization:</strong> IOM | <strong>Countries:</strong> Worldwide</p>
+<p><strong>Documents:</strong> 4 available<br>
+<strong>ID:</strong> <code>6c3c2cf3fa479112967612b0baddab72</code></p>
+</section>
+</div>
+<div id="bd00a9e7" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/AAP</span><span class="sc">%20E</span><span class="st">valuation%20Report_final_.pdf"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>find_eval(evals, url, by<span class="op">=</span><span class="st">'url'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="evaluation-of-iom-accountability-to-affected-populations-1" class="level3 cell-output cell-output-display cell-output-markdown">
+<h3 class="anchored" data-anchor-id="evaluation-of-iom-accountability-to-affected-populations-1">Evaluation of IOM Accountability to Affected Populations</h3>
+<p><strong>Year:</strong> 2025 | <strong>Organization:</strong> IOM | <strong>Countries:</strong> Worldwide</p>
+<p><strong>Documents:</strong> 4 available<br>
+<strong>ID:</strong> <code>6c3c2cf3fa479112967612b0baddab72</code></p>
+</section>
+</div>
+</section>
+<section id="downloading-evaluation-documents" class="level3">
+<h3 class="anchored" data-anchor-id="downloading-evaluation-documents">Downloading Evaluation Documents</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> evaluatr.downloaders <span class="im">import</span> download_evals</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>download_evals(evals)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="command-line-interface-cli-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="command-line-interface-cli-workflow">Command Line Interface (CLI) Workflow</h3>
+<p>Process any evaluation report from PDF to tagged outputs using three streamlined commands.</p>
+<p><strong>Example:</strong> Given a report at <code>example-report-dir/example-report-file.pdf</code></p>
+<p><strong>Step 1: OCR Processing</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_ocr</span> example-report <span class="at">--pdf-dir</span> . <span class="at">--output-dir</span> md_library</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 2: Document Enrichment</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_md_plus</span> example-report <span class="at">--md-dir</span> md_library</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 3: Framework Tagging</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_tag</span> example-report <span class="at">--md-dir</span> md_library</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="detailed-cli-usage" class="level3">
+<h3 class="anchored" data-anchor-id="detailed-cli-usage">Detailed CLI Usage</h3>
+<section id="evl_ocr---ocr-processing" class="level4">
+<h4 class="anchored" data-anchor-id="evl_ocr---ocr-processing"><code>evl_ocr</code> - OCR Processing</h4>
+<p>Convert PDF evaluation reports to structured markdown with extracted images.</p>
+<p><strong>Usage:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_ocr</span> <span class="op">&lt;</span>eval-id<span class="op">&gt;</span> <span class="pp">[</span><span class="ss">OPTIONS</span><span class="pp">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>--pdf-dir</code>: Directory containing PDF folders (default: <code>../data/pdf_library</code>)</li>
+<li><code>--output-dir</code>: Output directory for markdown (default: <code>../data/md_library</code>)</li>
+<li><code>--overwrite</code>: Reprocess if output already exists</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic usage</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_ocr</span> example-report</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom paths</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_ocr</span> example-report <span class="at">--pdf-dir</span> ./reports <span class="at">--output-dir</span> ./markdown</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Force reprocess</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_ocr</span> example-report <span class="at">--overwrite</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Output Structure:</strong></p>
+<pre><code>md_library/
+└── example-report/
+    └── example-report-file/
+        ├── page_1.md
+        ├── page_2.md
+        └── img/
+            ├── img-0.jpeg
+            └── img-1.jpeg</code></pre>
+</section>
+<section id="evl_md_plus---document-enrichment" class="level4">
+<h4 class="anchored" data-anchor-id="evl_md_plus---document-enrichment"><code>evl_md_plus</code> - Document Enrichment</h4>
+<p>Fix markdown headings hierarchy, append page numbers to each heading, and replace figures with AI-generated descriptions.</p>
+<p><strong>Usage:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_md_plus</span> <span class="op">&lt;</span>eval-id<span class="op">&gt;</span> <span class="pp">[</span><span class="ss">OPTIONS</span><span class="pp">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>--md-dir</code>: Directory containing markdown folders (default: <code>../data/md_library</code>)</li>
+<li><code>--overwrite</code>: Reprocess if enhanced/enriched already exists</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic usage</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_md_plus</span> example-report</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Force reprocess</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_md_plus</span> example-report <span class="at">--overwrite</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Output:</strong> Creates <code>enhanced/</code> and <code>enriched/</code> directories with corrected headings and image descriptions.</p>
+</section>
+<section id="evl_tag-iom-only-for-now" class="level4">
+<h4 class="anchored" data-anchor-id="evl_tag-iom-only-for-now"><code>evl_tag</code> [IOM only for now]</h4>
+<p>Map evaluation reports against established frameworks (SRF, GCM) using AI-assisted analysis.</p>
+<p><strong>Usage:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_tag</span> <span class="op">&lt;</span>eval-id<span class="op">&gt;</span> <span class="pp">[</span><span class="ss">OPTIONS</span><span class="pp">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>--md-dir</code>: Directory containing markdown folders (default: <code>_data/md_library</code>)</li>
+<li><code>--stages</code>: Comma-separated stages to run (default: <code>1,2,3</code>)
+<ul>
+<li>Stage 1: SRF Enablers &amp; Cross-cutting Priorities</li>
+<li>Stage 2: GCM Objectives</li>
+<li>Stage 3: SRF Outputs</li>
+</ul></li>
+<li><code>--force-refresh</code>: Force refresh specific stages (comma-separated: <code>sections,stage1,stage2,stage3</code>)</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run all stages</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_tag</span> example-report</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run specific stages only</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_tag</span> example-report <span class="at">--stages</span> 1,2</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Force refresh certain stages</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_tag</span> example-report <span class="at">--force-refresh</span> stage1,stage3</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Combined options</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="ex">evl_tag</span> example-report <span class="at">--stages</span> 2,3 <span class="at">--force-refresh</span> sections</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Output:</strong> Results stored in <code>~/.evaluatr/traces/</code> with complete audit trails of AI decisions.</p>
+</section>
+</section>
+</section>
+<section id="documentation" class="level2">
+<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
+<ul>
+<li><strong>Full Documentation</strong>: <a href="https://franckalbinet.github.io/evaluatr/">GitHub Pages</a></li>
+<li><strong>Module Notebooks</strong> (literate programming with nbdev):
+<ul>
+<li><a href="https://fr.anckalbi.net/evaluatr/ocr.html">OCR Processing</a></li>
+<li><a href="https://fr.anckalbi.net/evaluatr/enrichr.html">Document Enrichment</a></li>
+<li><a href="https://fr.anckalbi.net/evaluatr/mappr.html">Framework Mapping</a></li>
+</ul></li>
+<li><strong>Examples</strong>: See the <code>nbs/</code> directory for Jupyter notebooks</li>
+</ul>
+</section>
+<section id="contributing" class="level2">
+<h2 class="anchored" data-anchor-id="contributing">Contributing</h2>
+<section id="development-philosophy" class="level3">
+<h3 class="anchored" data-anchor-id="development-philosophy">Development Philosophy</h3>
+<p>Evaluatr is built using <a href="https://nbdev.fast.ai"><strong>nbdev</strong></a>, enabling documentation-driven development where code, docs, and tests live together in notebooks.</p>
+</section>
+<section id="adding-cli-commands" class="level3">
+<h3 class="anchored" data-anchor-id="adding-cli-commands">Adding CLI Commands</h3>
+<p>We use <a href="https://fastcore.fast.ai/script.html">fastcore.script</a> to create CLI tools. See the <a href="https://nbdev.fast.ai/tutorials/tutorial.html#advanced-functionality">nbdev console scripts tutorial</a> for setup details.</p>
+</section>
+<section id="development-setup" class="level3">
+<h3 class="anchored" data-anchor-id="development-setup">Development Setup</h3>
+<p>We welcome contributions! Here’s how you can help:</p>
+<ol type="1">
+<li><strong>Fork</strong> the repository</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install development dependencies</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li><strong>Create</strong> a feature branch (<code>git checkout -b feature/amazing-feature</code>)</li>
+<li><strong>Make</strong> your changes in the <code>nbs/</code> directory</li>
+<li><strong>Compile</strong> with <code>nbdev_prepare</code></li>
+<li><strong>Commit</strong> your changes (<code>git commit -m 'Add amazing feature'</code>)</li>
+<li><strong>Push</strong> to the branch (<code>git push origin feature/amazing-feature</code>)</li>
+<li><strong>Open</strong> a Pull Request</li>
+</ol>
+</section>
+</section>
+<section id="license" class="level2">
+<h2 class="anchored" data-anchor-id="license">License</h2>
+<p>This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details.</p>
+</section>
+<section id="dependencies" class="level2">
+<h2 class="anchored" data-anchor-id="dependencies">Dependencies</h2>
+<p>See <a href="settings.ini"><code>settings.ini</code></a> for the complete list of dependencies. Key packages include:</p>
+<ul>
+<li><strong>fastcore</strong> &amp; <strong>pandas</strong> - Core data processing</li>
+<li><strong>lisette</strong>, <strong>litellm</strong> &amp; <strong>dspy</strong> - AI/LLM integration</li>
+<li><strong>mistralai</strong> - OCR processing</li>
+</ul>
+</section>
+<section id="support" class="level2">
+<h2 class="anchored" data-anchor-id="support">Support</h2>
+<ul>
+<li><strong>Issues</strong>: <a href="https://github.com/franckalbinet/evalstack/issues">GitHub Issues</a></li>
+<li><strong>Discussions</strong>: <a href="https://github.com/franckalbinet/evalstack/discussions">GitHub Discussions</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/franckalbinet\.github\.io\/evaluatr");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/franckalbinet/evaluatr/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

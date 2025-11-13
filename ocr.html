@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="OCR evaluation reports">
+
+<title>OCR – Evaluatr</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-738cac9e5f2ad4ecce05fe3ba55cd681.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="OCR – Evaluatr">
+<meta property="og:description" content="OCR evaluation reports">
+<meta property="og:site_name" content="Evaluatr">
+<meta name="twitter:title" content="OCR – Evaluatr">
+<meta name="twitter:description" content="OCR evaluation reports">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Evaluatr</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/franckalbinet/evaluatr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./readers.html">API</a></li><li class="breadcrumb-item"><a href="./ocr.html">OCR</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluatr</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/eval_reports_eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation reports EDA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./readers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./downloaders.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Downloaders</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ocr.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">OCR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./enrichr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Enrichr</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./frameworks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frameworks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mappr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mappr</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#utils" id="toc-utils" class="nav-link active" data-scroll-target="#utils">Utils</a>
+  <ul>
+  <li><a href="#get_doc_subtype" id="toc-get_doc_subtype" class="nav-link" data-scroll-target="#get_doc_subtype">get_doc_subtype</a></li>
+  <li><a href="#clean_pdf_name" id="toc-clean_pdf_name" class="nav-link" data-scroll-target="#clean_pdf_name">clean_pdf_name</a></li>
+  </ul></li>
+  <li><a href="#batch-processing" id="toc-batch-processing" class="nav-link" data-scroll-target="#batch-processing">Batch processing</a>
+  <ul>
+  <li><a href="#setup_output_dirs" id="toc-setup_output_dirs" class="nav-link" data-scroll-target="#setup_output_dirs">setup_output_dirs</a></li>
+  <li><a href="#get_pdfs_and_dir" id="toc-get_pdfs_and_dir" class="nav-link" data-scroll-target="#get_pdfs_and_dir">get_pdfs_and_dir</a></li>
+  <li><a href="#save_page_images" id="toc-save_page_images" class="nav-link" data-scroll-target="#save_page_images">save_page_images</a></li>
+  <li><a href="#process_batch_results" id="toc-process_batch_results" class="nav-link" data-scroll-target="#process_batch_results">process_batch_results</a></li>
+  <li><a href="#create_batch_ocr_job" id="toc-create_batch_ocr_job" class="nav-link" data-scroll-target="#create_batch_ocr_job">create_batch_ocr_job</a></li>
+  <li><a href="#submit_and_monitor_batch_job" id="toc-submit_and_monitor_batch_job" class="nav-link" data-scroll-target="#submit_and_monitor_batch_job">submit_and_monitor_batch_job</a></li>
+  <li><a href="#download_and_parse_results" id="toc-download_and_parse_results" class="nav-link" data-scroll-target="#download_and_parse_results">download_and_parse_results</a></li>
+  <li><a href="#process_single_evaluation_batch" id="toc-process_single_evaluation_batch" class="nav-link" data-scroll-target="#process_single_evaluation_batch">process_single_evaluation_batch</a></li>
+  <li><a href="#process_all_reports_batch" id="toc-process_all_reports_batch" class="nav-link" data-scroll-target="#process_all_reports_batch">process_all_reports_batch</a></li>
+  </ul></li>
+  <li><a href="#cli" id="toc-cli" class="nav-link" data-scroll-target="#cli">CLI</a>
+  <ul>
+  <li><a href="#ocr_evaluation" id="toc-ocr_evaluation" class="nav-link" data-scroll-target="#ocr_evaluation">ocr_evaluation</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/franckalbinet/evaluatr/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./readers.html">API</a></li><li class="breadcrumb-item"><a href="./ocr.html">OCR</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">OCR</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+</div>
+
+<div>
+  <div class="description">
+    OCR evaluation reports
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>For testing purposes, let’s load evaluations:</p>
+<div id="cell-3" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fname_json <span class="op">=</span> <span class="st">'../_data/output/evaluations.json'</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>evals <span class="op">=</span> load_evals(fname_json)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(evals[<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">{</span>
+    <span style="color: #008000; text-decoration-color: #008000">'id'</span>: <span style="color: #008000; text-decoration-color: #008000">'1a57974ab89d7280988aa6b706147ce1'</span>,
+    <span style="color: #008000; text-decoration-color: #008000">'docs'</span>: <span style="font-weight: bold">[</span>
+        <span style="font-weight: bold">{</span>
+            <span style="color: #008000; text-decoration-color: #008000">'Document Subtype'</span>: <span style="color: #008000; text-decoration-color: #008000">'Evaluation report'</span>,
+            <span style="color: #008000; text-decoration-color: #008000">'File URL'</span>: 
+<span style="color: #008000; text-decoration-color: #008000">'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Internal%20Evaluation_NG20P0516_MAY_2023_F</span>
+<span style="color: #008000; text-decoration-color: #008000">INAL_Abderrahim%20EL%20MOULAT.pdf'</span>,
+            <span style="color: #008000; text-decoration-color: #008000">'File description'</span>: <span style="color: #008000; text-decoration-color: #008000">'Evaluation Report'</span>
+        <span style="font-weight: bold">}</span>,
+        <span style="font-weight: bold">{</span>
+            <span style="color: #008000; text-decoration-color: #008000">'Document Subtype'</span>: <span style="color: #008000; text-decoration-color: #008000">'Evaluation brief'</span>,
+            <span style="color: #008000; text-decoration-color: #008000">'File URL'</span>: 
+<span style="color: #008000; text-decoration-color: #008000">'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/RR0163_Evaluation%20Brief_MAY_%202023_Abde</span>
+<span style="color: #008000; text-decoration-color: #008000">rrahim%20EL%20MOULAT.pdf'</span>,
+            <span style="color: #008000; text-decoration-color: #008000">'File description'</span>: <span style="color: #008000; text-decoration-color: #008000">'Evaluation Brief'</span>
+        <span style="font-weight: bold">}</span>
+    <span style="font-weight: bold">]</span>,
+    <span style="color: #008000; text-decoration-color: #008000">'meta'</span>: <span style="font-weight: bold">{</span>
+        <span style="color: #008000; text-decoration-color: #008000">'Title'</span>: <span style="color: #008000; text-decoration-color: #008000">'EX-POST EVALUATION OF THE PROJECT:  NIGERIA: STRENGTHENING REINTEGRATION FOR RETURNEES (SRARP)  -</span>
+<span style="color: #008000; text-decoration-color: #008000">PHASE II'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Year'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2023</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Author'</span>: <span style="color: #008000; text-decoration-color: #008000">'Abderrahim El Moulat'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Best Practicesor Lessons Learnt'</span>: <span style="color: #008000; text-decoration-color: #008000">'Yes'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Date of Publication'</span>: <span style="color: #008000; text-decoration-color: #008000">'2023-05-10'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Donor'</span>: <span style="color: #008000; text-decoration-color: #008000">'Government of Germany'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Evaluation Brief'</span>: <span style="color: #008000; text-decoration-color: #008000">'Yes'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Evaluation Commissioner'</span>: <span style="color: #008000; text-decoration-color: #008000">'Donor, IOM'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Evaluation Coverage'</span>: <span style="color: #008000; text-decoration-color: #008000">'Country'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Evaluation Period From Date'</span>: <span style="color: #008000; text-decoration-color: #008000">'nan'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Evaluation Period To Date'</span>: <span style="color: #008000; text-decoration-color: #008000">'NaT'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Executive Summary'</span>: <span style="color: #008000; text-decoration-color: #008000">'Yes'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'External Version of the Report'</span>: <span style="color: #008000; text-decoration-color: #008000">'No'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Languages'</span>: <span style="color: #008000; text-decoration-color: #008000">'English'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Migration Thematic Areas'</span>: <span style="color: #008000; text-decoration-color: #008000">'Assistance to vulnerable migrants, Migrant training and integration (including</span>
+<span style="color: #008000; text-decoration-color: #008000">community cohesion), Migration health (assessment, travel, health promotion, crisis-affected), Return and AVRR'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Name of Project(s) Being Evaluated'</span>: nan,
+        <span style="color: #008000; text-decoration-color: #008000">'Number of Pages Excluding annexes'</span>: nan,
+        <span style="color: #008000; text-decoration-color: #008000">'Other Documents Included'</span>: nan,
+        <span style="color: #008000; text-decoration-color: #008000">'Project Code'</span>: <span style="color: #008000; text-decoration-color: #008000">'RR.0163'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Countries Covered'</span>: <span style="font-weight: bold">[</span><span style="color: #008000; text-decoration-color: #008000">'Nigeria'</span><span style="font-weight: bold">]</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Regions Covered'</span>: <span style="color: #008000; text-decoration-color: #008000">'RO Dakar'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Relevant Crosscutting Themes'</span>: <span style="color: #008000; text-decoration-color: #008000">'Gender, Rights-based approach'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Report Published'</span>: <span style="color: #008000; text-decoration-color: #008000">'Yes'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Terms of Reference'</span>: <span style="color: #008000; text-decoration-color: #008000">'No'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Type of Evaluation Scope'</span>: <span style="color: #008000; text-decoration-color: #008000">'Programme/Project'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Type of Evaluation Timing'</span>: <span style="color: #008000; text-decoration-color: #008000">'Ex-post (after the end of the project/programme)'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Type of Evaluator'</span>: <span style="color: #008000; text-decoration-color: #008000">'Internal'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Level of Evaluation'</span>: <span style="color: #008000; text-decoration-color: #008000">'Decentralized'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Document Subtype'</span>: <span style="color: #008000; text-decoration-color: #008000">'Evaluation report, Evaluation brief'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'File URL'</span>: 
+<span style="color: #008000; text-decoration-color: #008000">'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Internal%20Evaluation_NG20P0516_MAY_2023_F</span>
+<span style="color: #008000; text-decoration-color: #008000">INAL_Abderrahim%20EL%20MOULAT.pdf,   </span>
+<span style="color: #008000; text-decoration-color: #008000">https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/RR0163_Evaluation%20Brief_MAY_%202023_Abder</span>
+<span style="color: #008000; text-decoration-color: #008000">rahim%20EL%20MOULAT.pdf'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'File description'</span>: <span style="color: #008000; text-decoration-color: #008000">'Evaluation Report , Evaluation Brief'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Management response'</span>: <span style="color: #008000; text-decoration-color: #008000">'No'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Date added'</span>: <span style="color: #008000; text-decoration-color: #008000">'Fri, 07/07/2023 - 15:35'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'Metaevaluation'</span>: <span style="color: #008000; text-decoration-color: #008000">'2020-24'</span>,
+        <span style="color: #008000; text-decoration-color: #008000">'exclude'</span>: nan,
+        <span style="color: #008000; text-decoration-color: #008000">'reason'</span>: nan
+    <span style="font-weight: bold">}</span>
+<span style="font-weight: bold">}</span>
+</pre>
+</div>
+</div>
+<p>To find a particular evaluation per name (e.g “Final Evaluation of the EU-IOM Joint …”), we can simply:</p>
+<div id="cell-5" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>title <span class="op">=</span> <span class="st">'Final Evaluation of the EU-IOM Joint Initiative for migrant protection and reintegration in the Horn of Africa'</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> [o <span class="cf">for</span> o <span class="kw">in</span> evals.<span class="bu">filter</span>(<span class="kw">lambda</span> x: title.lower() <span class="kw">in</span> x[<span class="st">'meta'</span>][<span class="st">'Title'</span>].lower())]<span class="op">;</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'id': '49d2fba781b6a7c0d94577479636ee6f',
+  'docs': [{'Document Subtype': 'Evaluation report',
+    'File URL': 'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Abridged%20Evaluation%20Report_%20Final_Olta%20NDOJA.pdf',
+    'File description': 'Evaluation Report'},
+   {'Document Subtype': 'Evaluation brief',
+    'File URL': 'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Evaluation%20Learning%20Brief_Final_Olta%20NDOJA.pdf',
+    'File description': 'Evaluation Brief'},
+   {'Document Subtype': 'Annexes',
+    'File URL': 'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Final%20Evaluation%20Report%20Final_Olta%20NDOJA.pdf',
+    'File description': 'Abridged Report'},
+   {'Document Subtype': 'Management response',
+    'File URL': 'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/HoA%20EU%20JI%20Final%20Eval%20-%20Management%20Response%20Matrix%20-%20Final.pdf',
+    'File description': 'Management Response'}],
+  'meta': {'Title': 'Final Evaluation of the EU-IOM Joint Initiative for migrant protection and reintegration in the horn of Africa',
+   'Year': 2023,
+   'Author': 'PPMI Group',
+   'Best Practicesor Lessons Learnt': 'Yes',
+   'Date of Publication': '2023-03-17',
+   'Donor': 'European Union',
+   'Evaluation Brief': 'Yes',
+   'Evaluation Commissioner': 'IOM',
+   'Evaluation Coverage': 'Regional',
+   'Evaluation Period From Date': 'nan',
+   'Evaluation Period To Date': 'NaT',
+   'Executive Summary': 'Yes',
+   'External Version of the Report': 'No',
+   'Languages': 'English',
+   'Migration Thematic Areas': 'Assistance to vulnerable migrants, Return and AVRR',
+   'Name of Project(s) Being Evaluated': nan,
+   'Number of Pages Excluding annexes': nan,
+   'Other Documents Included': nan,
+   'Project Code': 'RT.1354',
+   'Countries Covered': ['Djibouti', 'Ethiopia', 'Somalia', 'South Sudan'],
+   'Regions Covered': 'RO Nairobi',
+   'Relevant Crosscutting Themes': 'Accountability to affected populations, Environment, Gender, Mainstreaming protection into crisis response, Principled humanitarian action, Rights-based approach',
+   'Report Published': 'Yes',
+   'Terms of Reference': 'No',
+   'Type of Evaluation Scope': 'Programme/Project',
+   'Type of Evaluation Timing': 'Final (at the end of the project/programme)',
+   'Type of Evaluator': 'External',
+   'Level of Evaluation': 'Decentralized',
+   'Document Subtype': 'Evaluation report, Evaluation brief, Annexes, Management response',
+   'File URL': 'https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Abridged%20Evaluation%20Report_%20Final_Olta%20NDOJA.pdf,   https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Evaluation%20Learning%20Brief_Final_Olta%20NDOJA.pdf,   https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/Final%20Evaluation%20Report%20Final_Olta%20NDOJA.pdf,   https://evaluation.iom.int/sites/g/files/tmzbdl151/files/docs/resources/HoA%20EU%20JI%20Final%20Eval%20-%20Management%20Response%20Matrix%20-%20Final.pdf',
+   'File description': 'Evaluation Report , Evaluation Brief, Abridged Report, Management Response',
+   'Management response': 'No',
+   'Date added': 'Fri, 05/26/2023 - 12:38',
+   'Metaevaluation': '2020-24',
+   'exclude': nan,
+   'reason': nan}}]</code></pre>
+</div>
+</div>
+<section id="utils" class="level2">
+<h2 class="anchored" data-anchor-id="utils">Utils</h2>
+<p>Given an evaluation <code>id</code> and a <code>pdf</code> file name of one of its supporting doc we’d like to check its <code>subtype</code>:</p>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L39" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_doc_subtype" class="level3">
+<h3 class="anchored" data-anchor-id="get_doc_subtype">get_doc_subtype</h3>
+<blockquote class="blockquote">
+<pre><code> get_doc_subtype (id:str, fname:str, evals)</code></pre>
+</blockquote>
+<p><em>Get Document Subtype for a given file in the evaluation dataset</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id</td>
+<td>str</td>
+<td>ID of the evaluation</td>
+</tr>
+<tr class="even">
+<td>fname</td>
+<td>str</td>
+<td>Name of the file</td>
+</tr>
+<tr class="odd">
+<td>evals</td>
+<td></td>
+<td>Evaluations data</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>str</strong></td>
+<td><strong>Document Subtype</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-9" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_doc_subtype(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span>:<span class="bu">str</span>, <span class="co"># ID of the evaluation</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    fname:<span class="bu">str</span>, <span class="co"># Name of the file</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    evals <span class="co"># Evaluations data</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    )<span class="op">-&gt;</span><span class="bu">str</span>: <span class="co"># Document Subtype</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Get Document Subtype for a given file in the evaluation dataset"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    eval_data <span class="op">=</span> L(evals).<span class="bu">filter</span>(<span class="kw">lambda</span> x: x[<span class="st">'id'</span>]<span class="op">==</span><span class="bu">id</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> eval_data: <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    docs <span class="op">=</span> L(eval_data[<span class="dv">0</span>][<span class="st">'docs'</span>])</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    matches <span class="op">=</span> docs.<span class="bu">filter</span>(<span class="kw">lambda</span> x: Path(x[<span class="st">'File URL'</span>]).name<span class="op">==</span>fname)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> matches[<span class="dv">0</span>][<span class="st">'Document Subtype'</span>] <span class="cf">if</span> matches <span class="cf">else</span> <span class="va">None</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Now, based on downloaded PDFs on <code>path_pdf</code>, we can get the subtype of each document:</p>
+<div id="cell-11" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>path_pdf <span class="op">=</span> Path(<span class="st">'../_data/pdf_library'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'49d2fba781b6a7c0d94577479636ee6f'</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> o <span class="kw">in</span> path_pdf.ls().<span class="bu">filter</span>(<span class="kw">lambda</span> x: x.name <span class="op">==</span> <span class="bu">id</span>)[<span class="dv">0</span>].ls():</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Name: </span><span class="sc">{</span>o<span class="sc">.</span>name<span class="sc">}</span><span class="ch">\n</span><span class="ss">Subtype: </span><span class="sc">{</span>get_doc_subtype(<span class="bu">id</span>, o.name, evals)<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Name: Evaluation%20Learning%20Brief_Final_Olta%20NDOJA.pdf
+Subtype: Evaluation brief
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Name: HoA%20EU%20JI%20Final%20Eval%<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">20</span>-%20Management%20Response%20Matrix%<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">20</span>-%20Final.pdf
+Subtype: Management response
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Name: Abridged%20Evaluation%20Report_%20Final_Olta%20NDOJA.pdf
+Subtype: Evaluation report
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Name: Final%20Evaluation%20Report%20Final_Olta%20NDOJA.pdf
+Subtype: Annexes
+</pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L54" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="clean_pdf_name" class="level3">
+<h3 class="anchored" data-anchor-id="clean_pdf_name">clean_pdf_name</h3>
+<blockquote class="blockquote">
+<pre><code> clean_pdf_name (pdf_name:str)</code></pre>
+</blockquote>
+<p><em>Clean PDF name to create folder-friendly string. Removes special characters and spaces, replaces with underscores.</em></p>
+<div id="cell-13" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: filename will be cleaned upstream in a next version</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_pdf_name(pdf_name: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Clean PDF name to create folder-friendly string.</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Removes special characters and spaces, replaces with underscores.</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Remove URL encoding</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    pdf_name <span class="op">=</span> urllib.parse.unquote(pdf_name)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Replace spaces and special characters with underscores</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Replace any character that is not a word character (\w), whitespace (\s), or hyphen (-) with underscore</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    cleaned <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="pp">[^</span><span class="dv">\w\s</span><span class="pp">-]</span><span class="vs">'</span>, <span class="st">'_'</span>, pdf_name)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Replace any sequence of hyphens or whitespace with a single underscore</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    cleaned <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="pp">[-</span><span class="dv">\s</span><span class="pp">]</span><span class="op">+</span><span class="vs">'</span>, <span class="st">'_'</span>, cleaned)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Replace multiple consecutive underscores with a single underscore</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    cleaned <span class="op">=</span> re.sub(<span class="vs">r'_</span><span class="op">+</span><span class="vs">'</span>, <span class="st">'_'</span>, cleaned)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    cleaned <span class="op">=</span> cleaned.strip(<span class="st">'_'</span>)  <span class="co"># Remove leading/trailing underscores</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cleaned.lower()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-14" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>clean_pdf_name(<span class="st">"Final</span><span class="sc">%20E</span><span class="st">valuation%20Report</span><span class="sc">%20F</span><span class="st">inal_Olta%20NDOJA.pdf"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre><code>'final_evaluation_report_final_olta_ndoja_pdf'</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="batch-processing" class="level2">
+<h2 class="anchored" data-anchor-id="batch-processing">Batch processing</h2>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L89" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="setup_output_dirs" class="level3">
+<h3 class="anchored" data-anchor-id="setup_output_dirs">setup_output_dirs</h3>
+<blockquote class="blockquote">
+<pre><code> setup_output_dirs (md_library_path='../_data/md_library')</code></pre>
+</blockquote>
+<p><em>Set up the output directory structure for markdown files</em></p>
+<div id="cell-17" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>log_dir <span class="op">=</span> Path.home() <span class="op">/</span> <span class="st">'.evaluatr'</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>log_dir.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    level<span class="op">=</span>logging.INFO,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">'</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(levelname)s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">'</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    handlers<span class="op">=</span>[</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        logging.FileHandler(<span class="bu">str</span>(log_dir <span class="op">/</span> <span class="st">'batch_ocr.log'</span>)),</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        logging.StreamHandler()</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-18" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setup_output_dirs(md_library_path<span class="op">=</span><span class="st">"../_data/md_library"</span>):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Set up the output directory structure for markdown files"</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    md_output_dir <span class="op">=</span> Path(md_library_path)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    mkdir(md_output_dir, parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>, overwrite<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> md_output_dir</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L96" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_pdfs_and_dir" class="level3">
+<h3 class="anchored" data-anchor-id="get_pdfs_and_dir">get_pdfs_and_dir</h3>
+<blockquote class="blockquote">
+<pre><code> get_pdfs_and_dir (report_path:pathlib.Path, md_output_dir:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Get PDFs from report directory and create output directory</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>report_path</td>
+<td>Path</td>
+<td>Path to the report directory</td>
+</tr>
+<tr class="even">
+<td>md_output_dir</td>
+<td>Path</td>
+<td>Path to the output directory</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>tuple</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-20" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_pdfs_and_dir(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    report_path:Path, <span class="co"># Path to the report directory</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    md_output_dir:Path <span class="co"># Path to the output directory</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="bu">tuple</span>[<span class="bu">list</span>[Path], <span class="bu">str</span>]:</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Get PDFs from report directory and create output directory"</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    pdfs <span class="op">=</span> report_path.ls(file_exts<span class="op">=</span><span class="st">'.pdf'</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    eval_report_path <span class="op">=</span> report_path.name</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    mkdir(md_output_dir <span class="op">/</span> eval_report_path, parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>, overwrite<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pdfs, eval_report_path</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Example usage for the “’Final Evaluation of the EU-IOM Joint Initiative …” evaluation:</p>
+<div id="cell-22" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># report_id_test = '49d2fba781b6a7c0d94577479636ee6f'</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># reports = [p for p in path_pdf.ls() if p.name == report_id_test]</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># pdfs, eval_report_path = get_pdfs_and_dir(reports[0], md_output_dir)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f'Reports: {reports}')</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f'pdfs[0]: {pdfs[0]}\nEvaluation report path: {eval_report_path}')</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L107" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="save_page_images" class="level3">
+<h3 class="anchored" data-anchor-id="save_page_images">save_page_images</h3>
+<blockquote class="blockquote">
+<pre><code> save_page_images (page, dest_folder:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Save all images from a page to destination folder as PNG</em></p>
+<div id="cell-24" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_page_images(page, dest_folder: Path):</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Save all images from a page to destination folder as PNG"</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    images <span class="op">=</span> page.images <span class="cf">if</span> <span class="bu">hasattr</span>(page, <span class="st">'images'</span>) <span class="cf">else</span> page.get(<span class="st">'images'</span>, [])</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> img <span class="kw">in</span> images:</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        img_data <span class="op">=</span> <span class="bu">getattr</span>(img, <span class="st">'image_base64'</span>, img.get(<span class="st">'image_base64'</span>))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        img_id <span class="op">=</span> <span class="bu">getattr</span>(img, <span class="st">'id'</span>, img.get(<span class="st">'id'</span>))</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> img_data <span class="kw">and</span> img_id:</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>            img_bytes <span class="op">=</span> base64.b64decode(img_data.split(<span class="st">','</span>)[<span class="dv">1</span>])</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>            pil_img <span class="op">=</span> Image.<span class="bu">open</span>(BytesIO(img_bytes))</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>            output_path <span class="op">=</span> dest_folder <span class="op">/</span> img_id</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>            pil_img.save(output_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L122" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="process_batch_results" class="level3">
+<h3 class="anchored" data-anchor-id="process_batch_results">process_batch_results</h3>
+<blockquote class="blockquote">
+<pre><code> process_batch_results (results, md_output_dir)</code></pre>
+</blockquote>
+<p><em>Process batch OCR results and save to appropriate folders</em></p>
+<div id="cell-26" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_batch_results(results, md_output_dir):</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Process batch OCR results and save to appropriate folders"</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> result <span class="kw">in</span> results:</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Parse custom_id to get eval_id and pdf_name</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>            eval_id, pdf_name <span class="op">=</span> result[<span class="st">'custom_id'</span>].split(<span class="st">'_'</span>, <span class="dv">1</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Get OCR response</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>            ocr_response <span class="op">=</span> result[<span class="st">'response'</span>][<span class="st">'body'</span>]</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Create folder structure</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>            pdf_clean_name <span class="op">=</span> clean_pdf_name(pdf_name)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>            pdf_dir <span class="op">=</span> md_output_dir <span class="op">/</span> eval_id <span class="op">/</span> pdf_clean_name</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>            pdf_dir.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Save each page markdown</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> page <span class="kw">in</span> ocr_response[<span class="st">'pages'</span>]:</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>                page_num <span class="op">=</span> page[<span class="st">'index'</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>                page_path <span class="op">=</span> pdf_dir <span class="op">/</span> <span class="ss">f"page_</span><span class="sc">{</span>page_num<span class="sc">}</span><span class="ss">.md"</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>                page_path.write_text(page[<span class="st">'markdown'</span>])</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Save images if they exist</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>            img_dir <span class="op">=</span> pdf_dir <span class="op">/</span> <span class="st">'img'</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> page <span class="kw">in</span> ocr_response[<span class="st">'pages'</span>]:</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> page.get(<span class="st">'images'</span>):</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>                    img_dir.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>                    save_page_images(page, img_dir)</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>            logging.info(<span class="ss">f"Saved </span><span class="sc">{</span><span class="bu">len</span>(ocr_response[<span class="st">'pages'</span>])<span class="sc">}</span><span class="ss"> pages for </span><span class="sc">{</span>pdf_clean_name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>            logging.error(<span class="ss">f"Error processing result </span><span class="sc">{</span>result<span class="sc">.</span>get(<span class="st">'custom_id'</span>, <span class="st">'unknown'</span>)<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L156" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_batch_ocr_job" class="level3">
+<h3 class="anchored" data-anchor-id="create_batch_ocr_job">create_batch_ocr_job</h3>
+<blockquote class="blockquote">
+<pre><code> create_batch_ocr_job (pdf_paths:List[pathlib.Path], eval_report_path:str,
+                       model:str='mistral-ocr-latest',
+                       include_images:bool=True, api_key:str=None)</code></pre>
+</blockquote>
+<p><em>Create batch entries for PDFs from one evaluation report</em></p>
+<div id="cell-28" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_batch_ocr_job(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    pdf_paths: List[Path],</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    eval_report_path: <span class="bu">str</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    model: <span class="bu">str</span> <span class="op">=</span> <span class="st">"mistral-ocr-latest"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    include_images: <span class="bu">bool</span> <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    api_key: <span class="bu">str</span> <span class="op">=</span> mistral_api_key</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Create batch entries for PDFs from one evaluation report"</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    cli <span class="op">=</span> Mistral(api_key<span class="op">=</span>api_key)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    batch_entries <span class="op">=</span> []</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> pdf_path <span class="kw">in</span> pdf_paths:</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        uploaded_pdf <span class="op">=</span> cli.files.upload(</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>            <span class="bu">file</span><span class="op">=</span>{</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>                <span class="st">"file_name"</span>: pdf_path.stem,</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">"content"</span>: pdf_path.read_bytes(),</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>            purpose<span class="op">=</span><span class="st">"ocr"</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        signed_url <span class="op">=</span> cli.files.get_signed_url(file_id<span class="op">=</span>uploaded_pdf.<span class="bu">id</span>)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        entry <span class="op">=</span> {</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>            <span class="st">"custom_id"</span>: <span class="ss">f"</span><span class="sc">{</span>eval_report_path<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>pdf_path<span class="sc">.</span>name<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>            <span class="st">"body"</span>: {</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>                <span class="st">"document"</span>: {</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"type"</span>: <span class="st">"document_url"</span>,</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"document_url"</span>: signed_url.url,</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>                <span class="st">"include_image_base64"</span>: include_images</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>        batch_entries.append(entry)</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>        logging.info(<span class="ss">f"Added </span><span class="sc">{</span>pdf_path<span class="sc">.</span>name<span class="sc">}</span><span class="ss"> to batch for </span><span class="sc">{</span>eval_report_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> batch_entries, cli</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L194" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="submit_and_monitor_batch_job" class="level3">
+<h3 class="anchored" data-anchor-id="submit_and_monitor_batch_job">submit_and_monitor_batch_job</h3>
+<blockquote class="blockquote">
+<pre><code> submit_and_monitor_batch_job (batch_entries, eval_report_path, cli)</code></pre>
+</blockquote>
+<p><em>Submit batch job and monitor until completion</em></p>
+<div id="cell-30" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> submit_and_monitor_batch_job(batch_entries, eval_report_path, cli):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Submit batch job and monitor until completion"</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tempfile.NamedTemporaryFile(mode<span class="op">=</span><span class="st">'w'</span>, suffix<span class="op">=</span><span class="st">'.jsonl'</span>, delete<span class="op">=</span><span class="va">True</span>) <span class="im">as</span> temp_file:</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Write batch entries to temp file</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> entry <span class="kw">in</span> batch_entries:</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>            temp_file.write(json.dumps(entry) <span class="op">+</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>        temp_file.flush()</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Upload and create job</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>        batch_data <span class="op">=</span> cli.files.upload(</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>            <span class="bu">file</span><span class="op">=</span>{<span class="st">"file_name"</span>: <span class="ss">f"batch_</span><span class="sc">{</span>eval_report_path<span class="sc">}</span><span class="ss">.jsonl"</span>, </span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"content"</span>: <span class="bu">open</span>(temp_file.name, <span class="st">"rb"</span>)},</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>            purpose<span class="op">=</span><span class="st">"batch"</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>        created_job <span class="op">=</span> cli.batch.jobs.create(</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>            input_files<span class="op">=</span>[batch_data.<span class="bu">id</span>],</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>            model<span class="op">=</span><span class="st">"mistral-ocr-latest"</span>,</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>            endpoint<span class="op">=</span><span class="st">"/v1/ocr"</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>        logging.info(<span class="ss">f"Batch job created for </span><span class="sc">{</span>eval_report_path<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>created_job<span class="sc">.</span><span class="bu">id</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Monitor completion</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>            job <span class="op">=</span> cli.batch.jobs.get(job_id<span class="op">=</span>created_job.<span class="bu">id</span>)</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>            logging.info(<span class="ss">f"Job status: </span><span class="sc">{</span>job<span class="sc">.</span>status<span class="sc">}</span><span class="ss"> - </span><span class="sc">{</span>job<span class="sc">.</span>succeeded_requests<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>job<span class="sc">.</span>total_requests<span class="sc">}</span><span class="ss"> completed"</span>)</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> job.status <span class="kw">not</span> <span class="kw">in</span> [<span class="st">"QUEUED"</span>, <span class="st">"RUNNING"</span>]:</span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>            time.sleep(<span class="dv">10</span>)</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> job</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L229" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="download_and_parse_results" class="level3">
+<h3 class="anchored" data-anchor-id="download_and_parse_results">download_and_parse_results</h3>
+<blockquote class="blockquote">
+<pre><code> download_and_parse_results (job, cli)</code></pre>
+</blockquote>
+<p><em>Download and parse batch job results</em></p>
+<div id="cell-32" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> download_and_parse_results(job, cli):</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Download and parse batch job results"</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> cli.files.download(file_id<span class="op">=</span>job.output_file)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    content <span class="op">=</span> response.read().decode(<span class="st">'utf-8'</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> line <span class="kw">in</span> content.strip().split(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>):</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> line:</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>            results.append(json.loads(line))</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    logging.info(<span class="ss">f"Downloaded and parsed </span><span class="sc">{</span><span class="bu">len</span>(results)<span class="sc">}</span><span class="ss"> OCR results"</span>)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L243" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="process_single_evaluation_batch" class="level3">
+<h3 class="anchored" data-anchor-id="process_single_evaluation_batch">process_single_evaluation_batch</h3>
+<blockquote class="blockquote">
+<pre><code> process_single_evaluation_batch (report:pathlib.Path,
+                                  md_output_dir:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>Process one evaluation report using batch OCR</em></p>
+<div id="cell-34" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_single_evaluation_batch(report: Path, md_output_dir: Path):</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Process one evaluation report using batch OCR"</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    logging.info(<span class="ss">f"Processing evaluation: </span><span class="sc">{</span>report<span class="sc">.</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    pdfs, eval_report_path <span class="op">=</span> get_pdfs_and_dir(report, md_output_dir)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> pdfs:</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>        logging.warning(<span class="ss">f"No PDFs found in </span><span class="sc">{</span>eval_report_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    batch_entries, cli <span class="op">=</span> create_batch_ocr_job(pdfs, eval_report_path)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    job <span class="op">=</span> submit_and_monitor_batch_job(batch_entries, eval_report_path, cli)</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> job <span class="kw">and</span> job.status <span class="op">==</span> <span class="st">"SUCCESS"</span>:</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>        results <span class="op">=</span> download_and_parse_results(job, cli)</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>        process_batch_results(results, md_output_dir)</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>        logging.info(<span class="ss">f"Completed processing evaluation: </span><span class="sc">{</span>eval_report_path<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>        logging.error(<span class="ss">f"Job failed for </span><span class="sc">{</span>eval_report_path<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L264" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="process_all_reports_batch" class="level3">
+<h3 class="anchored" data-anchor-id="process_all_reports_batch">process_all_reports_batch</h3>
+<blockquote class="blockquote">
+<pre><code> process_all_reports_batch (reports:list[pathlib.Path],
+                            md_library_path='../_data/md_library')</code></pre>
+</blockquote>
+<p><em>Process evaluation reports using batch OCR</em></p>
+<div id="cell-36" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_all_reports_batch(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    reports: <span class="bu">list</span>[Path],</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    md_library_path<span class="op">=</span><span class="st">"../_data/md_library"</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Process evaluation reports using batch OCR"</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    logging.info(<span class="ss">f"Starting batch OCR processing for </span><span class="sc">{</span><span class="bu">len</span>(reports)<span class="sc">}</span><span class="ss"> reports"</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    md_output_dir <span class="op">=</span> setup_output_dirs(md_library_path)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> report <span class="kw">in</span> tqdm(reports, desc<span class="op">=</span><span class="st">"Processing reports"</span>):</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>        process_single_evaluation_batch(report, md_output_dir)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    logging.info(<span class="st">"Batch OCR processing completed for all reports"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-37" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>process_all_reports_batch(reports, md_library_path<span class="op">=</span><span class="st">"../_data/md_library"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2025-08-06 17:38:39,461 - INFO - Starting batch OCR processing for 1 reports
+Processing reports:   0%|          | 0/1 [00:00&lt;?, ?it/s]2025-08-06 17:38:39,464 - INFO - Processing evaluation: 49d2fba781b6a7c0d94577479636ee6f
+2025-08-06 17:38:42,165 - INFO - HTTP Request: POST https://api.mistral.ai/v1/files "HTTP/1.1 200 OK"
+2025-08-06 17:38:42,521 - INFO - HTTP Request: GET https://api.mistral.ai/v1/files/20ea2096-b022-492c-84de-4130e24c6188/url?expiry=24 "HTTP/1.1 200 OK"
+2025-08-06 17:38:42,522 - INFO - Added Evaluation%20Learning%20Brief_Final_Olta%20NDOJA.pdf to batch for 49d2fba781b6a7c0d94577479636ee6f
+2025-08-06 17:38:44,401 - INFO - HTTP Request: POST https://api.mistral.ai/v1/files "HTTP/1.1 200 OK"
+2025-08-06 17:38:44,756 - INFO - HTTP Request: GET https://api.mistral.ai/v1/files/67423130-6d16-4f97-960e-35f1e85aa91d/url?expiry=24 "HTTP/1.1 200 OK"
+2025-08-06 17:38:44,760 - INFO - Added HoA%20EU%20JI%20Final%20Eval%20-%20Management%20Response%20Matrix%20-%20Final.pdf to batch for 49d2fba781b6a7c0d94577479636ee6f
+2025-08-06 17:38:52,790 - INFO - HTTP Request: POST https://api.mistral.ai/v1/files "HTTP/1.1 200 OK"
+2025-08-06 17:38:52,986 - INFO - HTTP Request: GET https://api.mistral.ai/v1/files/b3d152f4-a906-4bb3-89e9-b9bb67ee995e/url?expiry=24 "HTTP/1.1 200 OK"
+2025-08-06 17:38:52,988 - INFO - Added Abridged%20Evaluation%20Report_%20Final_Olta%20NDOJA.pdf to batch for 49d2fba781b6a7c0d94577479636ee6f
+2025-08-06 17:39:18,422 - INFO - HTTP Request: POST https://api.mistral.ai/v1/files "HTTP/1.1 200 OK"
+2025-08-06 17:39:18,611 - INFO - HTTP Request: GET https://api.mistral.ai/v1/files/6a41e07f-0e95-4408-81c7-b608d4c6e0c6/url?expiry=24 "HTTP/1.1 200 OK"
+2025-08-06 17:39:18,615 - INFO - Added Final%20Evaluation%20Report%20Final_Olta%20NDOJA.pdf to batch for 49d2fba781b6a7c0d94577479636ee6f
+2025-08-06 17:39:19,210 - INFO - HTTP Request: POST https://api.mistral.ai/v1/files "HTTP/1.1 200 OK"
+2025-08-06 17:39:19,899 - INFO - HTTP Request: POST https://api.mistral.ai/v1/batch/jobs "HTTP/1.1 200 OK"
+2025-08-06 17:39:19,905 - INFO - Batch job created for 49d2fba781b6a7c0d94577479636ee6f: 427954fa-adde-448d-ba8e-c7fcd4bd9c40
+2025-08-06 17:39:20,110 - INFO - HTTP Request: GET https://api.mistral.ai/v1/batch/jobs/427954fa-adde-448d-ba8e-c7fcd4bd9c40 "HTTP/1.1 200 OK"
+2025-08-06 17:39:20,115 - INFO - Job status: QUEUED - 0/4 completed
+2025-08-06 17:39:30,467 - INFO - HTTP Request: GET https://api.mistral.ai/v1/batch/jobs/427954fa-adde-448d-ba8e-c7fcd4bd9c40 "HTTP/1.1 200 OK"
+2025-08-06 17:39:30,471 - INFO - Job status: RUNNING - 0/4 completed
+2025-08-06 17:39:41,172 - INFO - HTTP Request: GET https://api.mistral.ai/v1/batch/jobs/427954fa-adde-448d-ba8e-c7fcd4bd9c40 "HTTP/1.1 200 OK"
+2025-08-06 17:39:41,177 - INFO - Job status: RUNNING - 0/4 completed
+2025-08-06 17:39:51,469 - INFO - HTTP Request: GET https://api.mistral.ai/v1/batch/jobs/427954fa-adde-448d-ba8e-c7fcd4bd9c40 "HTTP/1.1 200 OK"
+2025-08-06 17:39:51,474 - INFO - Job status: RUNNING - 0/4 completed
+2025-08-06 17:40:01,881 - INFO - HTTP Request: GET https://api.mistral.ai/v1/batch/jobs/427954fa-adde-448d-ba8e-c7fcd4bd9c40 "HTTP/1.1 200 OK"
+2025-08-06 17:40:01,883 - INFO - Job status: SUCCESS - 4/4 completed
+2025-08-06 17:40:02,110 - INFO - HTTP Request: GET https://api.mistral.ai/v1/files/0a684deb-2579-43c4-8fd0-477683465972/content "HTTP/1.1 200 OK"
+2025-08-06 17:40:03,154 - INFO - Downloaded and parsed 4 OCR results
+2025-08-06 17:40:03,156 - INFO - Saved 2 pages for evaluation_learning_brief_final_olta_ndoja_pdf
+2025-08-06 17:40:03,159 - INFO - Saved 8 pages for hoa_eu_ji_final_eval_management_response_matrix_final_pdf
+2025-08-06 17:40:03,200 - INFO - Saved 31 pages for abridged_evaluation_report_final_olta_ndoja_pdf
+2025-08-06 17:40:03,267 - INFO - Saved 142 pages for final_evaluation_report_final_olta_ndoja_pdf
+2025-08-06 17:40:03,268 - INFO - Completed processing evaluation: 49d2fba781b6a7c0d94577479636ee6f
+Processing reports: 100%|██████████| 1/1 [01:23&lt;00:00, 83.80s/it]
+2025-08-06 17:40:03,269 - INFO - Batch OCR processing completed for all reports</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="cli" class="level2">
+<h2 class="anchored" data-anchor-id="cli">CLI</h2>
+<div id="cell-39" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># row nb. 487: "e8d9427f4a9094f68e17307faa567d8b"</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Impact evaluation of the UN Secretary General’s Peacebuilding Fund-supported  East Darfur Assalaya-Sheiria-Yassin  Triangle of Peace and Coexistence project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/evaluatr/blob/main/evaluatr/ocr.py#L279" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="ocr_evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="ocr_evaluation">ocr_evaluation</h3>
+<blockquote class="blockquote">
+<pre><code> ocr_evaluation (eval_id:str, pdf_dir:str='../data/pdf_library',
+                 output_dir:str='../data/md_library',
+                 overwrite:bool=False)</code></pre>
+</blockquote>
+<p><em>Process OCR for a single evaluation report</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>eval_id</td>
+<td>str</td>
+<td></td>
+<td>Evaluation ID to process</td>
+</tr>
+<tr class="even">
+<td>pdf_dir</td>
+<td>str</td>
+<td>../data/pdf_library</td>
+<td>Directory containing PDF folders</td>
+</tr>
+<tr class="odd">
+<td>output_dir</td>
+<td>str</td>
+<td>../data/md_library</td>
+<td>Output directory for markdown</td>
+</tr>
+<tr class="even">
+<td>overwrite</td>
+<td>bool</td>
+<td>False</td>
+<td>Overwrite if it exists</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/franckalbinet\.github\.io\/evaluatr");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/franckalbinet/evaluatr/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
