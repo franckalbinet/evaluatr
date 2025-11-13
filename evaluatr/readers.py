@@ -167,7 +167,7 @@ def in_docs(
     "Check if a URL is in the documents of an evaluation" 
     return any(L(ev.docs).filter(lambda x: x['url'] == url))
 
-# %% ../nbs/01_readers.ipynb 46
+# %% ../nbs/01_readers.ipynb 48
 def find_eval(
     evals:list, # List of evaluations
     query:str, # Title or URL of evaluation
