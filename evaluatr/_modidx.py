@@ -181,5 +181,7 @@ d = { 'settings': { 'branch': 'main',
                                   'evaluatr.readers.IOMRepoReader.read': ('readers.html#iomreporeader.read', 'evaluatr/readers.py'),
                                   'evaluatr.readers.IOMRepoReader.tfm': ('readers.html#iomreporeader.tfm', 'evaluatr/readers.py'),
                                   'evaluatr.readers.IOMRepoReader.to_json': ('readers.html#iomreporeader.to_json', 'evaluatr/readers.py'),
+                                  'evaluatr.readers.find_eval': ('readers.html#find_eval', 'evaluatr/readers.py'),
+                                  'evaluatr.readers.in_docs': ('readers.html#in_docs', 'evaluatr/readers.py'),
                                   'evaluatr.readers.iom_input_cfg': ('readers.html#iom_input_cfg', 'evaluatr/readers.py'),
                                   'evaluatr.readers.load_evals': ('readers.html#load_evals', 'evaluatr/readers.py')}}}
